@@ -1,0 +1,251 @@
+Excellent.
+
+Do NOT redesign the UI.
+
+Do NOT modify the existing pages.
+
+Do NOT change the branding.
+
+Your task now is ONLY to integrate Firebase.
+
+========================================
+
+BACKEND
+
+========================================
+
+Use Firebase only.
+
+Never use Supabase.
+
+Never use PostgreSQL.
+
+Never use MongoDB.
+
+Use:
+
+• Firebase Authentication
+• Cloud Firestore
+• Firebase Storage
+
+Prepare the project for future Firebase Cloud Messaging (FCM), but do not implement notifications yet.
+
+========================================
+
+AUTHENTICATION
+
+========================================
+
+Merchant Authentication
+
+Email
+
+Password
+
+Forgot Password
+
+Remember Me
+
+Protected Merchant Dashboard
+
+Customer
+
+Do NOT require login for debt approval links.
+
+Generate secure public approval links.
+
+Generate secure public payment links.
+
+The customer should be able to
+
+Approve debt
+
+Reject debt
+
+Pay debt
+
+without creating an account.
+
+Customer mobile application authentication will be implemented later.
+
+========================================
+
+FIRESTORE COLLECTIONS
+
+========================================
+
+Create these collections:
+
+users
+
+merchants
+
+branches
+
+customers
+
+debts
+
+payments
+
+trust_scores
+
+analytics
+
+notifications
+
+merchant_settings
+
+========================================
+
+Debt Document
+
+========================================
+
+merchantId
+
+customerId
+
+customerName
+
+customerPhone
+
+amount
+
+remainingAmount
+
+description
+
+status
+
+paymentType
+
+dueDate
+
+createdAt
+
+updatedAt
+
+approvalStatus
+
+approvalToken
+
+paymentToken
+
+========================================
+
+Customer Document
+
+========================================
+
+fullName
+
+phone
+
+email
+
+trustScore
+
+totalDebt
+
+totalPaid
+
+merchantId
+
+createdAt
+
+========================================
+
+Payment Document
+
+========================================
+
+debtId
+
+merchantId
+
+customerId
+
+amount
+
+status
+
+createdAt
+
+paymentMethod
+
+========================================
+
+STORAGE
+
+========================================
+
+Create storage folders for
+
+merchant logos
+
+customer avatars
+
+attachments
+
+========================================
+
+SERVICES
+
+========================================
+
+Create reusable Firebase services.
+
+Separate UI from Firebase logic.
+
+Never call Firebase directly from UI components.
+
+Create services folder.
+
+Create hooks folder.
+
+Create types folder.
+
+========================================
+
+ERROR HANDLING
+
+========================================
+
+Loading state
+
+Error state
+
+Empty state
+
+Success toast
+
+========================================
+
+SECURITY
+
+========================================
+
+Use Firebase Security Rules.
+
+Users must only access their own data.
+
+Customers can only access debt links generated for them.
+
+Merchant Dashboard must require authentication.
+
+========================================
+
+IMPORTANT
+
+========================================
+
+Do NOT create fake APIs.
+
+Do NOT use mock database.
+
+Use Firebase architecture.
+
+If Firebase configuration is required, ask me for the Firebase project configuration.
+
+When Firebase integration is complete, stop and wait for the next instructions.

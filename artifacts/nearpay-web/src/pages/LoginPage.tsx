@@ -4,10 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Store, User, ArrowRight, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { StatusBar } from '../components/StatusBar';
 import { NearPayLogo } from '../components/NearPayLogo';
 import { useAuth } from '../hooks/useAuth';
 import { resetMerchantPassword } from '../services/authService';
+import { LanguageSwitcher } from '../components/LanguageSwitcher';
 
 export default function LoginPage() {
   const [_, setLocation] = useLocation();
@@ -60,25 +60,62 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="app-container flex flex-col bg-card">
-      <StatusBar />
+    <div className="min-h-screen flex bg-background relative overflow-hidden text-foreground">
+      {/* ── Left Side: Geometric Illustration ── */}
+      <div className="hidden lg:flex flex-1 relative bg-foreground overflow-hidden items-center justify-center p-12">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/20 rounded-full blur-[120px] translate-x-1/3 -translate-y-1/3" />
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[100px] -translate-x-1/3 translate-y-1/3" />
+        </div>
+        
+        <div className="relative z-10 max-w-lg">
+          <NearPayLogo size={48} className="mb-12 [&_span]:text-background [&_.text-primary]:text-primary" />
+          <h1 className="text-5xl font-bold tracking-tight text-background mb-6 leading-tight">
+            Simplify your <br />
+            <span className="text-primary">merchant tabs</span>
+          </h1>
+          <p className="text-lg text-background/60 mb-12">
+            The smart way to manage customer debts, track collections, and boost your cash flow.
+          </p>
+          
+          <div className="relative w-full h-[400px]">
+            <svg width="100%" height="100%" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="50" y="50" width="160" height="200" rx="24" fill="#ffffff" fillOpacity="0.05" />
+              <rect x="190" y="150" width="160" height="200" rx="24" fill="#16A34A" />
+              <circle cx="130" cy="110" r="24" fill="#ffffff" fillOpacity="0.1" />
+              <rect x="90" y="160" width="80" height="8" rx="4" fill="#ffffff" fillOpacity="0.1" />
+              <rect x="90" y="180" width="60" height="8" rx="4" fill="#ffffff" fillOpacity="0.1" />
+              <circle cx="270" cy="210" r="24" fill="#ffffff" fillOpacity="0.2" />
+              <rect x="230" y="260" width="80" height="8" rx="4" fill="#ffffff" fillOpacity="0.2" />
+              <rect x="230" y="280" width="60" height="8" rx="4" fill="#ffffff" fillOpacity="0.2" />
+            </svg>
+          </div>
+        </div>
+      </div>
 
-      <div className="flex-1 flex flex-col px-6 py-8 justify-between relative overflow-hidden">
-        {/* Background decoration — unchanged */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl" />
+      {/* ── Right Side: Auth Card ── */}
+      <div className="flex-1 flex flex-col justify-center relative items-center lg:items-start p-6 lg:p-24 bg-card lg:bg-background lg:max-w-2xl">
+        <div className="absolute top-6 right-6 z-20">
+          <LanguageSwitcher />
+        </div>
+        
+        {/* Mobile blobs */}
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl lg:hidden pointer-events-none" />
+        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl lg:hidden pointer-events-none" />
 
-        <div className="relative z-10 flex-1 flex flex-col justify-center">
+        <div className="w-full max-w-[390px] mx-auto z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-10"
+            className="mb-10 text-center lg:text-left"
           >
-            <NearPayLogo className="mb-6 justify-center scale-125" />
-            <h1 className="text-3xl font-bold text-center tracking-tight text-foreground">
+            <div className="lg:hidden flex justify-center mb-6">
+              <NearPayLogo size={40} />
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground">
               {step === 'forgot' ? 'Reset Password' : 'Welcome back'}
-            </h1>
-            <p className="text-center text-muted-foreground mt-2">
+            </h2>
+            <p className="text-muted-foreground mt-2 font-medium">
               {step === 'forgot'
                 ? "We'll send you a reset link"
                 : 'Log in to manage your tabs'}
@@ -86,7 +123,6 @@ export default function LoginPage() {
           </motion.div>
 
           <AnimatePresence mode="wait">
-
             {/* ── Forgot Password ── */}
             {step === 'forgot' && (
               <motion.div
@@ -97,23 +133,23 @@ export default function LoginPage() {
                 className="w-full"
               >
                 {forgotSent ? (
-                  <div className="text-center py-8 space-y-3">
-                    <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                      <Mail className="w-7 h-7 text-primary" />
+                  <div className="text-center py-8 space-y-4">
+                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                      <Mail className="w-8 h-8 text-primary" />
                     </div>
-                    <p className="font-semibold text-foreground">Check your inbox</p>
-                    <p className="text-sm text-muted-foreground">
-                      A reset link was sent to <span className="font-medium">{forgotEmail}</span>
+                    <p className="font-bold text-foreground text-lg">Check your inbox</p>
+                    <p className="text-sm text-muted-foreground font-medium">
+                      A reset link was sent to <span className="font-bold text-foreground">{forgotEmail}</span>
                     </p>
                     <button
                       onClick={() => { setStep('form'); setForgotSent(false); setForgotEmail(''); }}
-                      className="text-primary text-sm font-medium hover:underline mt-4 block mx-auto"
+                      className="text-primary text-sm font-bold hover:underline mt-6 block mx-auto"
                     >
                       Back to login
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleForgotSubmit} className="space-y-4">
+                  <form onSubmit={handleForgotSubmit} className="space-y-5">
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-muted-foreground">
                         <Mail size={20} />
@@ -121,17 +157,17 @@ export default function LoginPage() {
                       <Input
                         type="email"
                         placeholder="Email address"
-                        className="pl-12 h-14 rounded-2xl bg-secondary/50 border-0 focus-visible:ring-1 focus-visible:ring-primary text-base"
+                        className="pl-12 h-14 rounded-2xl bg-secondary/50 border border-border focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary text-base font-medium transition-all"
                         value={forgotEmail}
                         onChange={(e) => setForgotEmail(e.target.value)}
                       />
                     </div>
                     {forgotError && (
-                      <p className="text-sm text-destructive text-center">{forgotError}</p>
+                      <p className="text-sm text-destructive text-center font-medium">{forgotError}</p>
                     )}
                     <Button
                       type="submit"
-                      className="w-full h-14 rounded-2xl text-lg font-semibold shadow-sm hover-elevate"
+                      className="w-full h-14 rounded-2xl text-base font-bold shadow-soft hover-elevate"
                       disabled={!forgotEmail || forgotLoading}
                     >
                       {forgotLoading ? (
@@ -147,7 +183,7 @@ export default function LoginPage() {
                     <button
                       type="button"
                       onClick={() => setStep('form')}
-                      className="w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      className="w-full text-center text-sm font-bold text-muted-foreground hover:text-foreground transition-colors"
                     >
                       Back to login
                     </button>
@@ -165,28 +201,28 @@ export default function LoginPage() {
                 exit={{ opacity: 0, x: 20 }}
                 className="w-full"
               >
-                {/* Role Selector — same visual as before */}
-                <div className="flex bg-secondary p-1 rounded-2xl mb-7 relative">
+                {/* Role Selector */}
+                <div className="flex bg-secondary/80 p-1.5 rounded-2xl mb-8 relative border border-border">
                   <motion.div
-                    className="absolute inset-y-1 bg-card shadow-sm rounded-xl"
+                    className="absolute inset-y-1.5 bg-card shadow-sm rounded-xl"
                     layoutId="roleTab"
                     initial={false}
                     animate={{
-                      left: role === 'merchant' ? '4px' : '50%',
-                      width: 'calc(50% - 4px)',
+                      left: role === 'merchant' ? '6px' : '50%',
+                      width: 'calc(50% - 6px)',
                     }}
                     transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                   />
                   <button
                     onClick={() => { setRole('merchant'); setError(null); }}
-                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold relative z-10 transition-colors ${role === 'merchant' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                    className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold relative z-10 transition-colors ${role === 'merchant' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                   >
                     <Store size={18} />
                     Merchant
                   </button>
                   <button
                     onClick={() => { setRole('customer'); setError(null); }}
-                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold relative z-10 transition-colors ${role === 'customer' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                    className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold relative z-10 transition-colors ${role === 'customer' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                   >
                     <User size={18} />
                     Customer
@@ -202,77 +238,77 @@ export default function LoginPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
                       onSubmit={handleMerchantLogin}
-                      className="space-y-4"
+                      className="space-y-5"
                     >
-                      {/* Email */}
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-muted-foreground">
-                          <Mail size={20} />
+                      <div className="space-y-4">
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-muted-foreground">
+                            <Mail size={20} />
+                          </div>
+                          <Input
+                            type="email"
+                            placeholder="Email address"
+                            className="pl-12 h-14 rounded-2xl bg-secondary/50 border border-border focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary text-base font-medium transition-all"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            autoComplete="email"
+                          />
                         </div>
-                        <Input
-                          type="email"
-                          placeholder="Email address"
-                          className="pl-12 h-14 rounded-2xl bg-secondary/50 border-0 focus-visible:ring-1 focus-visible:ring-primary text-base"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          autoComplete="email"
-                        />
+
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-muted-foreground">
+                            <Lock size={20} />
+                          </div>
+                          <Input
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="Password"
+                            className="pl-12 pr-12 h-14 rounded-2xl bg-secondary/50 border border-border focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary text-base font-medium transition-all"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            autoComplete="current-password"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword((v) => !v)}
+                            className="absolute inset-y-0 right-0 flex items-center pr-4 text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                          </button>
+                        </div>
                       </div>
 
-                      {/* Password */}
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-muted-foreground">
-                          <Lock size={20} />
-                        </div>
-                        <Input
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder="Password"
-                          className="pl-12 pr-12 h-14 rounded-2xl bg-secondary/50 border-0 focus-visible:ring-1 focus-visible:ring-primary text-base"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          autoComplete="current-password"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword((v) => !v)}
-                          className="absolute inset-y-0 right-0 flex items-center pr-4 text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                        </button>
-                      </div>
-
-                      {/* Remember Me + Forgot Password */}
                       <div className="flex items-center justify-between px-1">
-                        <label className="flex items-center gap-2 cursor-pointer select-none">
+                        <label className="flex items-center gap-2 cursor-pointer select-none group">
                           <div
                             onClick={() => setRememberMe((v) => !v)}
-                            className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${rememberMe ? 'bg-primary border-primary' : 'border-border'}`}
+                            className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${rememberMe ? 'bg-primary border-primary' : 'border-muted-foreground/50 group-hover:border-primary/50'}`}
                           >
                             {rememberMe && (
-                              <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                              <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                               </svg>
                             )}
                           </div>
-                          <span className="text-sm text-muted-foreground">Remember me</span>
+                          <span className="text-sm font-semibold text-muted-foreground group-hover:text-foreground transition-colors">Remember me</span>
                         </label>
                         <button
                           type="button"
                           onClick={() => setStep('forgot')}
-                          className="text-sm text-primary font-medium hover:underline"
+                          className="text-sm font-bold text-primary hover:underline"
                         >
                           Forgot password?
                         </button>
                       </div>
 
-                      {/* Error */}
                       {error && (
-                        <p className="text-sm text-destructive text-center px-2">{error}</p>
+                        <div className="p-3 bg-destructive/10 rounded-xl border border-destructive/20">
+                          <p className="text-sm font-semibold text-destructive text-center">{error}</p>
+                        </div>
                       )}
 
                       <Button
                         type="submit"
-                        className="w-full h-14 rounded-2xl text-lg font-semibold shadow-sm hover-elevate"
+                        className="w-full h-14 rounded-2xl text-base font-bold shadow-soft hover-elevate mt-2"
                         disabled={!email || !password || actionLoading}
                       >
                         {actionLoading ? (
@@ -295,19 +331,22 @@ export default function LoginPage() {
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
-                      className="space-y-4"
+                      className="space-y-6"
                     >
-                      <div className="bg-secondary/60 rounded-2xl p-5 text-center space-y-2">
-                        <p className="text-sm font-medium text-foreground">No account needed</p>
-                        <p className="text-xs text-muted-foreground leading-relaxed">
-                          Browse nearby merchants, approve debts, and make payments — all without signing up.
+                      <div className="bg-secondary/60 rounded-[24px] p-6 text-center space-y-3 border border-border">
+                        <div className="w-12 h-12 bg-card rounded-full flex items-center justify-center mx-auto shadow-sm">
+                          <User size={24} className="text-primary" />
+                        </div>
+                        <p className="text-base font-bold text-foreground">No account needed</p>
+                        <p className="text-sm text-muted-foreground font-medium leading-relaxed">
+                          Browse nearby merchants, approve debts, and make payments — all securely and instantly.
                         </p>
                       </div>
                       <Button
-                        className="w-full h-14 rounded-2xl text-lg font-semibold shadow-sm hover-elevate"
+                        className="w-full h-14 rounded-2xl text-base font-bold shadow-soft hover-elevate"
                         onClick={handleCustomerContinue}
                       >
-                        Continue as Customer <ArrowRight className="ml-2" size={20} />
+                        Continue to app <ArrowRight className="ml-2" size={20} />
                       </Button>
                     </motion.div>
                   )}
@@ -317,8 +356,8 @@ export default function LoginPage() {
           </AnimatePresence>
         </div>
 
-        <div className="text-center text-xs text-muted-foreground pb-4">
-          By continuing, you agree to NearPay's Terms &amp; Conditions
+        <div className="w-full text-center mt-12 lg:mt-auto lg:text-left text-xs font-semibold text-muted-foreground">
+          By continuing, you agree to NearPay's <a href="#" className="hover:text-foreground transition-colors underline decoration-border underline-offset-4">Terms</a> &amp; <a href="#" className="hover:text-foreground transition-colors underline decoration-border underline-offset-4">Privacy</a>
         </div>
       </div>
     </div>

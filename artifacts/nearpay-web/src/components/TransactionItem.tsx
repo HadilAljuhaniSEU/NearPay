@@ -1,45 +1,60 @@
 import React from 'react';
-import { CreditCard, Wallet, Apple } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { ArrowUpRight, ArrowDownLeft, CheckCircle2, Clock } from 'lucide-react';
+import { format } from 'date-fns';
 
-interface TransactionItemProps {
-  merchantName: string;
-  date: string;
+export interface TransactionItemProps {
+  id: string;
   amount: number;
-  method: string;
-  status: string;
+  date: string | any;
+  status: 'paid' | 'pending' | 'failed' | 'completed';
+  type?: 'payment' | 'debt';
+  merchantName?: string;
+  customerName?: string;
 }
 
-export const TransactionItem = ({ merchantName, date, amount, method, status }: TransactionItemProps) => {
-  const getIcon = () => {
-    if (method.includes('Apple')) return <Apple size={20} />;
-    if (method.includes('Tab')) return <Wallet size={20} />;
-    return <CreditCard size={20} />;
-  };
+export const TransactionItem = ({ 
+  amount, 
+  date, 
+  status, 
+  type = 'payment',
+  merchantName = 'Merchant',
+  customerName = 'Customer'
+}: TransactionItemProps) => {
+  const isPositive = type === 'payment';
+  const displayStatus = status === 'paid' ? 'completed' : status;
+  
+  const formattedDate = typeof date === 'string' ? format(new Date(date), 'MMM dd, h:mm a') : 'Recent';
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex items-center justify-between py-3 border-b border-border last:border-0"
-    >
+    <div className="flex items-center justify-between py-2 group cursor-pointer">
       <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center text-muted-foreground">
-          {getIcon()}
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+          isPositive ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary'
+        }`}>
+          {isPositive ? <ArrowDownLeft size={18} /> : <ArrowUpRight size={18} />}
         </div>
         <div>
-          <h4 className="font-semibold text-sm text-foreground">{merchantName}</h4>
-          <p className="text-xs text-muted-foreground mt-0.5">{method} • {new Date(date).toLocaleDateString()}</p>
+          <p className="font-bold text-foreground text-sm">
+            {isPositive ? merchantName : customerName}
+          </p>
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
+            {displayStatus === 'completed' ? (
+              <CheckCircle2 size={10} className="text-success" />
+            ) : (
+              <Clock size={10} className="text-warning" />
+            )}
+            <span className="capitalize">{displayStatus}</span>
+            <span className="w-1 h-1 rounded-full bg-border" />
+            <span>{formattedDate}</span>
+          </div>
         </div>
       </div>
       <div className="text-right">
-        <div className="font-semibold text-sm text-foreground">SAR {amount}</div>
-        <div className={`text-[10px] uppercase tracking-wider font-bold mt-0.5 ${
-          status === 'paid' ? 'text-success' : 'text-warning'
-        }`}>
-          {status}
-        </div>
+        <p className={`font-bold text-sm ${isPositive ? 'text-success' : 'text-foreground'}`}>
+          {isPositive ? '+' : '-'}SAR {amount.toLocaleString()}
+        </p>
       </div>
-    </motion.div>
+    </div>
   );
 };

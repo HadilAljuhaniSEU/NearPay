@@ -1,54 +1,62 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { Phone, ChevronRight, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Phone, Wallet } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-interface CustomerCardProps {
+export interface CustomerCardProps {
+  id: string;
   name: string;
   phone: string;
-  totalDebt: number;
-  debtCount: number;
-  risk: 'low' | 'medium' | 'high';
   avatar: string;
+  totalDebt: number;
+  trustScore: number;
+  risk: 'low' | 'medium' | 'high';
 }
 
-export const CustomerCard = ({ name, phone, totalDebt, debtCount, risk, avatar }: CustomerCardProps) => {
-  const riskColors = {
-    low: 'bg-success',
-    medium: 'bg-warning',
-    high: 'bg-destructive'
-  };
-
+export const CustomerCard = ({ name, phone, avatar, totalDebt, trustScore, risk }: CustomerCardProps) => {
   return (
     <motion.div 
       whileHover={{ scale: 1.01 }}
-      className="bg-card border border-card-border rounded-[18px] p-4 shadow-sm relative overflow-hidden"
+      whileTap={{ scale: 0.98 }}
+      className="bg-card border border-card-border p-5 rounded-[20px] shadow-soft cursor-pointer flex items-center justify-between gap-4 group"
     >
-      <div className={`absolute top-0 right-0 w-2 h-full ${riskColors[risk]}`} />
-      
       <div className="flex items-center gap-4">
-        <Avatar className="h-14 w-14 border border-border shadow-sm">
-          <AvatarFallback className="bg-secondary text-secondary-foreground font-bold text-lg">
-            {avatar}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <h3 className="font-semibold text-foreground text-lg">{name}</h3>
-          <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
-            <Phone size={14} />
-            <span>{phone}</span>
+        <div className="relative">
+          <Avatar className="h-14 w-14 border border-border">
+            <AvatarFallback className="bg-primary/10 text-primary font-bold text-lg">
+              {avatar}
+            </AvatarFallback>
+          </Avatar>
+          <div className="absolute -bottom-1 -right-1 bg-card rounded-full p-0.5 shadow-sm">
+            {risk === 'low' ? (
+              <ShieldCheck size={16} className="text-success" />
+            ) : (
+              <AlertTriangle size={16} className={risk === 'high' ? 'text-destructive' : 'text-warning'} />
+            )}
+          </div>
+        </div>
+        
+        <div>
+          <h3 className="font-bold text-foreground text-base leading-tight">{name}</h3>
+          <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1">
+            <Phone size={12} />
+            <span className="font-medium">{phone}</span>
+          </div>
+          <div className="flex items-center gap-2 mt-1.5">
+            <span className="text-[10px] font-bold text-foreground/80 bg-secondary px-2 py-0.5 rounded-md uppercase tracking-wider">
+              Score: {trustScore}
+            </span>
           </div>
         </div>
       </div>
-      
-      <div className="mt-4 pt-4 border-t border-border flex justify-between items-center">
-        <div className="flex items-center gap-2 text-muted-foreground text-sm">
-          <Wallet size={16} className="text-primary" />
-          <span>{debtCount} active {debtCount === 1 ? 'tab' : 'tabs'}</span>
+
+      <div className="flex flex-col items-end gap-2">
+        <div className="flex flex-col items-end text-right">
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold mb-0.5">Owes</span>
+          <span className={`text-lg font-bold ${risk === 'high' ? 'text-destructive' : 'text-foreground'}`}>SAR {totalDebt.toLocaleString()}</span>
         </div>
-        <div className="text-right">
-          <span className="text-xs text-muted-foreground block mb-0.5">Total Owed</span>
-          <span className="font-bold text-foreground">SAR {totalDebt}</span>
+        <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+          <ChevronRight size={16} />
         </div>
       </div>
     </motion.div>

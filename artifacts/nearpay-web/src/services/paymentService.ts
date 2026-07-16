@@ -56,10 +56,10 @@ export async function recordPayment(params: {
     merchantId: params.merchantId,
     customerId: params.customerId,
     amount: params.amount,
-    status: 'completed',
+    status: 'completed' as const,
     paymentMethod: params.paymentMethod,
     createdAt: now,
-  } satisfies Omit<PaymentDoc, 'id'>);
+  });
 
   // 2. Update the debt's remaining amount
   await applyPaymentToDebt(params.debtId, params.amount, params.currentRemaining);

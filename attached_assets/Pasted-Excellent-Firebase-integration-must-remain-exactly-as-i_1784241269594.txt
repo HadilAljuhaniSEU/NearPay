@@ -1,0 +1,485 @@
+Excellent.
+
+Firebase integration must remain exactly as it is.
+
+DO NOT remove Firebase.
+
+DO NOT recreate the project.
+
+DO NOT change the backend.
+
+DO NOT modify Firestore collections.
+
+Your ONLY task is to completely redesign the UI and UX of NearPay.
+
+=================================================
+
+DESIGN GOAL
+
+=================================================
+
+NearPay is a Saudi FinTech startup.
+
+The interface must look like a real funded startup.
+
+The quality should be comparable to:
+
+• Tabby
+• Tamara
+• STC Pay
+• Stripe
+• Mercury
+• Brex
+• Linear
+
+Do NOT generate generic admin dashboards.
+
+Do NOT generate Bootstrap layouts.
+
+Do NOT generate colorful widgets.
+
+Do NOT generate student project UI.
+
+Everything must feel clean, premium and minimal.
+
+=================================================
+
+DESIGN LANGUAGE
+
+=================================================
+
+Use only
+
+White
+
+Soft Gray
+
+Dark Navy
+
+NearPay Green
+
+Lots of whitespace.
+
+Minimal shadows.
+
+Rounded cards.
+
+Modern typography.
+
+Elegant spacing.
+
+=================================================
+
+COLORS
+
+=================================================
+
+Primary
+
+#16A34A
+
+Background
+
+#F8FAFC
+
+Card
+
+#FFFFFF
+
+Dark
+
+#0F172A
+
+Border
+
+#E5E7EB
+
+Success
+
+#22C55E
+
+Warning
+
+#F59E0B
+
+Danger
+
+#EF4444
+
+=================================================
+
+TYPOGRAPHY
+
+=================================================
+
+Arabic
+
+IBM Plex Sans Arabic
+
+English
+
+Inter
+
+Perfect typography hierarchy.
+
+Large page titles.
+
+Comfortable spacing.
+
+=================================================
+
+RTL / LTR
+
+=================================================
+
+Arabic
+
+100% RTL
+
+English
+
+100% LTR
+
+Never mix alignments.
+
+Currency
+
+Dates
+
+Numbers
+
+Icons
+
+must automatically follow locale.
+
+=================================================
+
+LANGUAGE SWITCHER
+
+=================================================
+
+Display
+
+العربية
+
+English
+
+اردو
+
+Urdu must be disabled.
+
+Show a small badge:
+
+Coming Soon
+
+This represents a future feature.
+
+=================================================
+
+LOGO
+
+=================================================
+
+Redesign the NearPay logo.
+
+Flat SVG.
+
+Modern.
+
+Simple.
+
+Use
+
+Letter N
+
++
+
+Location Pin
+
++
+
+Check Mark
+
+No gradients.
+
+No 3D.
+
+No cartoon style.
+
+Create
+
+App icon
+
+Splash logo
+
+Favicon
+
+=================================================
+
+LOGIN SCREEN
+
+=================================================
+
+Completely redesign.
+
+Split layout.
+
+Beautiful illustration.
+
+Soft gradient background.
+
+Large logo.
+
+Professional card.
+
+Modern inputs.
+
+Large CTA button.
+
+Remember Me
+
+Forgot Password
+
+Merchant Login
+
+Customer Access
+
+=================================================
+
+DASHBOARD
+
+=================================================
+
+Remove generic widgets.
+
+Top section
+
+Greeting
+
+Merchant Name
+
+Today's Date
+
+Main KPI cards
+
+Total Debt
+
+Collected
+
+Overdue
+
+Expected Cash Flow
+
+Beautiful Charts.
+
+Minimal charts.
+
+No rainbow colors.
+
+Recent Debts
+
+Needs Follow-up
+
+Trust Score
+
+Smart AI Insight
+
+=================================================
+
+AI SCREEN
+
+=================================================
+
+Looks like ChatGPT.
+
+Modern AI assistant card.
+
+Suggested insights.
+
+Risk Alerts.
+
+Cash Flow Forecast.
+
+Collection Recommendation.
+
+=================================================
+
+ANALYTICS
+
+=================================================
+
+Professional charts.
+
+Smooth animations.
+
+Monthly collections.
+
+Debt distribution.
+
+Collection rate.
+
+Expected cash flow.
+
+Customer trust distribution.
+
+=================================================
+
+CUSTOMER APP
+
+=================================================
+
+Beautiful Home.
+
+Large cards.
+
+Outstanding debts.
+
+Payment history.
+
+Nearby merchants.
+
+Modern payment screen.
+
+Large Pay button.
+
+=================================================
+
+NEARBY
+
+=================================================
+
+Premium Google Maps style.
+
+Rounded search bar.
+
+Merchant cards.
+
+Distance.
+
+Open / Closed.
+
+WhatsApp button.
+
+Call button.
+
+Navigate button.
+
+Future feature badge:
+
+More merchants coming soon.
+
+=================================================
+
+ADD DEBT
+
+=================================================
+
+Elegant form.
+
+Progress indicator.
+
+Floating labels.
+
+Professional spacing.
+
+Modern success animation.
+
+=================================================
+
+BUTTONS
+
+=================================================
+
+Rounded XL.
+
+Soft shadow.
+
+Green primary.
+
+Animated hover.
+
+=================================================
+
+CARDS
+
+=================================================
+
+White.
+
+18px radius.
+
+1px border.
+
+Very subtle shadow.
+
+24px padding.
+
+=================================================
+
+ICONS
+
+=================================================
+
+Lucide only.
+
+Consistent size.
+
+No emojis.
+
+=================================================
+
+ANIMATIONS
+
+=================================================
+
+Framer Motion.
+
+Fade.
+
+Slide.
+
+Scale.
+
+Page transitions.
+
+Skeleton loading.
+
+=================================================
+
+RESPONSIVE
+
+=================================================
+
+Perfect on
+
+Android
+
+iPhone
+
+Tablet
+
+Desktop
+
+Desktop should simply expand spacing.
+
+Never redesign into desktop software.
+
+Always feel like a mobile application.
+
+=================================================
+
+IMPORTANT
+
+=================================================
+
+Do NOT change Firebase.
+
+Do NOT break authentication.
+
+Do NOT modify backend logic.
+
+Improve ONLY the UI and UX.
+
+When the redesign is complete,
+
+stop and wait for my next instructions.

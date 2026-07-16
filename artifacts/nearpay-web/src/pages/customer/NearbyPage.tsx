@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Map as MapIcon, SlidersHorizontal, Store } from 'lucide-react';
 import { StatusBar } from '../../components/StatusBar';
 import { BottomNav } from '../../components/BottomNav';
@@ -7,7 +7,6 @@ import { PageHeader } from '../../components/PageHeader';
 import { MerchantCard } from '../../components/MerchantCard';
 import { mockNearbyMerchants } from '../../data/mock';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 
 export default function CustomerNearbyPage() {
   const [search, setSearch] = useState('');
@@ -18,76 +17,101 @@ export default function CustomerNearbyPage() {
       <StatusBar />
       <PageHeader 
         title="Discover" 
-        subtitle="Find NearPay merchants nearby"
+        subtitle="Local merchant network"
         action={
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="rounded-full bg-card border-border"
-            onClick={() => setView(view === 'list' ? 'map' : 'list')}
-          >
-            {view === 'list' ? <MapIcon size={18} /> : <SlidersHorizontal size={18} />}
-          </Button>
+          <div className="flex bg-secondary p-1 rounded-xl">
+            <button 
+              onClick={() => setView('list')}
+              className={`p-1.5 rounded-lg transition-colors ${view === 'list' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground'}`}
+            >
+              <SlidersHorizontal size={16} />
+            </button>
+            <button 
+              onClick={() => setView('map')}
+              className={`p-1.5 rounded-lg transition-colors ${view === 'map' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground'}`}
+            >
+              <MapIcon size={16} />
+            </button>
+          </div>
         }
       />
       
-      <div className="page-scroll px-6 py-4">
-        <div className="sticky top-0 z-30 bg-background pt-2 pb-4 -mt-2">
+      <div className="page-scroll px-6 py-4 bg-secondary/30">
+        <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md pt-2 pb-4 -mt-4 mx-[-24px] px-6">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-muted-foreground">
-              <Search size={18} />
+              <Search size={20} />
             </div>
             <Input
               type="text"
-              placeholder="Search merchants or categories..."
-              className="pl-11 h-12 rounded-2xl bg-secondary/50 border-0 focus-visible:ring-1 focus-visible:ring-primary"
+              placeholder="Find places, groceries, electronics..."
+              className="pl-12 h-14 rounded-2xl bg-card border border-border focus-visible:ring-1 focus-visible:ring-primary shadow-sm text-base font-medium"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
         </div>
 
-        {view === 'list' ? (
-          <div className="space-y-4 mt-2">
-            {mockNearbyMerchants.map((merchant, i) => (
-              <motion.div
-                key={merchant.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-              >
-                <MerchantCard {...merchant} />
-              </motion.div>
-            ))}
-          </div>
-        ) : (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="relative w-full h-[400px] bg-secondary rounded-[24px] border border-border mt-2 overflow-hidden flex items-center justify-center"
-          >
-            {/* Map Placeholder */}
-            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, black 1px, transparent 0)', backgroundSize: '24px 24px' }} />
-            
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-              <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground shadow-lg mb-2 relative">
-                <div className="absolute w-full h-full bg-primary rounded-full animate-ping opacity-50" />
-                <Store size={24} />
+        <AnimatePresence mode="wait">
+          {view === 'list' ? (
+            <motion.div 
+              key="list"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="space-y-4 mt-2"
+            >
+              {mockNearbyMerchants.map((merchant, i) => (
+                <motion.div
+                  key={merchant.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                >
+                  <MerchantCard {...merchant} />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="map"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full h-[500px] bg-card rounded-[24px] border border-border mt-2 overflow-hidden flex items-center justify-center shadow-soft"
+            >
+              {/* Map Grid Pattern */}
+              <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+              
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10">
+                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-primary-foreground shadow-lg mb-2 relative border-[3px] border-background">
+                  <div className="absolute w-full h-full bg-primary rounded-full animate-ping opacity-50" />
+                </div>
+                <div className="bg-foreground text-background px-3 py-1.5 rounded-lg text-[10px] font-bold shadow-md uppercase tracking-wider">
+                  You
+                </div>
               </div>
-              <div className="bg-card text-foreground px-4 py-2 rounded-xl text-sm font-bold shadow-md">
-                You are here
-              </div>
-            </div>
 
-            {/* Merchant Pins Placeholder */}
-            <div className="absolute top-1/4 left-1/4 w-8 h-8 bg-foreground rounded-full flex items-center justify-center text-background shadow-lg border-2 border-background">
-              <Store size={14} />
-            </div>
-            <div className="absolute bottom-1/3 right-1/4 w-8 h-8 bg-foreground rounded-full flex items-center justify-center text-background shadow-lg border-2 border-background">
-              <Store size={14} />
-            </div>
-          </motion.div>
-        )}
+              {/* Merchant Pins */}
+              <div className="absolute top-[25%] left-[25%] flex flex-col items-center transform -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-110 transition-transform">
+                <div className="w-10 h-10 bg-card rounded-full flex items-center justify-center text-foreground shadow-lg border-2 border-border">
+                  <Store size={18} className="text-primary" />
+                </div>
+              </div>
+              <div className="absolute bottom-[35%] right-[20%] flex flex-col items-center transform translate-x-1/2 translate-y-1/2 cursor-pointer hover:scale-110 transition-transform">
+                <div className="w-10 h-10 bg-card rounded-full flex items-center justify-center text-foreground shadow-lg border-2 border-border">
+                  <Store size={18} className="text-primary" />
+                </div>
+              </div>
+              <div className="absolute top-[65%] left-[35%] flex flex-col items-center transform translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-110 transition-transform">
+                <div className="w-10 h-10 bg-card rounded-full flex items-center justify-center text-foreground shadow-lg border-2 border-border">
+                  <Store size={18} className="text-primary" />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div className="h-10" />
       </div>
 
       <BottomNav role="customer" />

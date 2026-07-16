@@ -38,17 +38,17 @@ export default function DebtsPage() {
         subtitle="Manage customer debts"
       />
       
-      <div className="page-scroll px-6 py-4">
+      <div className="page-scroll px-6 py-4 bg-secondary/30">
         {/* Search & Filter */}
-        <div className="sticky top-0 z-30 bg-background/95 backdrop-blur pt-2 pb-4 -mt-2 space-y-4">
-          <div className="relative">
+        <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md pt-2 pb-4 -mt-4 mx-[-24px] px-6">
+          <div className="relative mb-4">
             <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-muted-foreground">
-              <Search size={18} />
+              <Search size={20} />
             </div>
             <Input
               type="text"
               placeholder="Search customers..."
-              className="pl-11 h-12 rounded-2xl bg-secondary/50 border-0 focus-visible:ring-1 focus-visible:ring-primary"
+              className="pl-12 h-14 rounded-2xl bg-card border border-border focus-visible:ring-1 focus-visible:ring-primary shadow-sm text-base font-medium"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -59,10 +59,10 @@ export default function DebtsPage() {
               <button
                 key={f.id}
                 onClick={() => setFilter(f.id as any)}
-                className={`whitespace-nowrap px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                className={`whitespace-nowrap px-5 py-2.5 rounded-[16px] text-sm font-bold transition-all shadow-sm border ${
                   filter === f.id 
-                    ? 'bg-foreground text-background shadow-sm' 
-                    : 'bg-secondary text-muted-foreground hover:bg-secondary/80'
+                    ? 'bg-foreground text-background border-foreground' 
+                    : 'bg-card text-foreground border-border hover:border-foreground/30'
                 }`}
               >
                 {f.label}
@@ -72,10 +72,10 @@ export default function DebtsPage() {
         </div>
 
         {/* List */}
-        <div className="space-y-3 mt-2">
+        <div className="space-y-4 mt-2">
           <AnimatePresence mode="popLayout">
             {filteredDebts.length > 0 ? (
-              filteredDebts.map((debt) => {
+              filteredDebts.map((debt, index) => {
                 const customer = mockCustomers.find(c => c.id === debt.customerId);
                 if (!customer) return null;
                 
@@ -86,7 +86,7 @@ export default function DebtsPage() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.2, delay: index * 0.05 }}
                   >
                     <DebtCard 
                       id={debt.id}
@@ -105,17 +105,18 @@ export default function DebtsPage() {
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-center py-12"
+                className="text-center py-16 flex flex-col items-center justify-center bg-card rounded-[24px] border border-border mt-4 shadow-sm"
               >
-                <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mb-4">
                   <Filter size={24} className="text-muted-foreground" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground">No tabs found</h3>
-                <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters</p>
+                <h3 className="text-lg font-bold text-foreground">No tabs found</h3>
+                <p className="text-sm text-muted-foreground mt-1">Try adjusting your search or filters</p>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
+        <div className="h-10" />
       </div>
 
       {/* FAB */}
@@ -123,9 +124,9 @@ export default function DebtsPage() {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="absolute bottom-24 right-6 w-14 h-14 bg-primary text-primary-foreground rounded-2xl shadow-lg flex items-center justify-center z-50 hover-elevate"
+          className="absolute bottom-24 right-6 w-16 h-16 bg-primary text-primary-foreground rounded-full shadow-lg shadow-primary/30 flex items-center justify-center z-50 hover-elevate border-4 border-background"
         >
-          <Plus size={24} strokeWidth={2.5} />
+          <Plus size={28} strokeWidth={2.5} />
         </motion.button>
       </Link>
 

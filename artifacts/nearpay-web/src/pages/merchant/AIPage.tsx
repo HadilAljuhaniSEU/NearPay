@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Zap, Send } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Zap, Send, Sparkles } from 'lucide-react';
 import { StatusBar } from '../../components/StatusBar';
 import { BottomNav } from '../../components/BottomNav';
 import { PageHeader } from '../../components/PageHeader';
@@ -55,105 +55,111 @@ export default function AIPage() {
         "Based on your account data, I'd recommend prioritizing outreach to customers with debts older than 30 days. Your average collection time is 18 days, which is excellent for your category.";
       setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', text: reply }]);
       setLoading(false);
-    }, 900 + Math.random() * 500);
+    }, 1200 + Math.random() * 800);
   };
 
   return (
-    <div className="app-container flex flex-col bg-background">
+    <div className="app-container flex flex-col bg-background relative overflow-hidden">
+      <div className="absolute top-0 w-full h-[300px] bg-gradient-to-b from-primary/10 to-transparent pointer-events-none" />
       <StatusBar />
       <PageHeader
         title="AI Copilot"
-        subtitle="Powered by NearPay Intelligence"
+        subtitle="NearPay Intelligence"
         action={
-          <div className="flex items-center gap-1.5 bg-violet-100 text-violet-600 rounded-full px-3 py-1.5 text-xs font-semibold">
-            <Zap size={12} />
+          <div className="flex items-center gap-1.5 bg-primary/10 text-primary rounded-full px-3 py-1.5 text-xs font-bold shadow-sm border border-primary/20">
+            <Sparkles size={14} />
             Active
           </div>
         }
       />
 
       {/* Prompt Chips */}
-      <div className="px-6 py-3 border-b border-border flex gap-2 overflow-x-auto no-scrollbar">
-        {PROMPTS.map((p) => (
-          <button
-            key={p}
-            onClick={() => send(p)}
-            className="flex-shrink-0 px-3.5 py-2 rounded-full bg-secondary border border-border text-sm text-foreground font-medium hover:bg-secondary/70 transition-colors"
-          >
-            {p}
-          </button>
-        ))}
+      <div className="px-6 py-4 bg-background/80 backdrop-blur-md z-30">
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+          {PROMPTS.map((p) => (
+            <button
+              key={p}
+              onClick={() => send(p)}
+              className="flex-shrink-0 px-4 py-2 rounded-[14px] bg-card border border-border text-sm font-bold shadow-sm hover:border-primary/50 transition-colors whitespace-nowrap text-foreground"
+            >
+              {p}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4" style={{ paddingBottom: '100px' }}>
-        {messages.map((m) => (
-          <motion.div
-            key={m.id}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`flex items-end gap-2 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            {m.role === 'assistant' && (
-              <div className="w-8 h-8 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">
-                <Zap size={14} className="text-violet-600" />
-              </div>
-            )}
-            <div
-              className={`max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-line ${
-                m.role === 'user'
-                  ? 'bg-primary text-primary-foreground rounded-br-sm'
-                  : 'bg-card border border-border text-foreground rounded-bl-sm'
-              }`}
+      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6" style={{ paddingBottom: '120px' }}>
+        <AnimatePresence initial={false}>
+          {messages.map((m) => (
+            <motion.div
+              key={m.id}
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ type: "spring", bounce: 0.3 }}
+              className={`flex items-end gap-3 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              {m.text}
-            </div>
-          </motion.div>
-        ))}
-        {loading && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex items-end gap-2"
-          >
-            <div className="w-8 h-8 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">
-              <Zap size={14} className="text-violet-600" />
-            </div>
-            <div className="bg-card border border-border rounded-2xl rounded-bl-sm px-4 py-3">
-              <div className="flex gap-1">
-                {[0, 1, 2].map((i) => (
-                  <motion.div
-                    key={i}
-                    animate={{ y: [0, -4, 0] }}
-                    transition={{ repeat: Infinity, delay: i * 0.15, duration: 0.6 }}
-                    className="w-1.5 h-1.5 bg-muted-foreground rounded-full"
-                  />
-                ))}
+              {m.role === 'assistant' && (
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mb-1 border border-primary/20">
+                  <Zap size={14} className="text-primary" />
+                </div>
+              )}
+              <div
+                className={`max-w-[80%] rounded-[24px] px-5 py-4 text-sm font-medium leading-relaxed whitespace-pre-line shadow-sm ${
+                  m.role === 'user'
+                    ? 'bg-primary text-primary-foreground rounded-br-sm'
+                    : 'bg-card border border-border text-foreground rounded-bl-sm'
+                }`}
+              >
+                {m.text}
               </div>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          ))}
+          {loading && (
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className="flex items-end gap-3"
+            >
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mb-1 border border-primary/20">
+                <Zap size={14} className="text-primary" />
+              </div>
+              <div className="bg-card border border-border rounded-[24px] rounded-bl-sm px-5 py-4 shadow-sm">
+                <div className="flex gap-1.5">
+                  {[0, 1, 2].map((i) => (
+                    <motion.div
+                      key={i}
+                      animate={{ y: [0, -4, 0] }}
+                      transition={{ repeat: Infinity, delay: i * 0.15, duration: 0.6 }}
+                      className="w-1.5 h-1.5 bg-primary rounded-full"
+                    />
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <div ref={bottomRef} />
       </div>
 
       {/* Input Bar */}
-      <div className="absolute bottom-16 left-0 right-0 px-6 pb-4 bg-background/95 backdrop-blur-md border-t border-border pt-3">
-        <div className="flex gap-2 items-center">
+      <div className="absolute bottom-[80px] left-0 right-0 px-6 pb-4 pt-4 bg-gradient-to-t from-background via-background/95 to-transparent z-40">
+        <div className="flex gap-2 items-center bg-card border border-border rounded-[20px] p-1.5 shadow-soft">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && send(input)}
-            placeholder="Ask anything about your debts..."
-            className="flex-1 h-11 rounded-xl border border-border bg-secondary/50 px-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            placeholder="Ask Copilot..."
+            className="flex-1 h-12 bg-transparent px-4 text-sm font-medium text-foreground placeholder:text-muted-foreground focus:outline-none"
           />
           <Button
             size="icon"
             onClick={() => send(input)}
             disabled={!input.trim() || loading}
-            className="h-11 w-11 rounded-xl bg-primary text-primary-foreground disabled:opacity-40"
+            className="h-12 w-12 rounded-[16px] bg-primary text-primary-foreground disabled:opacity-50"
           >
-            <Send size={16} />
+            <Send size={18} className="ml-1" />
           </Button>
         </div>
       </div>

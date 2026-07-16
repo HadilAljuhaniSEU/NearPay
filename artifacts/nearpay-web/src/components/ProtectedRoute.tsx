@@ -1,16 +1,13 @@
 import { useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useAuthContext } from '../contexts/AuthContext';
+import { useT } from '../contexts/LanguageContext';
+import { NearPayIcon } from './NearPayLogo';
 
-/**
- * Wraps any merchant page.
- * - While Firebase resolves the auth state: shows a full-screen loading spinner.
- * - If no authenticated user: redirects to /login.
- * - Otherwise: renders children.
- */
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuthContext();
   const [_, setLocation] = useLocation();
+  const t = useT();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -21,9 +18,12 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   if (loading) {
     return (
       <div className="app-container flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-muted-foreground">Loading…</p>
+        <div className="flex flex-col items-center gap-5">
+          <div className="relative">
+            <NearPayIcon size={48} />
+            <div className="absolute -inset-3 border-2 border-teal/30 rounded-full animate-spin border-t-teal" />
+          </div>
+          <p className="text-sm font-medium text-muted-foreground">{t('loading')}</p>
         </div>
       </div>
     );

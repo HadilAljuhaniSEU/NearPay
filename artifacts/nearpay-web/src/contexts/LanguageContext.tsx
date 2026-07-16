@@ -1,32 +1,41 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
-export type Language = 'en' | 'ar';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { getT, LangKey, TranslationKey } from '../i18n/translations';
 
 interface LanguageContextValue {
-  lang: Language;
-  setLang: (l: Language) => void;
+  lang: LangKey;
+  setLang: (l: LangKey) => void;
   isRTL: boolean;
+  t: (key: TranslationKey, ...args: string[]) => string;
 }
 
 const LanguageContext = createContext<LanguageContextValue>({
   lang: 'en',
   setLang: () => {},
   isRTL: false,
+  t: (key) => key as string,
 });
 
 export const useLanguage = () => useContext(LanguageContext);
 
+/** Shorthand hook — returns just the t() function */
+export const useT = () => useContext(LanguageContext).t;
+
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [lang, setLangState] = useState<Language>(() => {
-    return (localStorage.getItem('nearpay_lang') as Language) ?? 'en';
+  const [lang, setLangState] = useState<LangKey>(() => {
+    return (localStorage.getItem('nearpay_lang') as LangKey) ?? 'en';
   });
 
   const isRTL = lang === 'ar';
 
-  const setLang = (l: Language) => {
+  const setLang = (l: LangKey) => {
     setLangState(l);
     localStorage.setItem('nearpay_lang', l);
   };
+
+  const t = useCallback(
+    (key: TranslationKey, ...args: string[]) => getT(lang)(key, ...args),
+    [lang]
+  );
 
   useEffect(() => {
     const html = document.documentElement;
@@ -43,7 +52,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   }, [isRTL]);
 
   return (
-    <LanguageContext.Provider value={{ lang, isRTL, setLang }}>
+    <LanguageContext.Provider value={{ lang, isRTL, setLang, t }}>
       {children}
     </LanguageContext.Provider>
   );

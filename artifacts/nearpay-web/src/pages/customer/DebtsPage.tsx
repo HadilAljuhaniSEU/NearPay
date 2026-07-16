@@ -6,63 +6,63 @@ import { PageHeader } from '../../components/PageHeader';
 import { DebtCard } from '../../components/DebtCard';
 import { mockDebts } from '../../data/mock';
 import { Filter } from 'lucide-react';
+import { useT } from '../../contexts/LanguageContext';
+
+type FilterId = 'all' | 'pending' | 'overdue' | 'settled';
 
 export default function CustomerDebtsPage() {
-  const [filter, setFilter] = useState<'all' | 'pending' | 'overdue' | 'settled'>('all');
+  const [filter, setFilter] = useState<FilterId>('all');
+  const t = useT();
 
   const myDebts = mockDebts.filter(d => d.customerId === 'c1');
-  
-  const filteredDebts = myDebts.filter(debt => {
-    if (filter !== 'all' && debt.status !== filter) return false;
-    return true;
-  });
+  const filteredDebts = myDebts.filter(debt => filter === 'all' || debt.status === filter);
 
-  const filters = [
-    { id: 'all', label: 'All Tabs' },
-    { id: 'pending', label: 'Pending' },
-    { id: 'overdue', label: 'Overdue' },
-    { id: 'settled', label: 'Settled' }
+  const filterOptions: { id: FilterId; labelKey: Parameters<typeof t>[0] }[] = [
+    { id: 'all',     labelKey: 'all_tabs' },
+    { id: 'pending', labelKey: 'status_pending' },
+    { id: 'overdue', labelKey: 'status_overdue' },
+    { id: 'settled', labelKey: 'status_settled' },
   ];
 
   return (
     <div className="app-container flex flex-col bg-background">
       <StatusBar />
-      <PageHeader title="My Tabs" />
-      
-      <div className="page-scroll px-6 py-4 bg-secondary/20">
-        <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md pt-2 pb-4 -mt-4 mx-[-24px] px-6">
-          <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
-            {filters.map(f => (
+      <PageHeader title={t('my_tabs_title')} />
+
+      <div className="page-scroll px-5 py-4">
+        <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md pt-2 pb-3 -mt-4 mx-[-20px] px-5">
+          <div className="flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden">
+            {filterOptions.map(f => (
               <button
                 key={f.id}
-                onClick={() => setFilter(f.id as any)}
-                className={`whitespace-nowrap px-5 py-2.5 rounded-[16px] text-sm font-bold transition-all shadow-sm ${
-                  filter === f.id 
-                    ? 'bg-foreground text-background border border-foreground' 
-                    : 'bg-card text-foreground border border-border hover:border-foreground/30'
+                onClick={() => setFilter(f.id)}
+                className={`whitespace-nowrap px-4 py-2 rounded-[12px] text-xs font-bold transition-all border ${
+                  filter === f.id
+                    ? 'bg-foreground text-background border-foreground shadow-sm'
+                    : 'bg-card text-foreground border-border/60 hover:border-foreground/30'
                 }`}
               >
-                {f.label}
+                {t(f.labelKey)}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="space-y-4 mt-2">
+        <div className="space-y-3 mt-2">
           <AnimatePresence mode="popLayout">
             {filteredDebts.length > 0 ? (
               filteredDebts.map((debt, index) => (
                 <motion.div
                   key={debt.id}
                   layout
-                  initial={{ opacity: 0, scale: 0.95 }}
+                  initial={{ opacity: 0, scale: 0.97 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.2, delay: index * 0.05 }}
+                  exit={{ opacity: 0, scale: 0.97 }}
+                  transition={{ duration: 0.18, delay: index * 0.05 }}
                 >
-                  <DebtCard 
+                  <DebtCard
                     id={debt.id}
-                    customerName="Abu Khalid Store"
+                    customerName={t('store_name_demo')}
                     avatar="AK"
                     amount={debt.amount}
                     dueDate={debt.dueDate}
@@ -73,16 +73,16 @@ export default function CustomerDebtsPage() {
                 </motion.div>
               ))
             ) : (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-center py-16 flex flex-col items-center justify-center bg-card rounded-[24px] border border-border mt-4 shadow-sm"
+                className="text-center py-16 flex flex-col items-center justify-center bg-card rounded-[22px] border border-border/60 mt-4 shadow-sm"
               >
-                <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mb-4">
-                  <Filter size={24} className="text-muted-foreground" />
+                <div className="w-14 h-14 bg-secondary rounded-full flex items-center justify-center mb-4">
+                  <Filter size={22} className="text-muted-foreground" />
                 </div>
-                <h3 className="text-lg font-bold text-foreground">No tabs found</h3>
-                <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters</p>
+                <h3 className="text-base font-bold text-foreground">{t('no_tabs_found')}</h3>
+                <p className="text-sm text-muted-foreground mt-1 font-medium">{t('try_different_search')}</p>
               </motion.div>
             )}
           </AnimatePresence>

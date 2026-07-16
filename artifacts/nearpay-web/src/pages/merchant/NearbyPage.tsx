@@ -7,46 +7,41 @@ import { PageHeader } from '../../components/PageHeader';
 import { MerchantCard } from '../../components/MerchantCard';
 import { mockNearbyMerchants } from '../../data/mock';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { useT } from '../../contexts/LanguageContext';
 
 export default function MerchantNearbyPage() {
   const [search, setSearch] = useState('');
   const [view, setView] = useState<'list' | 'map'>('list');
+  const t = useT();
 
   return (
     <div className="app-container flex flex-col bg-background">
       <StatusBar />
-      <PageHeader 
-        title="Explore" 
-        subtitle="Local neighborhood network"
+      <PageHeader
+        title={t('explore_title')}
+        subtitle={t('explore_sub')}
         action={
           <div className="flex bg-secondary p-1 rounded-xl">
-            <button 
-              onClick={() => setView('list')}
-              className={`p-1.5 rounded-lg transition-colors ${view === 'list' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground'}`}
-            >
-              <SlidersHorizontal size={16} />
+            <button onClick={() => setView('list')} className={`p-1.5 rounded-lg transition-colors ${view === 'list' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground'}`}>
+              <SlidersHorizontal size={15} />
             </button>
-            <button 
-              onClick={() => setView('map')}
-              className={`p-1.5 rounded-lg transition-colors ${view === 'map' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground'}`}
-            >
-              <MapIcon size={16} />
+            <button onClick={() => setView('map')} className={`p-1.5 rounded-lg transition-colors ${view === 'map' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground'}`}>
+              <MapIcon size={15} />
             </button>
           </div>
         }
       />
-      
-      <div className="page-scroll px-6 py-4 bg-secondary/30">
-        <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md pt-2 pb-4 -mt-4 mx-[-24px] px-6">
+
+      <div className="page-scroll px-5 py-4">
+        <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md pt-2 pb-3 -mt-4 mx-[-20px] px-5">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-muted-foreground">
-              <Search size={20} />
+              <Search size={18} />
             </div>
             <Input
               type="text"
-              placeholder="Find merchants or categories..."
-              className="pl-12 h-14 rounded-2xl bg-card border border-border focus-visible:ring-1 focus-visible:ring-primary shadow-sm text-base font-medium"
+              placeholder={t('search_merchants')}
+              className="pl-12 h-13 rounded-2xl bg-card border border-border/60 shadow-sm text-sm font-medium"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -55,68 +50,47 @@ export default function MerchantNearbyPage() {
 
         <AnimatePresence mode="wait">
           {view === 'list' ? (
-            <motion.div 
-              key="list"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="space-y-4 mt-2"
-            >
+            <motion.div key="list" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-3 mt-2">
               {mockNearbyMerchants.map((merchant, i) => (
-                <motion.div
-                  key={merchant.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                >
+                <motion.div key={merchant.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
                   <MerchantCard {...merchant} />
                 </motion.div>
               ))}
             </motion.div>
           ) : (
-            <motion.div 
-              key="map"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full h-[500px] bg-card rounded-[24px] border border-border mt-2 overflow-hidden flex items-center justify-center shadow-soft"
-            >
-              {/* Map Grid Pattern */}
-              <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-              
-              {/* Fake Roads */}
-              <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 100 Q 200 150 400 50" stroke="currentColor" strokeWidth="12" fill="none" strokeLinecap="round" />
-                <path d="M150 0 L 250 500" stroke="currentColor" strokeWidth="8" fill="none" />
-                <path d="M0 300 Q 150 250 400 400" stroke="currentColor" strokeWidth="10" fill="none" strokeLinecap="round" />
+            <motion.div key="map" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }}
+              className="relative w-full h-[480px] bg-card rounded-[24px] border border-border/60 mt-2 overflow-hidden flex items-center justify-center shadow-soft">
+              <div className="absolute inset-0 opacity-[0.025]"
+                   style={{ backgroundImage: 'linear-gradient(to right, #0B2341 1px, transparent 1px), linear-gradient(to bottom, #0B2341 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+              <svg className="absolute inset-0 w-full h-full opacity-8" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 100 Q 200 150 400 50" stroke="#0B2341" strokeWidth="10" fill="none" strokeLinecap="round" />
+                <path d="M150 0 L 250 500" stroke="#0B2341" strokeWidth="7" fill="none" />
+                <path d="M0 300 Q 150 250 400 400" stroke="#0B2341" strokeWidth="8" fill="none" strokeLinecap="round" />
               </svg>
-              
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10">
-                <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center text-primary-foreground shadow-lg mb-2 relative border-4 border-background">
-                  <div className="absolute w-full h-full bg-primary rounded-full animate-ping opacity-40" />
-                  <Store size={24} />
+                <div className="w-14 h-14 rounded-full flex items-center justify-center text-white shadow-lg mb-2 relative border-4 border-background"
+                     style={{ background: 'linear-gradient(135deg, #0B2341, #143B63)' }}>
+                  <div className="absolute w-full h-full rounded-full animate-ping opacity-30"
+                       style={{ background: '#2ED8C3' }} />
+                  <Store size={22} />
                 </div>
-                <div className="bg-foreground text-background px-4 py-2 rounded-xl text-xs font-bold shadow-md">
-                  Your Store
-                </div>
-              </div>
-
-              {/* Merchant Pins Placeholder */}
-              <div className="absolute top-[20%] left-[20%] flex flex-col items-center transform -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-110 transition-transform">
-                <div className="w-10 h-10 bg-foreground rounded-full flex items-center justify-center text-background shadow-lg border-2 border-background">
-                  <span className="text-[10px] font-bold tracking-tighter">0.5k</span>
+                <div className="bg-foreground text-background px-3 py-1.5 rounded-xl text-[10px] font-bold shadow-md uppercase tracking-wider">
+                  {t('your_store')}
                 </div>
               </div>
-              <div className="absolute bottom-[30%] right-[25%] flex flex-col items-center transform translate-x-1/2 translate-y-1/2 cursor-pointer hover:scale-110 transition-transform">
-                <div className="w-10 h-10 bg-foreground rounded-full flex items-center justify-center text-background shadow-lg border-2 border-background">
-                  <span className="text-[10px] font-bold tracking-tighter">1.2k</span>
+              {[
+                { top: '20%', left: '20%', label: '0.5k' },
+                { bottom: '30%', right: '25%', label: '1.2k' },
+                { top: '60%', left: '35%', label: '↑' },
+              ].map((pin, i) => (
+                <div key={i} className="absolute flex flex-col items-center cursor-pointer hover:scale-110 transition-transform"
+                     style={{ top: (pin as any).top, left: (pin as any).left, bottom: (pin as any).bottom, right: (pin as any).right, transform: 'translate(-50%, -50%)' }}>
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-white shadow-lg border-2 border-background text-[10px] font-bold"
+                       style={{ background: '#0B2341' }}>
+                    {pin.label}
+                  </div>
                 </div>
-              </div>
-              <div className="absolute top-[60%] left-[30%] flex flex-col items-center transform translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-110 transition-transform">
-                <div className="w-10 h-10 bg-success rounded-full flex items-center justify-center text-success-foreground shadow-lg border-2 border-background">
-                  <span className="text-[10px] font-bold tracking-tighter">New</span>
-                </div>
-              </div>
+              ))}
             </motion.div>
           )}
         </AnimatePresence>

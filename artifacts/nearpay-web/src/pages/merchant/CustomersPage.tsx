@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useCustomers } from '../../hooks/useCustomers';
+import { useT } from '../../contexts/LanguageContext';
 
 function getInitials(name: string): string {
   return name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
@@ -25,6 +26,7 @@ export default function CustomersPage() {
   const [search, setSearch] = useState('');
   const { merchant } = useAuthContext();
   const { customers, loading } = useCustomers(merchant?.id ?? null);
+  const t = useT();
 
   const filtered = customers.filter(
     (c) =>
@@ -36,25 +38,25 @@ export default function CustomersPage() {
     <div className="app-container flex flex-col bg-background">
       <StatusBar />
       <PageHeader
-        title="Clients"
-        subtitle={loading ? 'Loading...' : `${customers.length} total clients`}
+        title={t('customers_title')}
+        subtitle={loading ? t('loading') : `${customers.length}`}
         action={
-          <Button size="icon" className="rounded-full h-9 w-9 bg-primary/8 text-primary hover:bg-primary/15 border border-primary/15">
-            <UserPlus size={18} />
+          <Button size="icon" className="rounded-full h-9 w-9 bg-secondary border border-border/60 text-foreground hover:bg-secondary/80">
+            <UserPlus size={17} />
           </Button>
         }
       />
 
-      <div className="page-scroll px-6 py-4 bg-secondary/20">
-        <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md pt-2 pb-4 -mt-4 mx-[-24px] px-6">
+      <div className="page-scroll px-5 py-4">
+        <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md pt-2 pb-3 -mt-4 mx-[-20px] px-5">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-muted-foreground">
-              <Search size={18} />
+              <Search size={17} />
             </div>
             <Input
               type="text"
-              placeholder="Search by name or phone..."
-              className="pl-12 h-12 rounded-2xl bg-card border border-border focus-visible:ring-1 focus-visible:ring-primary shadow-sm text-sm font-medium"
+              placeholder={t('search_clients')}
+              className="pl-12 h-12 rounded-2xl bg-card border border-border/60 shadow-sm text-sm font-medium"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -91,16 +93,16 @@ export default function CustomersPage() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="text-center py-16 flex flex-col items-center justify-center bg-card rounded-[22px] border border-border mt-4"
+                  className="text-center py-16 flex flex-col items-center justify-center bg-card rounded-[22px] border border-border/60 mt-4 shadow-sm"
                 >
                   <div className="w-14 h-14 bg-secondary rounded-full flex items-center justify-center mb-4 text-muted-foreground">
                     <Users size={22} />
                   </div>
                   <h3 className="text-base font-bold text-foreground">
-                    {search ? 'No clients found' : 'No clients yet'}
+                    {search ? t('no_customers_yet') : t('no_customers_yet')}
                   </h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {search ? 'Try a different search term' : 'Add your first client by creating a tab'}
+                  <p className="text-sm text-muted-foreground mt-1 font-medium">
+                    {search ? t('try_different_search') : t('add_first_customer')}
                   </p>
                 </motion.div>
               )}

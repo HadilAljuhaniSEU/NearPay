@@ -7,10 +7,10 @@ import { PageHeader } from '../../components/PageHeader';
 import { DebtCard } from '../../components/DebtCard';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useDebts } from '../../hooks/useDebts';
+import { useT } from '../../contexts/LanguageContext';
 import type { DebtStatus } from '../../types';
 
 type FilterOption = 'all' | DebtStatus;
@@ -19,20 +19,20 @@ function getInitials(name: string): string {
   return name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 }
 
-const filters: { id: FilterOption; label: string }[] = [
-  { id: 'all', label: 'All Tabs' },
-  { id: 'pending', label: 'Pending' },
-  { id: 'active', label: 'Active' },
-  { id: 'overdue', label: 'Overdue' },
-  { id: 'settled', label: 'Settled' },
-];
-
 export default function DebtsPage() {
   const [filter, setFilter] = useState<FilterOption>('all');
   const [search, setSearch] = useState('');
-
   const { merchant } = useAuthContext();
   const { debts, loading } = useDebts(merchant?.id ?? null);
+  const t = useT();
+
+  const filterOptions: { id: FilterOption; labelKey: keyof ReturnType<typeof useT> extends never ? string : Parameters<ReturnType<typeof useT>>[0] }[] = [
+    { id: 'all',     labelKey: 'all_tabs' as const },
+    { id: 'pending', labelKey: 'status_pending' as const },
+    { id: 'active',  labelKey: 'status_active' as const },
+    { id: 'overdue', labelKey: 'status_overdue' as const },
+    { id: 'settled', labelKey: 'status_settled' as const },
+  ];
 
   const filteredDebts = debts.filter((debt) => {
     if (filter !== 'all' && debt.status !== filter) return false;
@@ -44,44 +44,43 @@ export default function DebtsPage() {
     <div className="app-container flex flex-col bg-background">
       <StatusBar />
       <PageHeader
-        title="Store Tabs"
-        subtitle={loading ? 'Loading...' : `${debts.length} total tabs`}
+        title={t('store_tabs')}
+        subtitle={loading ? t('loading') : `${debts.length}`}
       />
 
-      <div className="page-scroll px-6 py-4 bg-secondary/20">
+      <div className="page-scroll px-5 py-4">
         {/* Search & Filter */}
-        <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md pt-2 pb-4 -mt-4 mx-[-24px] px-6">
+        <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md pt-2 pb-3 -mt-4 mx-[-20px] px-5">
           <div className="relative mb-3">
             <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-muted-foreground">
-              <Search size={18} />
+              <Search size={17} />
             </div>
             <Input
               type="text"
-              placeholder="Search by customer name..."
-              className="pl-12 h-12 rounded-2xl bg-card border border-border focus-visible:ring-1 focus-visible:ring-primary shadow-sm text-sm font-medium"
+              placeholder={t('search_customer')}
+              className="pl-12 h-12 rounded-2xl bg-card border border-border/60 shadow-sm text-sm font-medium"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
 
           <div className="flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden">
-            {filters.map((f) => (
+            {filterOptions.map((f) => (
               <button
                 key={f.id}
                 onClick={() => setFilter(f.id)}
-                className={`whitespace-nowrap px-4 py-2 rounded-[14px] text-xs font-bold transition-all border ${
+                className={`whitespace-nowrap px-4 py-2 rounded-[12px] text-xs font-bold transition-all border ${
                   filter === f.id
                     ? 'bg-foreground text-background border-foreground shadow-sm'
-                    : 'bg-card text-foreground border-border hover:border-foreground/30'
+                    : 'bg-card text-foreground border-border/60 hover:border-foreground/30'
                 }`}
               >
-                {f.label}
+                {t(f.labelKey as any)}
               </button>
             ))}
           </div>
         </div>
 
-        {/* List */}
         <div className="space-y-3 mt-2">
           {loading ? (
             [1, 2, 3, 4].map((i) => <SkeletonCard key={i} />)
@@ -112,14 +111,14 @@ export default function DebtsPage() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="text-center py-16 flex flex-col items-center justify-center bg-card rounded-[22px] border border-border mt-4"
+                  className="text-center py-16 flex flex-col items-center justify-center bg-card rounded-[22px] border border-border/60 mt-4 shadow-sm"
                 >
                   <div className="w-14 h-14 bg-secondary rounded-full flex items-center justify-center mb-4">
                     <Filter size={22} className="text-muted-foreground" />
                   </div>
-                  <h3 className="text-base font-bold text-foreground">No tabs found</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {search ? 'Try a different search term' : 'No tabs in this category yet'}
+                  <h3 className="text-base font-bold text-foreground">{t('no_tabs_found')}</h3>
+                  <p className="text-sm text-muted-foreground mt-1 font-medium">
+                    {search ? t('try_different_search') : t('no_tabs_filter')}
                   </p>
                 </motion.div>
               )}
@@ -132,9 +131,10 @@ export default function DebtsPage() {
       {/* FAB */}
       <Link href="/merchant/add-debt">
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="absolute bottom-24 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-lg shadow-primary/25 flex items-center justify-center z-50 border-4 border-background"
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.94 }}
+          className="absolute bottom-24 end-5 w-14 h-14 rounded-full flex items-center justify-center z-50 border-4 border-background text-navy"
+          style={{ background: 'linear-gradient(135deg, #2ED8C3 0%, #19B8D3 100%)', boxShadow: '0 4px 20px rgba(46,216,195,0.4)' }}
         >
           <Plus size={24} strokeWidth={2.5} />
         </motion.button>

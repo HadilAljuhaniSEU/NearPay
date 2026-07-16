@@ -4,8 +4,14 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { useEffect } from 'react';
 
+import { AuthProvider } from './contexts/AuthContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
+
 // Pages
 import LoginPage from './pages/LoginPage';
+// Public (no auth)
+import DebtApprovalPage from './pages/public/DebtApprovalPage';
+import DebtPaymentPage from './pages/public/DebtPaymentPage';
 // Merchant
 import DashboardPage from './pages/merchant/DashboardPage';
 import DebtsPage from './pages/merchant/DebtsPage';
@@ -27,7 +33,6 @@ import NotFound from '@/pages/not-found';
 
 const queryClient = new QueryClient();
 
-// A simple redirect component
 function RootRedirect() {
   const [_, setLocation] = useLocation();
   useEffect(() => {
@@ -48,19 +53,41 @@ function Router() {
     <Switch>
       <Route path="/" component={RootRedirect} />
       <Route path="/login" component={LoginPage} />
-      
-      {/* Merchant Routes */}
-      <Route path="/merchant/dashboard" component={DashboardPage} />
-      <Route path="/merchant/debts" component={DebtsPage} />
-      <Route path="/merchant/customers" component={CustomersPage} />
-      <Route path="/merchant/add-debt" component={AddDebtPage} />
-      <Route path="/merchant/debt/:id" component={DebtDetailPage} />
-      <Route path="/merchant/analytics" component={AnalyticsPage} />
-      <Route path="/merchant/ai" component={AIPage} />
-      <Route path="/merchant/settings" component={MerchantSettingsPage} />
-      <Route path="/merchant/nearby" component={MerchantNearbyPage} />
 
-      {/* Customer Routes */}
+      {/* ── Public routes — no auth required ── */}
+      <Route path="/debt/approve/:token" component={DebtApprovalPage} />
+      <Route path="/debt/pay/:token" component={DebtPaymentPage} />
+
+      {/* ── Protected merchant routes ── */}
+      <Route path="/merchant/dashboard">
+        <ProtectedRoute><DashboardPage /></ProtectedRoute>
+      </Route>
+      <Route path="/merchant/debts">
+        <ProtectedRoute><DebtsPage /></ProtectedRoute>
+      </Route>
+      <Route path="/merchant/customers">
+        <ProtectedRoute><CustomersPage /></ProtectedRoute>
+      </Route>
+      <Route path="/merchant/add-debt">
+        <ProtectedRoute><AddDebtPage /></ProtectedRoute>
+      </Route>
+      <Route path="/merchant/debt/:id">
+        <ProtectedRoute><DebtDetailPage /></ProtectedRoute>
+      </Route>
+      <Route path="/merchant/analytics">
+        <ProtectedRoute><AnalyticsPage /></ProtectedRoute>
+      </Route>
+      <Route path="/merchant/ai">
+        <ProtectedRoute><AIPage /></ProtectedRoute>
+      </Route>
+      <Route path="/merchant/settings">
+        <ProtectedRoute><MerchantSettingsPage /></ProtectedRoute>
+      </Route>
+      <Route path="/merchant/nearby">
+        <ProtectedRoute><MerchantNearbyPage /></ProtectedRoute>
+      </Route>
+
+      {/* ── Customer routes — no Firebase auth needed ── */}
       <Route path="/customer/home" component={CustomerHomePage} />
       <Route path="/customer/nearby" component={CustomerNearbyPage} />
       <Route path="/customer/debts" component={CustomerDebtsPage} />
@@ -75,12 +102,14 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL?.replace(/\/$/, '')}>
-          <Router />
-        </WouterRouter>
-        <Toaster />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <WouterRouter base={import.meta.env.BASE_URL?.replace(/\/$/, '')}>
+            <Router />
+          </WouterRouter>
+          <Toaster />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

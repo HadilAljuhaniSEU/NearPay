@@ -1,5 +1,6 @@
 import {
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signOut,
   sendPasswordResetEmail,
   onAuthStateChanged,
@@ -63,6 +64,39 @@ export async function createUserDoc(
     } satisfies Omit<UserDoc, 'createdAt' | 'updatedAt'> & Record<string, unknown>,
     { merge: true }
   );
+}
+
+// ─── Register new merchant ────────────────────────────────────────────────────
+export async function registerMerchant(
+  email: string,
+  password: string,
+  businessName: string,
+  phone: string
+): Promise<User> {
+  const credential = await createUserWithEmailAndPassword(auth, email, password);
+  const uid = credential.user.uid;
+  const now = serverTimestamp();
+
+  // Create merchant document (UID doubles as merchantId for simplicity)
+  await setDoc(doc(db, 'merchants', uid), {
+    name: businessName,
+    phone,
+    email,
+    category: 'general',
+    address: '',
+    city: '',
+    totalOutstanding: 0,
+    totalCollected: 0,
+    customerCount: 0,
+    ownerId: uid,
+    createdAt: now,
+    updatedAt: now,
+  });
+
+  // Create user doc
+  await createUserDoc(uid, email, uid);
+
+  return credential.user;
 }
 
 // ─── Auth state observer (returns unsubscribe) ────────────────────────────────

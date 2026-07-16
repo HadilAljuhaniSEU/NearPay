@@ -4,6 +4,7 @@ import {
   signInMerchant,
   signOutMerchant,
   resetMerchantPassword,
+  registerMerchant,
 } from '../services/authService';
 import { useAuthContext } from '../contexts/AuthContext';
 
@@ -16,6 +17,7 @@ interface UseAuthReturn {
   signIn: (email: string, password: string, rememberMe: boolean) => Promise<void>;
   signOut: () => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
+  register: (email: string, password: string, businessName: string, phone: string) => Promise<void>;
 }
 
 export function useAuth(): UseAuthReturn {
@@ -34,6 +36,20 @@ export function useAuth(): UseAuthReturn {
     } catch (err: unknown) {
       const msg = mapFirebaseError(err);
       setError(msg);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const register = async (email: string, password: string, businessName: string, phone: string) => {
+    setActionLoading(true);
+    setError(null);
+    try {
+      await registerMerchant(email, password, businessName, phone);
+      localStorage.setItem('nearpay_role', 'merchant');
+      setLocation('/merchant/dashboard');
+    } catch (err: unknown) {
+      setError(mapFirebaseError(err));
     } finally {
       setActionLoading(false);
     }
@@ -73,6 +89,7 @@ export function useAuth(): UseAuthReturn {
     signIn,
     signOut,
     sendPasswordReset,
+    register,
   };
 }
 
@@ -86,6 +103,8 @@ function mapFirebaseError(err: unknown): string {
     'auth/too-many-requests': 'Too many attempts. Please try again later.',
     'auth/user-disabled': 'This account has been disabled.',
     'auth/invalid-email': 'Invalid email address.',
+    'auth/email-already-in-use': 'An account with this email already exists.',
+    'auth/weak-password': 'Password must be at least 6 characters.',
     'auth/network-request-failed': 'Network error. Check your connection.',
   };
   return map[code] ?? 'Something went wrong. Please try again.';

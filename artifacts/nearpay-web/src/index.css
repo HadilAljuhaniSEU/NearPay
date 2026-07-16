@@ -32,6 +32,11 @@
   --color-accent: hsl(var(--accent));
   --color-accent-foreground: hsl(var(--accent-foreground));
 
+  --color-teal: hsl(var(--teal));
+  --color-teal-foreground: hsl(var(--teal-foreground));
+  --color-navy: hsl(var(--navy));
+  --color-navy-secondary: hsl(var(--navy-secondary));
+
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
 
@@ -48,70 +53,86 @@
 
   --font-sans: 'Inter', sans-serif;
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
 }
 
 :root {
-  --background: 210 40% 98%; /* #F8FAFC */
-  --foreground: 220 49% 8%; /* #0B1220 */
-  --card: 0 0% 100%; /* #FFFFFF */
-  --card-foreground: 222.2 47.4% 11.2%;
-  --card-border: 220 13% 91%; /* #E5E7EB */
+  /* ── New NearPay palette ── */
+  --background: 213 43% 97%;       /* #F5F8FC */
+  --foreground: 213 71% 15%;       /* #0B2341 */
+  --card: 0 0% 100%;               /* #FFFFFF */
+  --card-foreground: 213 71% 15%;
+  --card-border: 213 30% 90%;
   --popover: 0 0% 100%;
-  --popover-foreground: 222.2 47.4% 11.2%;
-  --popover-border: 220 13% 91%;
-  
-  --primary: 142 76% 36%; /* #16A34A */
-  --primary-foreground: 0 0% 100%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215 14% 46%; /* #6B7280 */
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  
-  --destructive: 0 84% 60%; /* #EF4444 */
-  --destructive-foreground: 0 0% 100%;
-  --success: 142 71% 45%; /* #22C55E */
-  --success-foreground: 0 0% 100%;
-  --warning: 38 92% 50%; /* #F59E0B */
-  --warning-foreground: 0 0% 100%;
-  
-  --border: 220 13% 91%;
-  --input: 220 13% 91%;
-  --ring: 142 76% 36%;
-  --radius: 18px;
-}
+  --popover-foreground: 213 71% 15%;
+  --popover-border: 213 30% 90%;
 
-.dark {
-  --background: 222.2 47.4% 11.2%;
-  --foreground: 210 40% 98.1%;
-  --card: 222.2 47.4% 11.2%;
-  --card-foreground: 210 40% 98.1%;
-  --card-border: 215 27.9% 16.9%;
-  --popover: 222.2 47.4% 11.2%;
-  --popover-foreground: 210 40% 98.1%;
-  --popover-border: 215 27.9% 16.9%;
-  
-  --primary: 142 76% 36%;
+  /* Primary = Primary Navy */
+  --primary: 213 71% 15%;          /* #0B2341 */
   --primary-foreground: 0 0% 100%;
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98.1%;
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 210 40% 98.1%;
-  
+
+  --secondary: 213 30% 93%;
+  --secondary-foreground: 213 71% 15%;
+  --muted: 213 30% 93%;
+  --muted-foreground: 213 20% 52%;
+  --accent: 213 30% 93%;
+  --accent-foreground: 213 71% 15%;
+
+  /* Teal accent */
+  --teal: 173 69% 51%;             /* #2ED8C3 */
+  --teal-foreground: 213 71% 15%;
+
+  /* Navy palette */
+  --navy: 213 71% 15%;             /* #0B2341 */
+  --navy-secondary: 210 66% 23%;   /* #143B63 */
+
   --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98.1%;
+  --destructive-foreground: 0 0% 100%;
   --success: 142 71% 45%;
   --success-foreground: 0 0% 100%;
   --warning: 38 92% 50%;
   --warning-foreground: 0 0% 100%;
-  
-  --border: 215 27.9% 16.9%;
-  --input: 215 27.9% 16.9%;
-  --ring: 142 76% 36%;
+
+  --border: 213 30% 90%;
+  --input: 213 30% 90%;
+  --ring: 173 69% 51%;             /* teal focus ring */
+  --radius: 18px;
+}
+
+.dark {
+  --background: 213 71% 8%;
+  --foreground: 210 40% 98%;
+  --card: 213 60% 12%;
+  --card-foreground: 210 40% 98%;
+  --card-border: 213 40% 18%;
+  --popover: 213 60% 12%;
+  --popover-foreground: 210 40% 98%;
+  --popover-border: 213 40% 18%;
+
+  --primary: 213 71% 15%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 213 40% 18%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 213 40% 18%;
+  --muted-foreground: 213 20% 65%;
+  --accent: 213 40% 18%;
+  --accent-foreground: 210 40% 98%;
+
+  --teal: 173 69% 51%;
+  --teal-foreground: 213 71% 10%;
+  --navy: 213 71% 15%;
+  --navy-secondary: 210 66% 23%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --success: 142 71% 45%;
+  --success-foreground: 0 0% 100%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
+
+  --border: 213 40% 18%;
+  --input: 213 40% 18%;
+  --ring: 173 69% 51%;
 }
 
 @layer base {
@@ -145,11 +166,65 @@
   }
 }
 
-.rtl {
-  direction: rtl;
+/* ══════════════════════════════════════════
+   RTL — Arabic layout fixes
+   Setting dir="rtl" on <html> handles:
+   • flex-row direction reversal
+   • text-align defaults
+   • inline content ordering
+   The rules below fix physical left/right
+   positioning that CSS direction doesn't
+   auto-flip.
+═══════════════════════════════════════════ */
+
+/* Font switch for Arabic */
+[dir="rtl"],
+[dir="rtl"] body {
   font-family: 'IBM Plex Sans Arabic', sans-serif;
 }
 
-.rtl .font-sans {
+/* RTL: flip input icons (left-anchored → right-anchored) */
+[dir="rtl"] .absolute.inset-y-0.left-0 {
+  left: auto !important;
+  right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 1rem !important;
+}
+
+/* RTL: flip eye-toggle button (right-anchored → left-anchored) */
+[dir="rtl"] .absolute.inset-y-0.right-0 {
+  right: auto !important;
+  left: 0 !important;
+  padding-right: 0 !important;
+  padding-left: 1rem !important;
+}
+
+/* RTL: swap input left-padding (for icon space) to right */
+[dir="rtl"] input.pl-12,
+[dir="rtl"] input[class*="pl-12"] {
+  padding-left: 0.75rem !important;
+  padding-right: 3rem !important;
+}
+
+/* RTL: inputs with both icon and toggle */
+[dir="rtl"] input.pl-12.pr-12,
+[dir="rtl"] input[class*="pl-12"][class*="pr-12"] {
+  padding-left: 3rem !important;
+  padding-right: 3rem !important;
+}
+
+/* RTL: flip directional chevron/arrow icons */
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* RTL: BottomNav label text alignment */
+[dir="rtl"] .bottom-nav-label {
+  direction: rtl;
+}
+
+/* Legacy .rtl class (kept for backward compatibility) */
+.rtl {
+  direction: rtl;
   font-family: 'IBM Plex Sans Arabic', sans-serif;
 }

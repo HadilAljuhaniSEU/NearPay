@@ -55,7 +55,7 @@ export default function LoginPage() {
 
   const handleCustomerContinue = () => {
     localStorage.setItem('nearpay_role', 'customer');
-    setLocation('/customer/home');
+    setLocation('/customer/nearby');
   };
 
   const handleForgotSubmit = async (e: React.FormEvent) => {
@@ -111,10 +111,10 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-10 max-w-lg">
-          <NearPayLogo size={48} className="mb-12 [&_span]:text-white" />
+          <NearPayLogo size={48} variant="white" className="mb-12" />
           <h1 className="text-5xl font-bold tracking-tight text-white mb-5 leading-tight">
             Simplify your<br />
-            <span className="text-primary">merchant tabs</span>
+            <span className="text-teal">merchant tabs</span>
           </h1>
           <p className="text-lg text-white/55 mb-12 leading-relaxed">
             The smart way to manage customer credit, track collections, and grow your cash flow.
@@ -133,21 +133,21 @@ export default function LoginPage() {
               {/* Amount */}
               <rect x="40" y="114" width="110" height="11" rx="5.5" fill="white" fillOpacity="0.08" />
 
-              {/* Foreground card (green accent) */}
-              <rect x="160" y="130" width="200" height="130" rx="20" fill="#16A34A" fillOpacity="0.85" />
-              <circle cx="208" cy="178" r="22" fill="white" fillOpacity="0.15" />
+              {/* Foreground card (teal accent) */}
+              <rect x="160" y="130" width="200" height="130" rx="20" fill="#143B63" fillOpacity="0.95" />
+              <circle cx="208" cy="178" r="22" fill="#2ED8C3" fillOpacity="0.15" />
               <rect x="240" y="166" width="90" height="9" rx="4.5" fill="white" fillOpacity="0.3" />
-              <rect x="240" y="182" width="66" height="7" rx="3.5" fill="white" fillOpacity="0.18" />
-              <rect x="180" y="224" width="110" height="11" rx="5.5" fill="white" fillOpacity="0.2" />
+              <rect x="240" y="182" width="66" height="7" rx="3.5" fill="#2ED8C3" fillOpacity="0.45" />
+              <rect x="180" y="224" width="110" height="11" rx="5.5" fill="white" fillOpacity="0.18" />
 
               {/* Small stat chip */}
               <rect x="240" y="60" width="120" height="52" rx="14" fill="white" fillOpacity="0.06" stroke="white" strokeOpacity="0.1" />
               <rect x="256" y="76" width="48" height="8" rx="4" fill="white" fillOpacity="0.12" />
-              <rect x="256" y="90" width="72" height="7" rx="3.5" fill="#16A34A" fillOpacity="0.5" />
+              <rect x="256" y="90" width="72" height="7" rx="3.5" fill="#2ED8C3" fillOpacity="0.55" />
 
               {/* Connection dots */}
-              <circle cx="196" cy="130" r="5" fill="#16A34A" />
-              <circle cx="196" cy="130" r="5" fill="#16A34A" fillOpacity="0.3">
+              <circle cx="196" cy="130" r="5" fill="#2ED8C3" />
+              <circle cx="196" cy="130" r="5" fill="#2ED8C3" fillOpacity="0.3">
                 <animate attributeName="r" from="5" to="14" dur="2s" repeatCount="indefinite" />
                 <animate attributeName="fillOpacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
               </circle>

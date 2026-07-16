@@ -1,0 +1,211 @@
+Do NOT rebuild the project.
+
+Do NOT touch Firebase.
+
+Do NOT change Firestore.
+
+Only improve the existing application.
+
+====================================================
+
+This is NOT a responsive website.
+
+The product is a MOBILE-FIRST FinTech application.
+
+Every page must feel like a native Flutter application.
+
+Design for phones first.
+
+Desktop is only a preview.
+
+No web feeling.
+
+No huge horizontal layouts.
+
+No oversized white spaces.
+
+====================================================
+
+BRANDING
+
+Redesign the NearPay logo.
+
+Concept:
+
+A premium fintech icon combining:
+
+• Coin
+• Location Pin
+• Letter N
+
+Minimal.
+
+Flat.
+
+SVG.
+
+No gradients.
+
+No cartoon style.
+
+No thick outlines.
+
+Inspired by Stripe, Revolut and Monzo branding.
+
+Create:
+
+App icon
+
+Splash logo
+
+Navbar logo
+
+Favicon
+
+====================================================
+
+COLOR PALETTE
+
+Replace the current green identity.
+
+Primary Navy
+
+#0B2341
+
+Secondary Navy
+
+#143B63
+
+Primary Accent
+
+#2ED8C3
+
+Secondary Accent
+
+#58E7D1
+
+Background
+
+#F5F8FC
+
+Cards
+
+#FFFFFF
+
+Use Tiffany only as an accent.
+
+Avoid large green sections.
+
+====================================================
+
+LANGUAGE
+
+Arabic
+
+English
+
+Urdu (Coming Soon)
+
+The language selector must display
+
+Arabic
+
+English
+
+Urdu (Coming Soon)
+
+Never display Urdu in Arabic.
+
+====================================================
+
+RTL
+
+Currently RTL is broken.
+
+Fix full RTL support.
+
+When Arabic is selected:
+
+Entire UI switches to RTL.
+
+Navigation
+
+Cards
+
+Forms
+
+Charts
+
+Icons
+
+Spacing
+
+Text alignment
+
+Margins
+
+Everything must flip correctly.
+
+When English is selected:
+
+Return to LTR.
+
+====================================================
+
+AUTHENTICATION
+
+Merchant:
+
+Sign In
+
+Create Account
+
+Forgot Password
+
+Customer:
+
+No registration.
+
+Customers enter through:
+
+Approval Link
+
+Payment Link
+
+If customer opens the app without links,
+
+show Browse Nearby Merchants.
+
+====================================================
+
+MOBILE EXPERIENCE
+
+Every page must look like a real Flutter application.
+
+Bottom Navigation
+
+Large touch targets
+
+Safe Areas
+
+Rounded cards
+
+Floating Action Button where appropriate
+
+Comfortable spacing
+
+Native transitions
+
+Native page layouts
+
+Avoid desktop dashboard layouts.
+
+====================================================
+
+Keep every Firebase functionality.
+
+Do not change backend logic.
+
+After completing these improvements,
+
+stop and wait for the next prompt.

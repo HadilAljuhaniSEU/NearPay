@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "NearPay Web"
+version = "1.0.0"
+id = "artifacts/nearpay-web"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24320
+
+[services.development]
+run = "pnpm --filter @workspace/nearpay-web run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/nearpay-web", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/nearpay-web/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24320"
+BASE_PATH = "/"

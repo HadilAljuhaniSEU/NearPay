@@ -1,0 +1,23 @@
+kind = "mobile"
+previewPath = "/mobile/"
+title = "NearPay Mobile"
+version = "1.0.0"
+id = "artifacts/nearpay-mobile"
+router = "expo-domain"
+
+[[services]]
+name = "expo"
+ensurePreviewReachable = "/status"
+paths = [ "/mobile/" ]
+localPort = 22466
+
+[services.development]
+run = "pnpm --filter @workspace/nearpay-mobile run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/nearpay-mobile", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/nearpay-mobile", "run", "serve" ]
+
+[services.env]
+PORT = "22466"
+BASE_PATH = "/mobile/"

@@ -1,0 +1,331 @@
+You are a Senior Product Designer, Flutter Solution Architect, Firebase Engineer, and Frontend Engineer.
+
+Your task is NOT to build the backend.
+
+Your task is ONLY to build the entire frontend architecture and design system for NearPay.
+
+========================
+
+PROJECT
+
+========================
+
+NearPay is a Saudi FinTech platform.
+
+It helps small local businesses manage customer debts digitally.
+
+The project must feel like a real startup.
+
+The UI quality must be similar to:
+
+Stripe
+
+Mercury
+
+Brex
+
+Linear
+
+Apple Wallet
+
+Notion
+
+Vercel
+
+Never generate generic admin dashboards.
+
+Never use Bootstrap style.
+
+Never generate colorful widgets.
+
+Never use random spacing.
+
+Everything must feel premium.
+
+========================
+
+DESIGN SYSTEM
+
+========================
+
+Use ONLY
+
+Next.js
+
+TypeScript
+
+TailwindCSS
+
+shadcn/ui
+
+Framer Motion
+
+Lucide Icons
+
+Recharts
+
+NO Bootstrap.
+
+NO Material UI.
+
+NO Chakra.
+
+NO Ant Design.
+
+========================
+
+COLOR SYSTEM
+
+========================
+
+Primary
+
+#16A34A
+
+Background
+
+#F8FAFC
+
+Card
+
+#FFFFFF
+
+Dark
+
+#0F172A
+
+Border
+
+#E5E7EB
+
+Success
+
+#22C55E
+
+Warning
+
+#F59E0B
+
+Danger
+
+#EF4444
+
+========================
+
+TYPOGRAPHY
+
+========================
+
+Arabic
+
+IBM Plex Sans Arabic
+
+English
+
+Inter
+
+========================
+
+SPACING SYSTEM
+
+========================
+
+8px Grid
+
+Card Radius
+
+18px
+
+Inputs
+
+16px Radius
+
+Buttons
+
+16px Radius
+
+Cards
+
+24px Padding
+
+Section Spacing
+
+40px
+
+========================
+
+ANIMATIONS
+
+========================
+
+Framer Motion
+
+Fade
+
+Slide
+
+200ms
+
+Cards Hover
+
+Buttons Scale
+
+Loading Skeleton
+
+========================
+
+BRANDING
+
+========================
+
+Generate
+
+Professional Logo
+
+App Icon
+
+Splash Screen
+
+Favicon
+
+Logo Style
+
+Letter N
+
++
+
+Location Pin
+
++
+
+Checkmark
+
+Flat
+
+SVG
+
+Minimal
+
+Saudi FinTech
+
+========================
+
+NAVIGATION
+
+========================
+
+Merchant
+
+Dashboard
+
+Debts
+
+Customers
+
+Analytics
+
+AI Copilot
+
+Nearby
+
+Settings
+
+Customer
+
+Home
+
+Nearby
+
+My Debts
+
+Payments
+
+Profile
+
+========================
+
+PAGES
+
+========================
+
+Merchant Login
+
+Merchant Dashboard
+
+Add Debt
+
+Debt Details
+
+Analytics
+
+AI
+
+Settings
+
+Customer Approval
+
+Customer Payment
+
+Customer App
+
+Nearby
+
+Merchant Details
+
+Profile
+
+========================
+
+RESPONSIVE
+
+========================
+
+Design Mobile First.
+
+The interface must work perfectly on
+
+Android
+
+iPhone
+
+Small phones
+
+Large phones
+
+Tablets
+
+Desktop
+
+Every page must look like a mobile application first.
+
+Desktop should only expand spacing.
+
+========================
+
+IMPORTANT
+
+========================
+
+Do NOT connect Firebase.
+
+Do NOT create database.
+
+Do NOT implement backend.
+
+Create ONLY
+
+Architecture
+
+Folders
+
+Reusable Components
+
+Modern UI
+
+Responsive Design
+
+Professional Branding
+
+The UI must be investor-ready.
+
+When finished, stop and wait for the next instructions.

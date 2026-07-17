@@ -1,7 +1,14 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Caption } from './Shared';
+import { sfx } from '@/lib/sfx';
 
 export default function Scene11Success() {
+  useEffect(() => {
+    const t = setTimeout(() => sfx.success(), 300);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <motion.div
       className="absolute inset-0 flex flex-col items-center justify-center font-arabic overflow-hidden"

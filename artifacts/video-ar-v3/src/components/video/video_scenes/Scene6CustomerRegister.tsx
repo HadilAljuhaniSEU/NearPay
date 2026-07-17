@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Caption, NearPayLogo, PhoneFrame } from './Shared';
 import { useState, useEffect } from 'react';
+import { sfx } from '@/lib/sfx';
 
 export default function Scene6CustomerRegister() {
   const [mapRevealed, setMapRevealed] = useState(false);
@@ -51,7 +52,7 @@ export default function Scene6CustomerRegister() {
                 transition={{ delay: 0.6 }}
               >
                 <div className="h-14 border border-[#E2E8F0] rounded-xl flex items-center px-4 bg-white">
-                  <span className="font-bold text-[#0B2341]">هديل المطيري</span>
+                  <span className="font-bold text-[#0B2341]">هديل الجهني</span>
                 </div>
               </motion.div>
 

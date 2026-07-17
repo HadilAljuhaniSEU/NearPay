@@ -50,63 +50,58 @@ export default function Scene0Hook() {
 
         <div className="relative mt-32 w-full flex justify-center items-center h-[200px]">
           {/* Card 1 (back-left) */}
+          {/* Card 1 (back-left) */}
           <motion.div
-            className="absolute bg-[#F8FAFC] rounded-[16px] shadow-2xl w-[180px] h-[100px] p-3 flex flex-col justify-between"
-            initial={{ opacity: 0, y: 100, rotate: -20, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, rotate: -8, scale: 1, x: -100 }}
-            transition={{ delay: 0.5, type: 'spring', stiffness: 200, damping: 20 }}
+            className="absolute bg-[#F8FAFC] rounded-[14px] shadow-xl w-[148px] h-[78px] p-2.5 flex flex-col justify-between"
+            initial={{ opacity: 0, y: 80, rotate: -18, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, rotate: -7, scale: 1, x: -90 }}
+            transition={{ delay: 0.5, type: 'spring', stiffness: 220, damping: 22 }}
             style={{ zIndex: 0 }}
           >
-            <div className="flex justify-between items-start w-full">
-              <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0B2341] to-[#143B63] flex items-center justify-center text-white font-bold text-sm">هـ</div>
-                <span className="font-bold text-[#0B2341] text-sm">هديل</span>
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center gap-1.5">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#0B2341] to-[#143B63] flex items-center justify-center text-white font-bold text-xs">هـ</div>
+                <span className="font-bold text-[#0B2341] text-xs">هديل الجهني</span>
               </div>
-              <div className="w-2 h-2 rounded-full bg-[#F59E0B]"></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
             </div>
-            <div className="font-bold text-[#EF4444] text-lg text-left w-full" style={{ direction: 'ltr' }}>
-              ٤٥ ريال
-            </div>
+            <div className="font-bold text-[#EF4444] text-base text-left w-full" style={{ direction: 'ltr' }}>٤٥ ريال</div>
           </motion.div>
 
           {/* Card 2 (middle) */}
           <motion.div
-            className="absolute bg-white rounded-[16px] shadow-2xl w-[180px] h-[100px] p-3 flex flex-col justify-between z-10"
-            initial={{ opacity: 0, y: 100, scale: 0.8 }}
-            animate={{ opacity: 1, y: -10, rotate: 2, scale: 1.05, x: 0 }}
-            transition={{ delay: 0.8, type: 'spring', stiffness: 200, damping: 20 }}
+            className="absolute bg-white rounded-[14px] shadow-xl w-[148px] h-[78px] p-2.5 flex flex-col justify-between"
+            initial={{ opacity: 0, y: 80, scale: 0.8 }}
+            animate={{ opacity: 1, y: -8, rotate: 2, scale: 1.04, x: 0 }}
+            transition={{ delay: 0.75, type: 'spring', stiffness: 220, damping: 22 }}
             style={{ zIndex: 10 }}
           >
-            <div className="flex justify-between items-start w-full">
-              <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0B2341] to-[#143B63] flex items-center justify-center text-white font-bold text-sm">غ</div>
-                <span className="font-bold text-[#0B2341] text-sm">غلا</span>
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center gap-1.5">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#0B2341] to-[#143B63] flex items-center justify-center text-white font-bold text-xs">غ</div>
+                <span className="font-bold text-[#0B2341] text-xs">غلا</span>
               </div>
-              <div className="w-2 h-2 rounded-full bg-[#EF4444]"></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
             </div>
-            <div className="font-bold text-[#EF4444] text-xl text-left w-full" style={{ direction: 'ltr' }}>
-              ١٢٠ ريال
-            </div>
+            <div className="font-bold text-[#EF4444] text-base text-left w-full" style={{ direction: 'ltr' }}>١٢٠ ريال</div>
           </motion.div>
 
           {/* Card 3 (front-right) */}
           <motion.div
-            className="absolute bg-white rounded-[16px] shadow-2xl w-[180px] h-[100px] p-3 flex flex-col justify-between"
-            initial={{ opacity: 0, y: 100, rotate: 20, scale: 0.8 }}
-            animate={{ opacity: 1, y: 10, rotate: 6, scale: 1, x: 100 }}
-            transition={{ delay: 1.1, type: 'spring', stiffness: 200, damping: 20 }}
+            className="absolute bg-white rounded-[14px] shadow-xl w-[148px] h-[78px] p-2.5 flex flex-col justify-between"
+            initial={{ opacity: 0, y: 80, rotate: 18, scale: 0.8 }}
+            animate={{ opacity: 1, y: 8, rotate: 6, scale: 1, x: 90 }}
+            transition={{ delay: 1.0, type: 'spring', stiffness: 220, damping: 22 }}
             style={{ zIndex: 20 }}
           >
-            <div className="flex justify-between items-start w-full">
-              <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0B2341] to-[#143B63] flex items-center justify-center text-white font-bold text-sm">د</div>
-                <span className="font-bold text-[#0B2341] text-sm">دالي</span>
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center gap-1.5">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#0B2341] to-[#143B63] flex items-center justify-center text-white font-bold text-xs">د</div>
+                <span className="font-bold text-[#0B2341] text-xs">دالي</span>
               </div>
-              <div className="w-2 h-2 rounded-full bg-[#F59E0B]"></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
             </div>
-            <div className="font-bold text-[#EF4444] text-lg text-left w-full" style={{ direction: 'ltr' }}>
-              ٣٢ ريال
-            </div>
+            <div className="font-bold text-[#EF4444] text-base text-left w-full" style={{ direction: 'ltr' }}>٣٢ ريال</div>
           </motion.div>
         </div>
       </div>

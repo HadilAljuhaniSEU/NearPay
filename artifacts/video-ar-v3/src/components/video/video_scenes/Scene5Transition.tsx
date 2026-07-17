@@ -56,7 +56,7 @@ export default function Scene5Transition() {
               fill="#0B2341"
             />
             <path
-              d="M11 19.5V11L16 17.5L21 11V19.5"
+              d="M11 19.5V11L21 19.5V11"
               stroke="white"
               strokeWidth="2.2"
               strokeLinecap="round"

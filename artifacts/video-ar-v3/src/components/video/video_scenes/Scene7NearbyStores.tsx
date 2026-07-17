@@ -110,7 +110,7 @@ export default function Scene7NearbyStores() {
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0B2341] to-[#143B63] flex items-center justify-center mr-4 shrink-0 shadow-inner">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" className="w-[60%] h-[60%]">
               <path d="M16 1.5C9.1 1.5 3.5 7.1 3.5 14C3.5 19.8 7.2 24.7 12.4 26.7L16 30.5L19.6 26.7C24.8 24.7 28.5 19.8 28.5 14C28.5 7.1 22.9 1.5 16 1.5Z" fill="#2ED8C3" />
-              <path d="M11 19.5V11L16 17.5L21 11V19.5" stroke="#0B2341" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M11 19.5V11L21 19.5V11" stroke="#0B2341" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
           

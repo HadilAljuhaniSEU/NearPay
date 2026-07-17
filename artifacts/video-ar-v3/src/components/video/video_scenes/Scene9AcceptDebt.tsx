@@ -1,13 +1,15 @@
 import { motion } from 'framer-motion';
 import { Caption, NearPayLogo, PhoneFrame } from './Shared';
 import { useState, useEffect } from 'react';
+import { sfx } from '@/lib/sfx';
 
 export default function Scene9AcceptDebt() {
   const [accepted, setAccepted] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setAccepted(true), 4000);
-    return () => clearTimeout(t);
+    sfx.notification();
+    const t1 = setTimeout(() => { setAccepted(true); sfx.select(); }, 4000);
+    return () => clearTimeout(t1);
   }, []);
 
   return (

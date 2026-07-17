@@ -56,9 +56,9 @@ export const NearPayLogo = ({ className = 'w-12 h-12' }: { className?: string })
       stroke="#2ED8C3"
       strokeWidth="0.75"
     />
-    {/* N letterform */}
+    {/* N letterform — left post, diagonal, right post */}
     <path
-      d="M11 19.5V11L16 17.5L21 11V19.5"
+      d="M11 19.5V11L21 19.5V11"
       stroke="white"
       strokeWidth="2.2"
       strokeLinecap="round"
@@ -74,10 +74,11 @@ export const PhoneFrame = ({
   children: React.ReactNode;
   className?: string;
 }) => (
-  <div
-    className={`relative bg-white rounded-[32px] overflow-hidden shadow-[0_24px_80px_rgba(11,35,65,0.28)] flex flex-col ${className}`}
-    style={{ width: 'min(320px, 82vw)', aspectRatio: '360 / 680' }}
-  >
-    {children}
+  <div style={{ transform: 'scale(0.78)', transformOrigin: 'center' }}>
+    <div
+      className={`relative bg-white w-[340px] h-[640px] rounded-[32px] overflow-hidden shadow-[0_20px_56px_rgba(11,35,65,0.22)] flex flex-col ${className}`}
+    >
+      {children}
+    </div>
   </div>
 );

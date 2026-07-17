@@ -1,16 +1,19 @@
 import { motion } from 'framer-motion';
 import { Caption, NearPayLogo, PhoneFrame } from './Shared';
 import { useState, useEffect } from 'react';
+import { sfx } from '@/lib/sfx';
 
 export default function Scene3AddDebt() {
   const [total, setTotal] = useState(3);
   
   useEffect(() => {
+    sfx.tap();
     const timeouts = [
-      setTimeout(() => setTotal(11), 1000 + 400),
-      setTimeout(() => setTotal(26), 1000 + 800),
-      setTimeout(() => setTotal(35), 1000 + 1200),
-      setTimeout(() => setTotal(45), 1000 + 1600),
+      setTimeout(() => { setTotal(11); sfx.select(); }, 1400),
+      setTimeout(() => setTotal(26), 1800),
+      setTimeout(() => setTotal(35), 2200),
+      setTimeout(() => setTotal(45), 2600),
+      setTimeout(() => sfx.add(), 5400),
     ];
     return () => timeouts.forEach(clearTimeout);
   }, []);
@@ -47,7 +50,7 @@ export default function Scene3AddDebt() {
             <label className="text-sm font-bold text-[#0B2341]">العميل</label>
             <div className="h-14 border border-[#2ED8C3] bg-[#2ED8C3]/5 rounded-xl flex items-center px-4 relative">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0B2341] to-[#143B63] flex items-center justify-center text-white text-sm font-bold ml-3">هـ</div>
-              <span className="font-bold text-[#0B2341]">هديل المطيري</span>
+              <span className="font-bold text-[#0B2341]">هديل الجهني</span>
               <span className="absolute left-4 text-[#2ED8C3] font-bold">✓</span>
             </div>
           </div>
@@ -153,7 +156,7 @@ export default function Scene3AddDebt() {
             transition={{ delay: 7.3 }}
             className="text-2xl font-bold text-center"
           >
-            تم إرسال الطلب لـ هديل ✓
+            تم إرسال الطلب لـ هديل الجهني ✓
           </motion.div>
         </motion.div>
       </PhoneFrame>

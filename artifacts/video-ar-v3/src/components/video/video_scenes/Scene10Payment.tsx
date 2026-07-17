@@ -1,14 +1,15 @@
 import { motion } from 'framer-motion';
 import { Caption, NearPayLogo, PhoneFrame } from './Shared';
 import { useState, useEffect } from 'react';
+import { sfx } from '@/lib/sfx';
 
 export default function Scene10Payment() {
   const [paying, setPaying] = useState(false);
   const [paid, setPaid] = useState(false);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPaying(true), 3500);
-    const t2 = setTimeout(() => setPaid(true), 4500);
+    const t1 = setTimeout(() => { setPaying(true); sfx.tap(); }, 3500);
+    const t2 = setTimeout(() => { setPaid(true); sfx.payment(); }, 4500);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);

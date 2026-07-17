@@ -1,7 +1,15 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Caption, NearPayLogo, PhoneFrame } from './Shared';
+import { sfx } from '@/lib/sfx';
 
 export default function Scene1MerchantRegister() {
+  useEffect(() => {
+    const t1 = setTimeout(() => sfx.tap(), 1200);
+    const t2 = setTimeout(() => sfx.add(), 4200);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+
   return (
     <motion.div
       className="absolute inset-0 flex items-center justify-center font-arabic"

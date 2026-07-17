@@ -44,7 +44,10 @@ function Router() {
       <Route path="/debt/approve/:token" component={DebtApprovalPage} />
       <Route path="/debt/pay/:token" component={DebtPaymentPage} />
 
-      {/* ── Protected merchant routes ── */}
+      {/* ── Customer OTP auth — public (unauthenticated users land here) ── */}
+      <Route path="/customer/otp" component={CustomerOTPPage} />
+
+      {/* ── Protected merchant routes — Firebase email/password auth ── */}
       <Route path="/merchant/dashboard">
         <ProtectedRoute><DashboardPage /></ProtectedRoute>
       </Route>
@@ -73,15 +76,22 @@ function Router() {
         <ProtectedRoute><MerchantNearbyPage /></ProtectedRoute>
       </Route>
 
-      {/* ── Customer OTP auth (public) ── */}
-      <Route path="/customer/otp" component={CustomerOTPPage} />
-
-      {/* ── Customer routes — no Firebase auth needed ── */}
-      <Route path="/customer/home" component={CustomerHomePage} />
-      <Route path="/customer/nearby" component={CustomerNearbyPage} />
-      <Route path="/customer/debts" component={CustomerDebtsPage} />
-      <Route path="/customer/payments" component={CustomerPaymentsPage} />
-      <Route path="/customer/profile" component={CustomerProfilePage} />
+      {/* ── Protected customer routes — Firebase phone (OTP) auth ── */}
+      <Route path="/customer/home">
+        <ProtectedRoute><CustomerHomePage /></ProtectedRoute>
+      </Route>
+      <Route path="/customer/nearby">
+        <ProtectedRoute><CustomerNearbyPage /></ProtectedRoute>
+      </Route>
+      <Route path="/customer/debts">
+        <ProtectedRoute><CustomerDebtsPage /></ProtectedRoute>
+      </Route>
+      <Route path="/customer/payments">
+        <ProtectedRoute><CustomerPaymentsPage /></ProtectedRoute>
+      </Route>
+      <Route path="/customer/profile">
+        <ProtectedRoute><CustomerProfilePage /></ProtectedRoute>
+      </Route>
 
       <Route component={NotFound} />
     </Switch>

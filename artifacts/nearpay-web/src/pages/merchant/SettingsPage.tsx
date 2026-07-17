@@ -16,6 +16,7 @@ import { useLocation } from 'wouter';
 import { NearPayLogo } from '../../components/NearPayLogo';
 import { useT } from '../../contexts/LanguageContext';
 import { useAuth } from '../../hooks/useAuth';
+import { signOutMerchant } from '../../services/authService';
 import { updateMerchantGeoData, BUSINESS_TYPES, SAUDI_CITIES, MerchantGeoData } from '../../services/nearbyService';
 
 export default function MerchantSettingsPage() {
@@ -56,8 +57,12 @@ export default function MerchantSettingsPage() {
     if (merchant.isVisible != null) setIsVisible(merchant.isVisible);
   }, [merchant]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('nearpay_role');
+  const handleLogout = async () => {
+    try {
+      await signOutMerchant();
+    } catch {
+      // ignore
+    }
     setLocation('/login');
   };
 

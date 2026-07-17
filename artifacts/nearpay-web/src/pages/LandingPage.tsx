@@ -163,10 +163,7 @@ export default function LandingPage() {
             {/* Customer Access */}
             <motion.button
               variants={fadeUp}
-              onClick={() => {
-                localStorage.setItem('nearpay_role', 'customer');
-                setLocation('/customer/nearby');
-              }}
+              onClick={() => setLocation('/customer/otp')}
               className="w-full h-14 rounded-2xl flex items-center justify-between px-5 font-bold text-sm bg-card border border-border/70 hover:border-teal/40 transition-colors active:scale-[0.98] shadow-sm"
             >
               <div className="flex items-center gap-3">
@@ -176,7 +173,7 @@ export default function LandingPage() {
                 </div>
                 <div className="text-left">
                   <p className="font-bold text-foreground leading-tight">{t('customer')}</p>
-                  <p className="text-[11px] text-muted-foreground font-medium">{t('no_account_needed')}</p>
+                  <p className="text-[11px] text-muted-foreground font-medium">{t('otp_subtitle')}</p>
                 </div>
               </div>
               <ArrowRight size={18} className="text-muted-foreground rtl-flip" />

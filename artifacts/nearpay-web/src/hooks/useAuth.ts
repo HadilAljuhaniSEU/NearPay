@@ -36,7 +36,6 @@ export function useAuth(): UseAuthReturn {
     setError(null);
     try {
       const u = await signInMerchant(email, password, rememberMe);
-      localStorage.setItem('nearpay_role', 'merchant');
       // Persist current language preference to Firestore
       await updateMerchantLanguage(u.uid, lang);
       setLocation('/merchant/dashboard');
@@ -58,7 +57,6 @@ export function useAuth(): UseAuthReturn {
         return;
       }
       await registerMerchant({ ...params, language: lang });
-      localStorage.setItem('nearpay_role', 'merchant');
       setLocation('/merchant/dashboard');
     } catch (err: unknown) {
       setError(mapFirebaseError(err));
@@ -71,7 +69,6 @@ export function useAuth(): UseAuthReturn {
     setActionLoading(true);
     try {
       await signOutMerchant();
-      localStorage.removeItem('nearpay_role');
       setLocation('/login');
     } catch (err: unknown) {
       console.error('Sign out error:', err);

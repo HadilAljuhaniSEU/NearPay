@@ -64,8 +64,7 @@ export default function LoginPage() {
   };
 
   const handleCustomerContinue = () => {
-    localStorage.setItem('nearpay_role', 'customer');
-    setLocation('/customer/nearby');
+    setLocation('/customer/otp');
   };
 
   const handleForgotSubmit = async (e: React.FormEvent) => {
@@ -434,13 +433,13 @@ export default function LoginPage() {
                       <div className="rounded-[22px] p-6 text-center space-y-3 border border-border/50 bg-secondary/40">
                         <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto border"
                              style={{ background: 'rgba(32,214,199,0.10)', borderColor: 'rgba(32,214,199,0.2)' }}>
-                          <User size={21} style={{ color: '#20D6C7' }} />
+                          <Phone size={21} style={{ color: '#20D6C7' }} />
                         </div>
-                        <p className="text-base font-bold">{t('no_account_needed')}</p>
-                        <p className="text-sm text-muted-foreground font-medium leading-relaxed">{t('customer_panel_desc')}</p>
+                        <p className="text-base font-bold">{t('otp_title')}</p>
+                        <p className="text-sm text-muted-foreground font-medium leading-relaxed">{t('otp_subtitle')}</p>
                       </div>
                       <Button className="w-full h-12 rounded-2xl text-sm font-bold" onClick={handleCustomerContinue}>
-                        {t('continue_to_app')} <ArrowRight className="ms-2 rtl-flip" size={17} />
+                        {t('otp_send_btn')} <ArrowRight className="ms-2 rtl-flip" size={17} />
                       </Button>
                     </motion.div>
                   )}

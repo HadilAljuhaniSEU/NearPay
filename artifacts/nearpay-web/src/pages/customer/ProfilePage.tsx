@@ -5,16 +5,29 @@ import { LogOut, ShieldCheck, CreditCard, ChevronRight, CheckCircle2, History, S
 import { StatusBar } from '../../components/StatusBar';
 import { BottomNav } from '../../components/BottomNav';
 import { PageHeader } from '../../components/PageHeader';
-import { mockCustomerProfile } from '../../data/mock';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useT } from '../../contexts/LanguageContext';
+import { useAuthContext } from '../../contexts/AuthContext';
+import { signOutMerchant } from '../../services/authService';
 
 export default function CustomerProfilePage() {
   const [_, setLocation] = useLocation();
   const t = useT();
+  const { user } = useAuthContext();
 
-  const handleLogout = () => {
-    localStorage.removeItem('nearpay_role');
+  // Derive display values from Firebase phone auth user
+  const phone       = user?.phoneNumber ?? '';
+  const displayName = user?.displayName?.trim() || '';
+  const initials    = displayName
+    ? displayName.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase()
+    : phone.replace(/\D/g, '').slice(-2); // last 2 digits of phone as fallback
+
+  const handleLogout = async () => {
+    try {
+      await signOutMerchant(); // signOut(auth) — works for any Firebase user
+    } catch {
+      // ignore
+    }
     setLocation('/login');
   };
 
@@ -34,11 +47,15 @@ export default function CustomerProfilePage() {
                  style={{ background: 'linear-gradient(to bottom, rgba(32,214,199,0.08), transparent)' }} />
             <Avatar className="h-20 w-20 border-4 border-background shadow-md mb-4 relative z-10">
               <AvatarFallback className="bg-foreground text-background text-2xl font-bold">
-                {mockCustomerProfile.avatar}
+                {initials || '?'}
               </AvatarFallback>
             </Avatar>
-            <h2 className="text-xl font-bold text-foreground mb-1 tracking-tight">{mockCustomerProfile.name}</h2>
-            <p className="text-xs font-medium text-muted-foreground bg-secondary/50 px-3 py-1 rounded-full">{mockCustomerProfile.phone}</p>
+            <h2 className="text-xl font-bold text-foreground mb-1 tracking-tight">
+              {displayName || t('customer')}
+            </h2>
+            <p className="text-xs font-medium text-muted-foreground bg-secondary/50 px-3 py-1 rounded-full">
+              {phone}
+            </p>
           </motion.div>
 
           {/* NearPay Score */}
@@ -51,7 +68,7 @@ export default function CustomerProfilePage() {
               <div>
                 <h3 className="text-[10px] font-bold opacity-80 uppercase tracking-widest mb-1">{t('nearpay_score')}</h3>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-5xl font-black tracking-tighter">{mockCustomerProfile.score}</span>
+                  <span className="text-5xl font-black tracking-tighter">—</span>
                   <span className="text-lg font-bold opacity-60">/100</span>
                 </div>
               </div>

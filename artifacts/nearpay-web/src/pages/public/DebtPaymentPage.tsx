@@ -104,14 +104,9 @@ export default function DebtPaymentPage() {
     setState('paying');
     try {
       await recordPayment({
-        debtId:              debt.id,
-        merchantId:          debt.merchantId,
-        customerId:          debt.customerId,
-        amount:              payAmount,
-        currentRemaining:    debt.remainingAmount,
-        currentCustomerPaid: 0,
-        paymentMethod:       method,
-        dueDate:             debt.dueDate,
+        paymentToken:  token,
+        amount:        payAmount,
+        paymentMethod: method,
       });
       setState('paid');
     } catch {

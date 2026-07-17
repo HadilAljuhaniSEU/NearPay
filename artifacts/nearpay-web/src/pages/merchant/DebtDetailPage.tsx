@@ -14,8 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { useDebt } from '../../hooks/useDebts';
 import { useCustomer } from '../../hooks/useCustomers';
 import { useAuthContext } from '../../contexts/AuthContext';
-import { fetchPaymentsForDebt } from '../../services/paymentService';
-import { recordPayment } from '../../services/paymentService';
+import { fetchPaymentsForDebt, recordPaymentAsMerchant } from '../../services/paymentService';
 import { PaymentDoc, PaymentMethod } from '../../types';
 import { useT } from '../../contexts/LanguageContext';
 
@@ -91,7 +90,7 @@ export default function DebtDetailPage() {
     setPaying(true);
     setPayError('');
     try {
-      await recordPayment({
+      await recordPaymentAsMerchant({
         debtId:               debt.id,
         merchantId:           merchant.id,
         customerId:           customer.id,

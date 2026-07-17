@@ -79,12 +79,21 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/customerProfiles/$(request.auth.uid));
     }
 
-    // The phone number stored in the caller's customerProfiles document.
-    // Used to match against debts.customerPhone — prevents a customer from
-    // spoofing another customer's phone number because customerProfiles can
-    // only be written by the document owner (see customerProfiles rules).
+    // The verified phone number for the authenticated customer.
+    // Prefers request.auth.token.phone_number — the phone_number claim in the
+    // Firebase Auth JWT, which is only present when the user authenticated via
+    // Firebase Phone Authentication (SMS OTP). This claim is set by Firebase
+    // and cannot be forged by the client.
+    // Falls back to the phone field in customerProfiles/{uid} for email-auth
+    // users who provided their phone through the post-login collection modal.
+    // The fallback is safe only because the customerProfiles phone field is
+    // immutable once set (see the customerProfiles update rule), which prevents
+    // an existing account from changing its stored phone to another customer's
+    // number in order to gain unauthorised access to their debts or payments.
     function myPhone() {
-      return get(/databases/$(database)/documents/customerProfiles/$(request.auth.uid)).data.phone;
+      return request.auth.token.phone_number != null
+        ? request.auth.token.phone_number
+        : get(/databases/$(database)/documents/customerProfiles/$(request.auth.uid)).data.phone;
     }
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -182,10 +191,20 @@ service cloud.firestore {
       allow create: if isOwner(uid)
         && request.resource.data.uid == request.auth.uid;
 
-      // Customer may update their own profile (e.g. phone collection modal,
-      // language preference). The uid field must not change.
+      // Customer may update their own profile (e.g. language preference, or
+      // setting their phone via the post-login collection modal).
+      // The uid field must not change.
+      // The phone field is immutable once set: if the existing document already
+      // contains a phone number the incoming update must preserve it unchanged.
+      // This prevents an existing account from replacing its stored phone with
+      // another customer's number to spoof the myPhone() identity anchor used
+      // in debt read and payment create guards.
+      // If phone is currently absent or empty it may be set to any value —
+      // this covers the first-time phone collection modal flow.
       allow update: if isOwner(uid)
-        && request.resource.data.uid == resource.data.uid;
+        && request.resource.data.uid == resource.data.uid
+        && (resource.data.phone == null || resource.data.phone == ''
+            || request.resource.data.phone == resource.data.phone);
 
       // Profile deletion is not permitted from the client.
       allow delete: if false;
@@ -202,22 +221,12 @@ service cloud.firestore {
     //  Merchant access   Full CRUD, restricted to documents whose merchantId
     //                    matches the authenticated merchant's merchantId.
     //
-    //  Payment-page update   When a customer completes payment via the
-    //                        /pay/{token} URL, the app calls recordPayment()
-    //                        which internally updates customer financial
-    //                        aggregates (totalDebt, totalPaid, trustScore).
-    //                        The customer IS authenticated at this point
-    //                        (the page redirects to login first).
-    //                        This rule permits that narrow update:
-    //                        — merchantId must not change
-    //                        — only financial aggregate fields may be written
-    //
-    //  PRODUCTION NOTE   The payment-page update rule is intentionally
-    //                    narrow but an authenticated customer could still
-    //                    attempt to manipulate another merchant's customer
-    //                    aggregates. For maximum security, move
-    //                    adjustCustomerDebtMetrics() to a Cloud Function
-    //                    triggered on payment document creation.
+    //  Customer aggregate updates (totalDebt, totalPaid, trustScore) are
+    //  performed server-side by adjustCustomerDebtMetrics() via the Firebase
+    //  Admin SDK, which bypasses these rules entirely. No client-side rule
+    //  grants any party the ability to write financial aggregates — removing
+    //  that surface eliminates the risk of any authenticated user zeroing out
+    //  debts or inflating trust scores across all merchants on the platform.
     // ──────────────────────────────────────────────────────────────────────────
     match /customers/{customerId} {
       // Merchant: read any customer record belonging to their merchantId.
@@ -233,17 +242,6 @@ service cloud.firestore {
       allow update: if isMerchant()
         && resource.data.merchantId == myMerchantId()
         && request.resource.data.merchantId == resource.data.merchantId;
-
-      // Payment-page update: authenticated customer adjusting financial aggregates.
-      // Conditions:
-      //   1. Caller is authenticated.
-      //   2. merchantId field is not changed.
-      //   3. Only the listed financial aggregate keys are modified.
-      //      (name, phone, email, merchantId, createdAt, etc. cannot change)
-      allow update: if isAuthed()
-        && request.resource.data.merchantId == resource.data.merchantId
-        && request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(['totalDebt', 'totalPaid', 'trustScore', 'updatedAt']);
 
       // Merchant: delete their own customers.
       allow delete: if isMerchant()
@@ -306,14 +304,16 @@ service cloud.firestore {
         && resource.data.customerPhone == myPhone();
 
       // ── Token-based read (approval / payment URL pages) ─────────────────────
-      // Requires authentication (both pages redirect to login if not signed in).
-      // The token itself (a UUID) is the proof of authorization.
-      allow read: if isAuthed()
-        && (
-          (resource.data.approvalToken != null && resource.data.approvalToken != '')
-          ||
-          (resource.data.paymentToken  != null && resource.data.paymentToken  != '')
-        );
+      // REMOVED: the prior rule granted read access to ANY authenticated user
+      // whenever the document merely *had* a token — it did not require the
+      // caller to know the token value. Because virtually every active debt
+      // carries a token, this effectively exposed the entire debts collection
+      // to all authenticated users via a simple query filter.
+      //
+      // Legitimate read paths are covered by the merchant and customer rules
+      // above. Approval/payment pages redirect to login first; after login the
+      // customer's phone is stored in customerProfiles and the customer-read
+      // rule (customerPhone == myPhone()) grants access to their own debts.
 
       // ── Merchant: create a new debt ─────────────────────────────────────────
       // merchantId in the new document must match the writer's merchantId.
@@ -372,22 +372,24 @@ service cloud.firestore {
     //  Merchant access   Full read + create. Updates and deletes are blocked
     //                    — payment records are append-only audit entries.
     //
-    //  Payment-page create   When a customer completes payment via
-    //                        /pay/{token}, recordPayment() creates a payment
-    //                        document. The customer IS authenticated (the page
-    //                        requires login). This rule validates that the
-    //                        referenced debt has a non-null paymentToken,
-    //                        tying the create to a legitimate payment flow.
+    //  Payment-page create   All customer payment creation is handled by the
+    //                        API server (POST /api/payments/record). The server
+    //                        endpoint uses the Firebase Admin SDK to:
+    //                          (a) cryptographically verify the caller's Firebase
+    //                              ID token (cannot be forged)
+    //                          (b) look up the debt by paymentToken server-side
+    //                          (c) compare the verified caller phone against
+    //                              debt.customerPhone before writing
+    //                        No client-side create rule is granted for customers —
+    //                        this eliminates the broken access control that
+    //                        previously let any authenticated user insert payment
+    //                        records for any merchant.
     //
     //  Payment-page read     The payment page calls fetchPaymentsForDebt()
     //                        to check prior partial payments. Allowed for
-    //                        any authenticated user when the payment record
-    //                        references a debtId (non-null).
-    //
-    //  PRODUCTION NOTE   Allowing authenticated customers to create payment
-    //                    records is a deliberate trade-off. For full
-    //                    auditability, move recordPayment() to a Cloud
-    //                    Function that verifies the paymentToken server-side.
+    //                        authenticated customers when the payment record
+    //                        references their debt (debtId non-null and the
+    //                        debt's customerPhone matches the caller's phone).
     // ──────────────────────────────────────────────────────────────────────────
     match /payments/{paymentId} {
 
@@ -397,23 +399,22 @@ service cloud.firestore {
 
       // ── Payment-page read (authenticated customer) ──────────────────────────
       // Allows fetchPaymentsForDebt() (query by debtId) from the payment page.
-      // Only permitted when the referenced debtId is non-null.
-      allow read: if isAuthed()
-        && resource.data.debtId != null;
+      // Scoped to records whose referenced debt belongs to the calling customer
+      // via their phone — prevents reading payment records for other customers.
+      allow read: if isCustomer()
+        && resource.data.debtId != null
+        && get(/databases/$(database)/documents/debts/$(resource.data.debtId)).data.customerPhone == myPhone();
 
       // ── Merchant: create a payment record ───────────────────────────────────
       // merchantId in new document must match the writer's merchantId.
       allow create: if isMerchant()
         && request.resource.data.merchantId == myMerchantId();
 
-      // ── Payment-page create (authenticated customer) ─────────────────────────
-      // Validates that the referenced debt exists and carries a paymentToken,
-      // confirming this create is part of a legitimate token-gated payment flow.
-      allow create: if isAuthed()
-        && request.resource.data.debtId != null
-        && exists(/databases/$(database)/documents/debts/$(request.resource.data.debtId))
-        && get(/databases/$(database)/documents/debts/$(request.resource.data.debtId)).data.paymentToken != null
-        && get(/databases/$(database)/documents/debts/$(request.resource.data.debtId)).data.paymentToken != '';
+      // ── Customer payment-page create: REMOVED ───────────────────────────────
+      // Customer payment creation has been moved to POST /api/payments/record on
+      // the API server, which uses the Firebase Admin SDK. This closes the
+      // broken access control that allowed any authenticated user to insert
+      // fabricated payment records by referencing any debt with a paymentToken.
 
       // Payment records are append-only. Updates and deletes are not permitted
       // from the client — they must be handled server-side if ever needed.

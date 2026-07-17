@@ -1,25 +1,14 @@
-/**
- * CustomerOTPPage — Firebase Phone Authentication for customers.
- *
- * TODO: Before this works in production:
- *   1. Go to Firebase Console → Authentication → Sign-in method → Enable "Phone"
- *   2. Add your domain to Firebase Auth → Settings → Authorized domains
- *   3. For production, configure App Check to prevent OTP abuse
- *
- * The page is reachable at /customer/otp?redirect=<encoded-path>
- * After a successful OTP verification it redirects back to the original path.
- */
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, ArrowRight, ChevronLeft, ShieldCheck } from 'lucide-react';
-import { RecaptchaVerifier, ConfirmationResult } from 'firebase/auth';
+import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { NearPayLogo } from '../../components/NearPayLogo';
 import { LanguageSwitcher } from '../../components/LanguageSwitcher';
 import { auth } from '../../lib/firebase';
-import { sendPhoneOTP, verifyPhoneOTP, createCustomerDoc } from '../../services/authService';
+import { createCustomerDoc } from '../../services/authService';
 import { isValidSaudiPhone, normalizeSaudiPhone } from '../../utils/phone';
 import { useT } from '../../contexts/LanguageContext';
 
@@ -37,7 +26,8 @@ export default function CustomerOTPPage() {
   const [resendCooldown, setResendCooldown] = useState(0);
 
   const confirmationRef = useRef<ConfirmationResult | null>(null);
-  const recaptchaRef    = useRef<RecaptchaVerifier | null>(null);
+  // Holds the current RecaptchaVerifier so we can clear it on retry/unmount
+  const recaptchaRef = useRef<RecaptchaVerifier | null>(null);
 
   // Read redirect param from query string
   const redirectTo = (() => {
@@ -56,21 +46,8 @@ export default function CustomerOTPPage() {
     }
   }, []);
 
-  // Initialize invisible reCAPTCHA on mount
+  // Clean up RecaptchaVerifier on unmount
   useEffect(() => {
-    if (recaptchaRef.current) return;
-    try {
-      recaptchaRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
-        size: 'invisible',
-        callback: () => {},
-        'expired-callback': () => {
-          recaptchaRef.current?.clear();
-          recaptchaRef.current = null;
-        },
-      });
-    } catch (e) {
-      // Phone auth not yet enabled — will show an error when user submits
-    }
     return () => {
       recaptchaRef.current?.clear();
       recaptchaRef.current = null;
@@ -84,6 +61,25 @@ export default function CustomerOTPPage() {
     return () => clearTimeout(id);
   }, [resendCooldown]);
 
+  // ── Helper: create a fresh invisible RecaptchaVerifier ──────────────────────
+  // Must be called right before signInWithPhoneNumber. Each RecaptchaVerifier
+  // instance can only be used once — clear and recreate on every attempt.
+  const createRecaptcha = (): RecaptchaVerifier => {
+    // Always clear any previous instance first
+    if (recaptchaRef.current) {
+      try { recaptchaRef.current.clear(); } catch {}
+      recaptchaRef.current = null;
+    }
+    const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+      size: 'invisible',
+      callback: () => {},
+      'expired-callback': () => {},
+    });
+    recaptchaRef.current = verifier;
+    return verifier;
+  };
+
+  // ── Step 1: Send OTP ────────────────────────────────────────────────────────
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -91,35 +87,36 @@ export default function CustomerOTPPage() {
 
     setLoading(true);
     try {
-      if (!recaptchaRef.current) {
-        // Re-initialize if it was cleared
-        recaptchaRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
-          size: 'invisible',
-          callback: () => {},
-        });
-      }
       const normalized = normalizeSaudiPhone(phone);
-      confirmationRef.current = await sendPhoneOTP(normalized, recaptchaRef.current);
+      const verifier   = createRecaptcha();
+      // signInWithPhoneNumber is called directly here (not via a service wrapper)
+      // so the RecaptchaVerifier instance is guaranteed to be tied to the same
+      // auth object that is exported from lib/firebase.ts.
+      confirmationRef.current = await signInWithPhoneNumber(auth, normalized, verifier);
       setStep('otp');
       setResendCooldown(60);
     } catch (err: unknown) {
-      setError(mapOTPError(err));
-      // Reset reCAPTCHA so it can be reused
-      recaptchaRef.current?.clear();
+      // Always clear reCAPTCHA on failure so the next attempt gets a fresh one
+      try { recaptchaRef.current?.clear(); } catch {}
       recaptchaRef.current = null;
+      setError(mapOTPError(err));
     } finally {
       setLoading(false);
     }
   };
 
+  // ── Step 2: Verify OTP ──────────────────────────────────────────────────────
   const handleVerifyOTP = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     if (otp.length < 6) { setError(t('otp_too_short')); return; }
+    if (!confirmationRef.current) { setError('Session expired. Please request a new code.'); return; }
 
     setLoading(true);
     try {
-      const user = await verifyPhoneOTP(confirmationRef.current!, otp);
+      const credential = await confirmationRef.current.confirm(otp);
+      const user = credential.user;
+      // Upsert the Firestore customer auth doc (no-op if already exists)
       await createCustomerDoc(user.uid, normalizeSaudiPhone(phone));
       setStep('success');
       setTimeout(() => setLocation(redirectTo), 1200);
@@ -130,21 +127,26 @@ export default function CustomerOTPPage() {
     }
   };
 
-  const handleResend = async () => {
-    if (resendCooldown > 0) return;
+  // ── "Change number" — go back to step 1 and reset everything ───────────────
+  const handleChangeNumber = () => {
     setOtp('');
     setError('');
-    setStep('phone');
-    // Reset reCAPTCHA
-    recaptchaRef.current?.clear();
+    confirmationRef.current = null;
+    try { recaptchaRef.current?.clear(); } catch {}
     recaptchaRef.current = null;
+    setResendCooldown(0);
+    setStep('phone');
   };
 
   const inputCls = "h-12 rounded-2xl bg-secondary/40 border border-border focus-visible:border-teal focus-visible:ring-1 text-sm font-medium transition-all";
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-5 relative overflow-hidden">
-      {/* Invisible reCAPTCHA anchor */}
+      {/*
+        Invisible reCAPTCHA anchor — must stay mounted for the entire lifetime
+        of this page so RecaptchaVerifier can always find it in the DOM.
+        Do NOT place it inside AnimatePresence or any conditional block.
+      */}
       <div id="recaptcha-container" />
 
       <div className="absolute top-5 end-5 z-20"><LanguageSwitcher /></div>
@@ -202,7 +204,7 @@ export default function CustomerOTPPage() {
           {step === 'otp' && (
             <motion.div key="otp" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}>
               <div className="bg-card rounded-3xl p-7 shadow-sm border border-border/60">
-                <button onClick={handleResend} className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors mb-5">
+                <button onClick={handleChangeNumber} className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors mb-5">
                   <ChevronLeft size={15} className="rtl-flip" /> {t('otp_change_number')}
                 </button>
 
@@ -225,6 +227,7 @@ export default function CustomerOTPPage() {
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     autoComplete="one-time-code"
                     dir="ltr"
+                    autoFocus
                   />
                   {error && <ErrorBox msg={error} />}
                   <Button type="submit" className="w-full h-12 rounded-2xl text-sm font-bold" disabled={loading || otp.length < 6}>
@@ -235,7 +238,7 @@ export default function CustomerOTPPage() {
                 <p className="text-center text-sm text-muted-foreground mt-4 font-medium">
                   {resendCooldown > 0
                     ? <>{t('otp_resend_in')} <span className="font-bold text-foreground">{resendCooldown}s</span></>
-                    : <button onClick={handleResend} className="font-bold hover:underline" style={{ color: '#20D6C7' }}>{t('otp_resend')}</button>
+                    : <button onClick={handleChangeNumber} className="font-bold hover:underline" style={{ color: '#20D6C7' }}>{t('otp_resend')}</button>
                   }
                 </p>
               </div>
@@ -281,17 +284,28 @@ function LoadingDots() {
   );
 }
 
+// Maps Firebase error codes to user-readable messages.
+// For unmapped codes the raw Firebase message is shown so nothing is hidden.
 function mapOTPError(err: unknown): string {
-  const code = (err as { code?: string })?.code ?? '';
+  const code    = (err as { code?: string })?.code ?? '';
+  const message = (err as { message?: string })?.message ?? '';
+
   const map: Record<string, string> = {
-    'auth/invalid-phone-number':          'Invalid phone number. Use format: 05XXXXXXXX',
-    'auth/too-many-requests':             'Too many attempts. Please wait and try again.',
-    'auth/invalid-verification-code':     'Incorrect code. Please check and try again.',
-    'auth/code-expired':                  'Code expired. Request a new one.',
-    'auth/missing-phone-number':          'Please enter your phone number.',
-    'auth/quota-exceeded':                'SMS quota exceeded. Try again later.',
-    'auth/operation-not-allowed':         'Phone sign-in is not enabled. Contact support.',
-    'auth/network-request-failed':        'Network error. Check your connection.',
+    'auth/invalid-phone-number':       'Invalid phone number. Use format: 05XXXXXXXX',
+    'auth/too-many-requests':          'Too many attempts. Please wait and try again.',
+    'auth/invalid-verification-code':  'Incorrect code. Please check and try again.',
+    'auth/code-expired':               'Code expired. Please request a new one.',
+    'auth/missing-phone-number':       'Please enter your phone number.',
+    'auth/quota-exceeded':             'SMS quota exceeded. Try again later.',
+    'auth/network-request-failed':     'Network error. Check your connection.',
+    'auth/captcha-check-failed':       'reCAPTCHA check failed. Please try again.',
+    'auth/missing-app-credential':     'App credential missing. Check Firebase configuration.',
+    'auth/web-storage-unsupported':    'Third-party cookies are blocked. Please allow them and retry.',
+    'auth/internal-error':             'An internal error occurred. Please try again.',
   };
-  return map[code] ?? 'Something went wrong. Please try again.';
+
+  if (map[code]) return map[code];
+  // Show the real Firebase error so it is never silently swallowed
+  if (code) return `${message || code}`;
+  return 'Something went wrong. Please try again.';
 }

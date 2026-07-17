@@ -226,6 +226,37 @@ const translations = {
     payment_method_transfer: 'Bank Transfer',
     confirm_payment_btn: 'Confirm Payment',
 
+    // ── Customer Journey — Dispute & Approval ──────────────────────────────
+    dispute_btn:               'Dispute Debt',
+    approve_debt_btn:          'Approve Debt',
+    dispute_title:             'Dispute This Debt',
+    dispute_desc:              'Explain why you are disputing this debt. The merchant will be notified.',
+    dispute_reason_label:      'Your Reason',
+    dispute_reason_placeholder:'Describe why you are disputing this debt...',
+    submit_dispute:            'Submit Dispute',
+    disputed_title:            'Dispute Submitted',
+    disputed_desc:             'Your dispute has been sent. The merchant will review it.',
+    go_back:       'Go Back',
+
+    // ── Payment page extras ────────────────────────────────────────────────
+    min_payment:    'Min. Payment',
+    payment_mode:   'Payment Mode',
+    pay_full:       'Full',
+    pay_half:       'Half',
+    pay_custom:     'Custom',
+    enter_amount:   'Enter amount in SAR',
+    amount_exceeds: 'Exceeds remaining balance',
+    amount_invalid: 'Enter a valid amount',
+
+    // ── Customer pages ─────────────────────────────────────────────────────
+    no_debts_customer:     'No tabs yet',
+    no_debts_customer_sub: 'Your payment tabs will appear here',
+    filter_active:         'Active',
+    sort_newest:           'New',
+    sort_amount:           'Amount',
+    sort_due:              'Due Date',
+    search_placeholder:    'Search merchant or reference…',
+
     // ── Analytics ──
     analytics_title: 'Analytics',
     collected: 'Collected',
@@ -917,6 +948,37 @@ const translations = {
     payment_method_stcpay: 'STC Pay',
     payment_method_transfer: 'تحويل بنكي',
     confirm_payment_btn: 'تأكيد الدفعة',
+
+    // ── Customer Journey — Dispute & Approval ──────────────────────────────
+    dispute_btn:               'الاعتراض على الدين',
+    approve_debt_btn:          'الموافقة على الدين',
+    dispute_title:             'الاعتراض على هذا الدين',
+    dispute_desc:              'اشرح سبب اعتراضك على هذا الدين. سيتم إخطار التاجر.',
+    dispute_reason_label:      'سبب الاعتراض',
+    dispute_reason_placeholder:'صف سبب اعتراضك على هذا الدين...',
+    submit_dispute:            'إرسال الاعتراض',
+    disputed_title:            'تم إرسال الاعتراض',
+    disputed_desc:             'تم إرسال اعتراضك. سيقوم التاجر بمراجعته.',
+    go_back:       'رجوع',
+
+    // ── Payment page ──────────────────────────────────────────────────────
+    min_payment:    'الحد الأدنى للدفع',
+    payment_mode:   'طريقة الدفع',
+    pay_full:       'كامل',
+    pay_half:       'نصف',
+    pay_custom:     'مخصص',
+    enter_amount:   'أدخل المبلغ بالريال',
+    amount_exceeds: 'يتجاوز الرصيد المتبقي',
+    amount_invalid: 'أدخل مبلغاً صحيحاً',
+
+    // ── Customer pages ────────────────────────────────────────────────────
+    no_debts_customer:     'لا توجد ديون بعد',
+    no_debts_customer_sub: 'ستظهر ديونك هنا',
+    filter_active:         'نشط',
+    sort_newest:           'الأحدث',
+    sort_amount:           'المبلغ',
+    sort_due:              'تاريخ الاستحقاق',
+    search_placeholder:    'ابحث عن التاجر أو رقم المرجع…',
   },
 } as const;
 

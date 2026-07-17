@@ -18,6 +18,16 @@ export function buildApprovalUrl(approvalToken: string): string {
   return `${base}/debt/approve/${approvalToken}`;
 }
 
+/**
+ * Generate a unique reference number in the format NP-YYYY-XXXXXX.
+ * Uses Math.random for sequence; a server-side counter can replace this later.
+ */
+export function generateReferenceNumber(): string {
+  const year = new Date().getFullYear();
+  const seq  = Math.floor(Math.random() * 999999).toString().padStart(6, '0');
+  return `NP-${year}-${seq}`;
+}
+
 /** Build a public payment URL for a debt */
 export function buildPaymentUrl(paymentToken: string): string {
   const base = window.location.origin + import.meta.env.BASE_URL?.replace(/\/$/, '');

@@ -1,0 +1,2 @@
+- [Customer Journey](customer-journey.md) — approval token in URL, dispute flow, pay full/half/custom, customer phone used to query debts
+- [DebtDoc extended fields](debt-doc-fields.md) — new fields added in customer journey phase; createDebt return type includes referenceNumber

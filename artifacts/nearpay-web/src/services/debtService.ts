@@ -14,7 +14,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { DebtDoc, DebtStatus, ApprovalStatus } from '../types';
-import { generateToken } from '../lib/tokens';
+import { generateToken, generateReferenceNumber } from '../lib/tokens';
 
 const COL = 'debts';
 
@@ -56,18 +56,21 @@ export async function fetchDebtByPaymentToken(token: string): Promise<DebtDoc | 
 // ─── Create ───────────────────────────────────────────────────────────────────
 export async function createDebt(
   data: Omit<DebtDoc, 'id' | 'createdAt' | 'updatedAt' | 'approvalToken' | 'paymentToken'>
-): Promise<{ id: string; approvalToken: string; paymentToken: string }> {
+): Promise<{ id: string; approvalToken: string; paymentToken: string; referenceNumber: string }> {
   const now = serverTimestamp();
   const approvalToken = generateToken();
   const paymentToken  = generateToken();
+  const referenceNumber = generateReferenceNumber();
   const ref_ = await addDoc(collection(db, COL), {
     ...data,
     approvalToken,
     paymentToken,
+    referenceNumber,
+    paymentStatus: 'unpaid',
     createdAt: now,
     updatedAt: now,
   });
-  return { id: ref_.id, approvalToken, paymentToken };
+  return { id: ref_.id, approvalToken, paymentToken, referenceNumber };
 }
 
 // ─── Update status ────────────────────────────────────────────────────────────
@@ -84,14 +87,19 @@ export async function updateDebtApproval(
   approvalStatus: ApprovalStatus
 ): Promise<void> {
   const status: DebtStatus =
-    approvalStatus === 'approved'
-      ? 'active'
-      : approvalStatus === 'rejected'
-      ? 'rejected'
-      : 'pending';
+    approvalStatus === 'approved' ? 'active' :
+    approvalStatus === 'rejected' ? 'rejected' : 'pending';
+  const updates: Record<string, unknown> = { approvalStatus, status, updatedAt: serverTimestamp() };
+  if (approvalStatus === 'approved') updates.approvedAt = serverTimestamp();
+  await updateDoc(doc(db, COL, id), updates);
+}
+
+// ─── Dispute ──────────────────────────────────────────────────────────────────
+export async function updateDebtDispute(id: string, reason: string): Promise<void> {
   await updateDoc(doc(db, COL, id), {
-    approvalStatus,
-    status,
+    approvalStatus: 'disputed' as ApprovalStatus,
+    disputeReason: reason,
+    disputedAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
 }
@@ -102,13 +110,17 @@ export async function applyPaymentToDebt(
   paidAmount: number,
   currentRemaining: number
 ): Promise<void> {
-  const newRemaining = Math.max(0, currentRemaining - paidAmount);
+  const newRemaining   = Math.max(0, currentRemaining - paidAmount);
   const status: DebtStatus = newRemaining === 0 ? 'settled' : 'active';
-  await updateDoc(doc(db, COL, id), {
+  const paymentStatus  = newRemaining === 0 ? 'paid' : 'partial';
+  const updates: Record<string, unknown> = {
     remainingAmount: newRemaining,
     status,
+    paymentStatus,
     updatedAt: serverTimestamp(),
-  });
+  };
+  if (newRemaining === 0) updates.paidAt = serverTimestamp();
+  await updateDoc(doc(db, COL, id), updates);
 }
 
 // ─── General update ───────────────────────────────────────────────────────────
@@ -117,6 +129,21 @@ export async function updateDebt(
   data: Partial<Omit<DebtDoc, 'id' | 'createdAt'>>
 ): Promise<void> {
   await updateDoc(doc(db, COL, id), { ...data, updatedAt: serverTimestamp() });
+}
+
+// ─── Real-time listener by customer phone ────────────────────────────────────
+export function subscribeDebtsByCustomerPhone(
+  phone: string,
+  callback: (debts: DebtDoc[]) => void
+): Unsubscribe {
+  const q = query(
+    collection(db, COL),
+    where('customerPhone', '==', phone),
+    orderBy('createdAt', 'desc')
+  );
+  return onSnapshot(q, (snap) => {
+    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as DebtDoc)));
+  });
 }
 
 // ─── Real-time listener for single debt ──────────────────────────────────────

@@ -1,0 +1,337 @@
+IMPORTANT
+
+Do NOT redesign the UI.
+
+Do NOT change branding.
+
+Do NOT change colors.
+
+Keep Firebase Authentication and Firestore exactly as they are.
+
+This prompt is ONLY about implementing the complete customer journey.
+
+==================================================
+
+GOAL
+
+Implement the complete NearPay customer experience.
+
+Merchant creates a debt.
+
+Customer receives a secure link.
+
+Customer reviews the debt.
+
+Customer approves or disputes it.
+
+Customer pays all or part of the debt.
+
+Merchant dashboard updates automatically.
+
+==================================================
+
+FIRESTORE
+
+Use the existing collections.
+
+Every debt must have:
+
+debtId
+
+merchantId
+
+customerId
+
+customerName
+
+customerPhone
+
+description
+
+amount
+
+remainingAmount
+
+status
+
+dueDate
+
+createdAt
+
+approvedAt
+
+paidAt
+
+referenceNumber
+
+approvalStatus
+
+paymentStatus
+
+==================================================
+
+UNIQUE REFERENCE
+
+Generate a unique reference number automatically.
+
+Example:
+
+NP-2026-000001
+
+Display it everywhere.
+
+==================================================
+
+CUSTOMER APPROVAL LINK
+
+Generate a secure shareable URL.
+
+Example:
+
+/approve/{debtId}
+
+When customer opens it:
+
+Show:
+
+Merchant Name
+
+Merchant Logo
+
+Customer Name
+
+Amount
+
+Remaining Amount
+
+Description
+
+Due Date
+
+Reference Number
+
+==================================================
+
+APPROVAL ACTIONS
+
+Buttons:
+
+Approve Debt
+
+Dispute Debt
+
+Approve
+
+Update Firestore:
+
+approvalStatus = approved
+
+approvedAt = timestamp
+
+Dispute
+
+Show text area.
+
+Customer enters reason.
+
+Save:
+
+approvalStatus = disputed
+
+disputeReason
+
+disputedAt
+
+Notify merchant immediately.
+
+==================================================
+
+PAYMENT LINK
+
+Create another route.
+
+Example:
+
+/pay/{debtId}
+
+Display:
+
+Merchant
+
+Reference Number
+
+Total Amount
+
+Remaining Amount
+
+Minimum Payment
+
+Payment History
+
+==================================================
+
+PAYMENT OPTIONS
+
+For MVP
+
+DO NOT connect to a real payment gateway.
+
+Create a secure payment simulation.
+
+Buttons:
+
+Pay Full Amount
+
+Pay Partial Amount
+
+Custom Amount
+
+Validate:
+
+Cannot exceed remaining balance.
+
+Cannot be negative.
+
+==================================================
+
+When payment succeeds
+
+Update Firestore.
+
+Decrease remainingAmount.
+
+Update paymentStatus.
+
+If remainingAmount == 0
+
+status = Paid
+
+Else
+
+status = Partially Paid
+
+Save payment history.
+
+==================================================
+
+PAYMENT HISTORY
+
+Display:
+
+Date
+
+Amount
+
+Remaining Balance
+
+Method
+
+Status
+
+==================================================
+
+CUSTOMER HOME
+
+Create customer home page.
+
+Display all debts.
+
+Status colors:
+
+Green
+
+Paid
+
+Yellow
+
+Due Soon
+
+Red
+
+Overdue
+
+Blue
+
+Active
+
+Allow:
+
+Search
+
+Sort
+
+Filter
+
+==================================================
+
+MERCHANT DASHBOARD
+
+Realtime updates.
+
+When customer:
+
+Approves
+
+Disputes
+
+Pays
+
+Dashboard updates automatically.
+
+==================================================
+
+NOTIFICATIONS
+
+Generate notifications.
+
+Examples:
+
+Debt Approved
+
+Debt Disputed
+
+Partial Payment Received
+
+Debt Fully Paid
+
+==================================================
+
+SECURITY
+
+Customer must only access debts assigned to them.
+
+Merchant only sees their own debts.
+
+==================================================
+
+RESPONSIVE
+
+Customer pages must feel like a native mobile app.
+
+Large buttons.
+
+Safe spacing.
+
+Bottom action buttons.
+
+==================================================
+
+Leave TODO comments where a future payment gateway will be integrated:
+
+Mada
+
+Apple Pay (iOS)
+
+Google Pay (Android)
+
+STC Pay
+
+No fake payment gateway branding.
+
+Only placeholders for future integration.
+
+==================================================
+
+When complete,
+
+stop and wait for the next instructions.

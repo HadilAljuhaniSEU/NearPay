@@ -75,7 +75,7 @@ export interface CustomerDoc {
 
 // ─── Debt ────────────────────────────────────────────────────────────────────
 export type DebtStatus = 'pending' | 'active' | 'overdue' | 'settled' | 'rejected';
-export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
+export type ApprovalStatus = 'pending' | 'approved' | 'rejected' | 'disputed';
 export type PaymentType = 'full' | 'installment' | 'flexible';
 
 export interface DebtDoc {
@@ -95,6 +95,14 @@ export interface DebtDoc {
   approvalStatus: ApprovalStatus;
   approvalToken: string;    // UUID — used in public approval link
   paymentToken: string;     // UUID — used in public payment link
+  // Extended fields
+  merchantName?: string;
+  referenceNumber?: string;
+  paymentStatus?: 'unpaid' | 'partial' | 'paid';
+  approvedAt?: Timestamp;
+  paidAt?: Timestamp;
+  disputeReason?: string;
+  disputedAt?: Timestamp;
 }
 
 // ─── Payment ─────────────────────────────────────────────────────────────────

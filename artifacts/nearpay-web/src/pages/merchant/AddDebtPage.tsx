@@ -92,17 +92,18 @@ export default function AddDebtPage() {
         : null;
 
       const { approvalToken, paymentToken } = await createDebt({
-        merchantId:     merchant.id,
-        customerId:     selectedCustomer.id,
-        customerName:   selectedCustomer.fullName,
-        customerPhone:  selectedCustomer.phone,
-        amount:         amountNum,
+        merchantId:      merchant.id,
+        merchantName:    merchant.name,
+        customerId:      selectedCustomer.id,
+        customerName:    selectedCustomer.fullName,
+        customerPhone:   selectedCustomer.phone,
+        amount:          amountNum,
         remainingAmount: amountNum,
-        description:    description.trim(),
-        status:         'pending' as DebtStatus,
-        paymentType:    'flexible' as PaymentType,
-        dueDate:        dueDateTs,
-        approvalStatus: 'pending' as ApprovalStatus,
+        description:     description.trim(),
+        status:          'pending' as DebtStatus,
+        paymentType:     'flexible' as PaymentType,
+        dueDate:         dueDateTs,
+        approvalStatus:  'pending' as ApprovalStatus,
       });
 
       // Update merchant outstanding

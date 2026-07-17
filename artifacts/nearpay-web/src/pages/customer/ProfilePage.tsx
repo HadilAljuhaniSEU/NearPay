@@ -31,7 +31,7 @@ export default function CustomerProfilePage() {
           {/* Profile Card */}
           <motion.div variants={item} className="bg-card rounded-[22px] p-6 flex flex-col items-center text-center shadow-sm border border-border/60 relative overflow-hidden">
             <div className="absolute top-0 w-full h-20 pointer-events-none"
-                 style={{ background: 'linear-gradient(to bottom, rgba(46,216,195,0.08), transparent)' }} />
+                 style={{ background: 'linear-gradient(to bottom, rgba(32,214,199,0.08), transparent)' }} />
             <Avatar className="h-20 w-20 border-4 border-background shadow-md mb-4 relative z-10">
               <AvatarFallback className="bg-foreground text-background text-2xl font-bold">
                 {mockCustomerProfile.avatar}
@@ -45,7 +45,7 @@ export default function CustomerProfilePage() {
           <motion.div variants={item} className="rounded-[22px] p-6 text-white relative overflow-hidden"
                       style={{ background: 'linear-gradient(135deg, #0B2341 0%, #143B63 100%)', boxShadow: '0 6px 24px rgba(11,35,65,0.25)' }}>
             <div className="absolute top-0 end-0 w-40 h-40 rounded-full blur-2xl -me-10 -mt-10 pointer-events-none"
-                 style={{ background: 'radial-gradient(circle, rgba(46,216,195,0.2), transparent)' }} />
+                 style={{ background: 'radial-gradient(circle, rgba(32,214,199,0.2), transparent)' }} />
 
             <div className="relative z-10 flex items-center justify-between">
               <div>
@@ -56,15 +56,15 @@ export default function CustomerProfilePage() {
                 </div>
               </div>
               <div className="w-14 h-14 rounded-[18px] flex items-center justify-center border"
-                   style={{ background: 'rgba(46,216,195,0.15)', borderColor: 'rgba(46,216,195,0.3)' }}>
-                <ShieldCheck size={30} style={{ color: '#2ED8C3' }} />
+                   style={{ background: 'rgba(32,214,199,0.15)', borderColor: 'rgba(32,214,199,0.3)' }}>
+                <ShieldCheck size={30} style={{ color: '#20D6C7' }} />
               </div>
             </div>
 
             <div className="mt-5 pt-4 border-t border-white/15 flex items-center gap-2 text-xs font-bold rounded-xl px-3 py-2"
-                 style={{ background: 'rgba(46,216,195,0.1)' }}>
-              <CheckCircle2 size={15} style={{ color: '#2ED8C3' }} />
-              <span style={{ color: '#2ED8C3' }}>{t('excellent_history')}</span>
+                 style={{ background: 'rgba(32,214,199,0.1)' }}>
+              <CheckCircle2 size={15} style={{ color: '#20D6C7' }} />
+              <span style={{ color: '#20D6C7' }}>{t('excellent_history')}</span>
             </div>
           </motion.div>
 

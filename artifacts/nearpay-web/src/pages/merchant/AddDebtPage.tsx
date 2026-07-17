@@ -156,7 +156,7 @@ export default function AddDebtPage() {
           <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
             className="flex flex-col items-center text-center py-5">
             <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4 border-4 border-background shadow-lg"
-                 style={{ background: 'linear-gradient(135deg, #2ED8C3, #19B8D3)' }}>
+                 style={{ background: 'linear-gradient(135deg, #20D6C7, #0FB8A9)' }}>
               <CheckCircle2 size={38} className="text-white" />
             </div>
             <h2 className="text-2xl font-bold tracking-tight">{t('tab_created')}</h2>
@@ -177,8 +177,8 @@ export default function AddDebtPage() {
                 <p className="text-xs font-medium text-muted-foreground truncate">{approvalUrl}</p>
               </div>
               <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                   style={{ background: 'rgba(46,216,195,0.10)' }}>
-                <FileText size={18} style={{ color: '#2ED8C3' }} />
+                   style={{ background: 'rgba(32,214,199,0.10)' }}>
+                <FileText size={18} style={{ color: '#20D6C7' }} />
               </div>
             </div>
             <p className="text-xs text-muted-foreground font-medium">{t('approval_link_hint')}</p>
@@ -206,8 +206,8 @@ export default function AddDebtPage() {
                 <p className="text-xs font-medium text-muted-foreground truncate">{paymentUrl}</p>
               </div>
               <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                   style={{ background: 'rgba(46,216,195,0.10)' }}>
-                <Calendar size={18} style={{ color: '#2ED8C3' }} />
+                   style={{ background: 'rgba(32,214,199,0.10)' }}>
+                <Calendar size={18} style={{ color: '#20D6C7' }} />
               </div>
             </div>
             <p className="text-xs text-muted-foreground font-medium">{t('payment_link_hint')}</p>
@@ -253,7 +253,7 @@ export default function AddDebtPage() {
           {([1, 2, 3] as const).map(i => (
             <div key={i}
               className={`h-1.5 rounded-full transition-all duration-300 ${step === i ? 'w-7' : step > i ? 'w-2' : 'w-2 bg-border'}`}
-              style={step === i ? { background: 'linear-gradient(90deg, #2ED8C3, #19B8D3)' } : step > i ? { background: 'rgba(46,216,195,0.4)' } : {}}
+              style={step === i ? { background: 'linear-gradient(90deg, #20D6C7, #0FB8A9)' } : step > i ? { background: 'rgba(32,214,199,0.4)' } : {}}
             />
           ))}
         </div>
@@ -317,7 +317,7 @@ export default function AddDebtPage() {
               {/* Add New Customer */}
               <Button variant="outline"
                 className="w-full h-13 rounded-[18px] border-dashed border-2 font-bold bg-transparent"
-                style={{ color: '#2ED8C3', borderColor: 'rgba(46,216,195,0.4)' }}
+                style={{ color: '#20D6C7', borderColor: 'rgba(32,214,199,0.4)' }}
                 onClick={() => setShowAddCustomer(true)}>
                 {t('add_new_client')}
               </Button>
@@ -335,7 +335,7 @@ export default function AddDebtPage() {
                 <span className="absolute start-6 text-xl font-bold text-muted-foreground">{t('sar')}</span>
                 <Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
                   className="h-28 text-center text-5xl font-bold rounded-[28px] bg-secondary/50 border-0 focus-visible:ring-2 tracking-tighter"
-                  style={{ '--tw-ring-color': '#2ED8C3' } as any}
+                  style={{ '--tw-ring-color': '#20D6C7' } as any}
                   placeholder="0" autoFocus min={1} />
               </div>
               <div className="flex gap-3 w-full">
@@ -369,7 +369,7 @@ export default function AddDebtPage() {
                 </div>
                 <div className="text-end">
                   <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-0.5">{t('tab_amount')}</p>
-                  <p className="font-bold text-lg" style={{ color: '#2ED8C3' }}>{t('sar')} {amount}</p>
+                  <p className="font-bold text-lg" style={{ color: '#20D6C7' }}>{t('sar')} {amount}</p>
                 </div>
               </div>
 

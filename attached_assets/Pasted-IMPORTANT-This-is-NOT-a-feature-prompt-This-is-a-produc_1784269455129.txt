@@ -1,0 +1,311 @@
+IMPORTANT
+
+This is NOT a feature prompt.
+
+This is a production stabilization prompt.
+
+DO NOT redesign the architecture.
+
+DO NOT remove any existing functionality.
+
+DO NOT generate mock data.
+
+The goal is to make NearPay behave like a real production application.
+
+==================================================
+
+FIRST
+
+Perform a complete audit of the project.
+
+Detect every broken page, broken route, missing Firebase integration, runtime error and console error.
+
+Fix them before adding anything else.
+
+==================================================
+
+AUTHENTICATION
+
+Currently users can access protected pages without authentication.
+
+Fix this.
+
+Requirements:
+
+• Nobody can access Dashboard without login.
+
+• Nobody can access Add Debt without login.
+
+• Nobody can access AI Dashboard without login.
+
+• Nobody can access Analytics without login.
+
+Implement Firebase Authentication Guards.
+
+==================================================
+
+LANDING PAGE
+
+Create a premium Landing Page.
+
+When opening the application users should NOT go directly to Dashboard.
+
+Landing Page includes:
+
+NearPay logo
+
+Hero section
+
+Short description
+
+Merchant Login
+
+Merchant Register
+
+Customer Login
+
+Language selector
+
+Dark / Light mode
+
+Professional animations
+
+==================================================
+
+MERCHANT REGISTRATION
+
+Merchant Registration must require:
+
+Business Name
+
+Commercial Registration Number (Required)
+
+Business Type
+
+Owner Name
+
+Phone
+
+Email
+
+Password
+
+Confirm Password
+
+Business Address
+
+City
+
+Location
+
+Accept Terms
+
+Validate Commercial Registration field.
+
+Store it in Firestore.
+
+==================================================
+
+LOGIN
+
+Implement proper login.
+
+Users should never enter the application automatically.
+
+Support:
+
+Email + Password
+
+Phone OTP (prepare if Firebase Phone is not enabled)
+
+Persistent login
+
+Logout
+
+==================================================
+
+ADD DEBT
+
+Currently debt creation has loading/errors.
+
+Audit the Firestore integration.
+
+Fix all read/write errors.
+
+Debt creation must actually create documents inside Firestore.
+
+After creation:
+
+Redirect to Success page.
+
+==================================================
+
+CUSTOMER FLOW
+
+Verify:
+
+Approval page
+
+Objection page
+
+Payment page
+
+Debt status updates
+
+Firestore synchronization
+
+Everything must work.
+
+==================================================
+
+GOOGLE MAPS
+
+Currently map says API key missing.
+
+Prepare environment variable:
+
+VITE_GOOGLE_MAPS_KEY
+
+Gracefully handle missing API key.
+
+If key missing:
+
+Display elegant placeholder.
+
+Never crash.
+
+==================================================
+
+LOGO
+
+Replace the current logo.
+
+Design a premium minimalist logo.
+
+Concept:
+
+Map Pin
+
+Inside the pin:
+
+Saudi Riyal symbol OR payment wave
+
+Colors:
+
+Primary
+
+#0B5FFF
+
+Secondary
+
+#20D6C7
+
+White
+
+Flat style.
+
+Modern fintech startup.
+
+Generate SVG logo.
+
+Use throughout application.
+
+==================================================
+
+BRANDING
+
+Replace every green color.
+
+Use only:
+
+#0B5FFF
+
+#20D6C7
+
+White
+
+Light Gray
+
+Dark Navy
+
+Premium gradients.
+
+==================================================
+
+LANGUAGE
+
+Fix Arabic.
+
+Currently changing language does not translate everything.
+
+Implement full i18n.
+
+Arabic
+
+English
+
+RTL support
+
+Keep Urdu visible as:
+
+Coming Soon
+
+Do NOT translate Urdu label into Arabic.
+
+Display:
+
+Urdu (Coming Soon)
+
+==================================================
+
+RESPONSIVE
+
+The project should look like a real mobile application.
+
+Not a website.
+
+Optimize spacing.
+
+Cards.
+
+Buttons.
+
+Bottom navigation.
+
+Animations.
+
+==================================================
+
+ERROR HANDLING
+
+Replace ugly error messages.
+
+Display friendly UI.
+
+Retry buttons.
+
+Loading skeletons.
+
+Empty states.
+
+==================================================
+
+PERFORMANCE
+
+Remove duplicate renders.
+
+Optimize Firebase calls.
+
+Fix console warnings.
+
+==================================================
+
+FINAL
+
+When everything is complete,
+
+run a final audit.
+
+Ensure there are NO runtime errors.
+
+Stop and wait.

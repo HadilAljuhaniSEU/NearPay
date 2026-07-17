@@ -114,8 +114,8 @@ export function trustScoreLabel(score: number): 'excellent' | 'good' | 'average'
 }
 
 export function trustScoreColor(score: number): string {
-  if (score >= 90) return '#2ED8C3';
-  if (score >= 70) return '#19B8D3';
+  if (score >= 90) return '#20D6C7';
+  if (score >= 70) return '#0FB8A9';
   if (score >= 50) return '#F59E0B';
   return '#EF4444';
 }

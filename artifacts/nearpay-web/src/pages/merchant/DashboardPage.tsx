@@ -46,11 +46,11 @@ function useCountUp(target: number, duration = 700) {
 }
 
 const NOTIF_CONFIG: Record<string, { icon: React.ElementType; color: string; labelKey: string }> = {
-  approved: { icon: CheckCircle2, color: '#2ED8C3',  labelKey: 'notif_approved' },
+  approved: { icon: CheckCircle2, color: '#20D6C7',  labelKey: 'notif_approved' },
   rejected: { icon: XCircle,      color: '#EF4444',  labelKey: 'notif_rejected' },
   overdue:  { icon: AlertTriangle,color: '#F59E0B',  labelKey: 'notif_overdue'  },
   settled:  { icon: DollarSign,   color: '#6366F1',  labelKey: 'notif_settled'  },
-  created:  { icon: Clock,        color: '#19B8D3',  labelKey: 'notif_created'  },
+  created:  { icon: Clock,        color: '#0FB8A9',  labelKey: 'notif_created'  },
 };
 
 interface NotifItem { id: string; type: string; name: string; amount: number; ts: number; }
@@ -204,7 +204,7 @@ export default function DashboardPage() {
 
       {/* Ambient glow */}
       <div className="absolute top-0 right-0 w-[360px] h-[360px] rounded-full blur-[130px] pointer-events-none"
-           style={{ background: 'radial-gradient(circle, rgba(46,216,195,0.07) 0%, transparent 70%)' }} />
+           style={{ background: 'radial-gradient(circle, rgba(32,214,199,0.07) 0%, transparent 70%)' }} />
 
       {/* ── Sticky Header ──────────────────────────────────────────────────── */}
       <div className="px-5 py-4 flex items-center justify-between sticky top-0 bg-background/90 backdrop-blur-xl z-40 border-b border-border/30 relative">
@@ -272,7 +272,7 @@ export default function DashboardPage() {
             className="text-white rounded-[24px] p-6 relative overflow-hidden"
             style={{ background: 'linear-gradient(135deg, #0B2341 0%, #143B63 100%)', boxShadow: '0 8px 32px rgba(11,35,65,0.3)' }}>
             <div className="absolute top-0 end-0 w-48 h-48 rounded-full blur-3xl -me-16 -mt-16 pointer-events-none"
-                 style={{ background: 'radial-gradient(circle, rgba(46,216,195,0.2) 0%, transparent 70%)' }} />
+                 style={{ background: 'radial-gradient(circle, rgba(32,214,199,0.2) 0%, transparent 70%)' }} />
             <div className="absolute bottom-0 start-0 w-36 h-36 rounded-full blur-3xl -ms-10 -mb-10 pointer-events-none"
                  style={{ background: 'radial-gradient(circle, rgba(25,184,211,0.1) 0%, transparent 70%)' }} />
             <div className="relative z-10">
@@ -285,7 +285,7 @@ export default function DashboardPage() {
                     {t('sar')} {animBalance.toLocaleString()}
                   </h2>
                   <div className="flex items-center gap-2 text-xs font-medium mb-5 flex-wrap">
-                    <span className="px-2 py-0.5 rounded-md font-bold" style={{ color: '#2ED8C3', background: 'rgba(46,216,195,0.15)' }}>
+                    <span className="px-2 py-0.5 rounded-md font-bold" style={{ color: '#20D6C7', background: 'rgba(32,214,199,0.15)' }}>
                       {activeDebts.length} {t('active_tabs').toLowerCase()}
                     </span>
                     {overdueDebts.length > 0 && (
@@ -300,7 +300,7 @@ export default function DashboardPage() {
               <div className="flex gap-3">
                 <Link href="/merchant/add-debt" className="flex-1">
                   <Button className="w-full h-11 rounded-xl font-bold text-sm"
-                    style={{ background: 'linear-gradient(135deg, #2ED8C3 0%, #19B8D3 100%)', color: '#0B2341', boxShadow: '0 2px 8px rgba(46,216,195,0.3)' }}>
+                    style={{ background: 'linear-gradient(135deg, #20D6C7 0%, #0FB8A9 100%)', color: '#0B2341', boxShadow: '0 2px 8px rgba(32,214,199,0.3)' }}>
                     <Plus size={16} className="me-1.5" /> {t('new_tab')}
                   </Button>
                 </Link>
@@ -315,10 +315,10 @@ export default function DashboardPage() {
 
           {/* ── 6 KPI Cards ─────────────────────────────────────────────────── */}
           <motion.div variants={item} className="grid grid-cols-2 gap-3">
-            <KpiCard title={t('kpi_outstanding')} value={totalOutstanding} prefix={t('sar')} icon={Wallet}       color="#2ED8C3" isLoading={debtsLoading} />
+            <KpiCard title={t('kpi_outstanding')} value={totalOutstanding} prefix={t('sar')} icon={Wallet}       color="#20D6C7" isLoading={debtsLoading} />
             <KpiCard title={t('kpi_collected')}   value={totalCollected}   prefix={t('sar')} icon={TrendingUp}   color="#0B2341" isLoading={debtsLoading} />
             <KpiCard title={t('kpi_overdue')}     value={overdueAmount}    prefix={t('sar')} icon={AlertTriangle} color="#EF4444" isLoading={debtsLoading} />
-            <KpiCard title={t('kpi_customers')}   value={activeCustomers}              icon={Users}         color="#19B8D3" isLoading={debtsLoading} />
+            <KpiCard title={t('kpi_customers')}   value={activeCustomers}              icon={Users}         color="#0FB8A9" isLoading={debtsLoading} />
             <KpiCard title={t('kpi_total_debts')} value={debts.length}                 icon={BarChart3}     color="#6366F1" isLoading={debtsLoading} />
             <KpiCard title={t('kpi_cashflow')}    value={expectedCashFlow} prefix={t('sar')} icon={CalendarDays} color="#10B981" isLoading={debtsLoading} />
           </motion.div>
@@ -327,13 +327,13 @@ export default function DashboardPage() {
           {(insights.length > 0 || debtsLoading) && (
             <motion.div variants={item}
               className="rounded-[20px] p-5 relative overflow-hidden"
-              style={{ background: 'linear-gradient(135deg, rgba(46,216,195,0.07) 0%, rgba(25,184,211,0.04) 100%)', border: '1px solid rgba(46,216,195,0.18)' }}>
+              style={{ background: 'linear-gradient(135deg, rgba(32,214,199,0.07) 0%, rgba(25,184,211,0.04) 100%)', border: '1px solid rgba(32,214,199,0.18)' }}>
               <div className="flex items-center gap-2 mb-3">
                 <span className="flex h-2 w-2 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: '#2ED8C3' }} />
-                  <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: '#2ED8C3' }} />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: '#20D6C7' }} />
+                  <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: '#20D6C7' }} />
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#2ED8C3' }}>
+                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#20D6C7' }}>
                   <Sparkles size={11} className="inline me-1" />{t('ai_insights')}
                 </span>
               </div>
@@ -343,7 +343,7 @@ export default function DashboardPage() {
                   <ul className="space-y-2">
                     {insights.slice(0, 4).map((ins, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm font-medium text-foreground leading-snug">
-                        <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#2ED8C3' }} />
+                        <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#20D6C7' }} />
                         {ins}
                       </li>
                     ))}
@@ -358,7 +358,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t('recent_tabs')}</h2>
               <Link href="/merchant/debts">
-                <Button variant="ghost" size="sm" className="text-xs font-bold h-8 rounded-full px-3 hover:bg-secondary" style={{ color: '#2ED8C3' }}>
+                <Button variant="ghost" size="sm" className="text-xs font-bold h-8 rounded-full px-3 hover:bg-secondary" style={{ color: '#20D6C7' }}>
                   {t('view_all')} <ArrowRight size={12} className="ms-1 rtl-flip" />
                 </Button>
               </Link>

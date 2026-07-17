@@ -51,7 +51,7 @@ export const BottomNav = ({ role }: { role: 'merchant' | 'customer' }) => {
                     <motion.div
                       layoutId={`bottomNavIndicator-${role}`}
                       className="absolute inset-0 rounded-2xl"
-                      style={{ background: 'linear-gradient(135deg, rgba(46,216,195,0.18) 0%, rgba(25,184,211,0.14) 100%)' }}
+                      style={{ background: 'linear-gradient(135deg, rgba(32,214,199,0.18) 0%, rgba(25,184,211,0.14) 100%)' }}
                       transition={{ type: 'spring', bounce: 0.2, duration: 0.45 }}
                     />
                   )}

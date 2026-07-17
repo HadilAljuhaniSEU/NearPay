@@ -124,8 +124,8 @@ const INSIGHT_ICON = {
   danger:  Flame,
 };
 const INSIGHT_COLOR = {
-  success: { icon: '#2ED8C3', bg: 'rgba(46,216,195,0.1)',  border: 'rgba(46,216,195,0.2)' },
-  info:    { icon: '#19B8D3', bg: 'rgba(25,184,211,0.1)',  border: 'rgba(25,184,211,0.2)' },
+  success: { icon: '#20D6C7', bg: 'rgba(32,214,199,0.1)',  border: 'rgba(32,214,199,0.2)' },
+  info:    { icon: '#0FB8A9', bg: 'rgba(25,184,211,0.1)',  border: 'rgba(25,184,211,0.2)' },
   warning: { icon: '#F59E0B', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.2)' },
   danger:  { icon: '#EF4444', bg: 'rgba(239,68,68,0.08)',  border: 'rgba(239,68,68,0.2)'  },
 };
@@ -186,14 +186,14 @@ export default function AIPage() {
 
       {/* Ambient glow */}
       <div className="absolute top-0 right-0 w-80 h-80 rounded-full blur-[120px] pointer-events-none"
-           style={{ background: 'radial-gradient(circle, rgba(46,216,195,0.06) 0%, transparent 70%)' }} />
+           style={{ background: 'radial-gradient(circle, rgba(32,214,199,0.06) 0%, transparent 70%)' }} />
 
       <PageHeader
         title="AI & Insights"
         subtitle="Financial Intelligence"
         action={
           <div className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-bold border"
-               style={{ background: 'rgba(46,216,195,0.1)', color: '#2ED8C3', borderColor: 'rgba(46,216,195,0.25)' }}>
+               style={{ background: 'rgba(32,214,199,0.1)', color: '#20D6C7', borderColor: 'rgba(32,214,199,0.25)' }}>
             <Zap size={11} />
             Live
           </div>
@@ -237,7 +237,7 @@ export default function AIPage() {
                 <div className="rounded-[22px] p-5 relative overflow-hidden col-span-2"
                      style={{ background: 'linear-gradient(135deg, #0B2341 0%, #143B63 100%)', boxShadow: '0 4px 16px rgba(11,35,65,0.18)' }}>
                   <div className="absolute top-0 end-0 w-24 h-24 rounded-full blur-xl -me-8 -mt-8 pointer-events-none"
-                       style={{ background: 'rgba(46,216,195,0.25)' }} />
+                       style={{ background: 'rgba(32,214,199,0.25)' }} />
                   <div className="flex items-end justify-between">
                     <div>
                       <p className="text-[10px] text-white/70 font-bold uppercase tracking-widest mb-1">{t('collection_rate')}</p>
@@ -253,7 +253,7 @@ export default function AIPage() {
                   </div>
                   <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden mt-4">
                     <motion.div className="h-full rounded-full"
-                      style={{ background: 'linear-gradient(90deg, #2ED8C3, #19B8D3)' }}
+                      style={{ background: 'linear-gradient(90deg, #20D6C7, #0FB8A9)' }}
                       initial={{ width: 0 }} animate={{ width: `${metrics.collectionRate}%` }}
                       transition={{ delay: 0.3, duration: 0.9, type: 'spring' }} />
                   </div>
@@ -318,7 +318,7 @@ export default function AIPage() {
                 ) : (
                   <div className="flex items-end gap-2" style={{ height: 96 }}>
                     {metrics.monthlyRecovery.map((m, i) => (
-                      <Bar key={i} value={m.amount} max={maxRecovery} color="#2ED8C3" label={m.label} height={96} />
+                      <Bar key={i} value={m.amount} max={maxRecovery} color="#20D6C7" label={m.label} height={96} />
                     ))}
                   </div>
                 )}
@@ -328,7 +328,7 @@ export default function AIPage() {
               <motion.div variants={item} className={`${cardCls} p-5`}>
                 <h3 className="text-sm font-bold mb-4">Paid vs Outstanding</h3>
                 {[
-                  { label: 'Paid',    value: metrics.paidTotal,    color: '#2ED8C3' },
+                  { label: 'Paid',    value: metrics.paidTotal,    color: '#20D6C7' },
                   { label: 'Partial', value: metrics.partialTotal,  color: '#F59E0B' },
                   { label: 'Unpaid',  value: metrics.unpaidTotal,   color: '#EF4444' },
                 ].map(row => {
@@ -356,7 +356,7 @@ export default function AIPage() {
                   <h3 className="text-sm font-bold">Merchant Credit Insights</h3>
                 </div>
                 {[
-                  { title: 'Top Paying',          icon: Star,     color: '#2ED8C3', customers: creditIns.topPaying,          sub: (c: typeof creditIns.topPaying[0]) => `SAR ${c.totalPaid.toLocaleString()} paid` },
+                  { title: 'Top Paying',          icon: Star,     color: '#20D6C7', customers: creditIns.topPaying,          sub: (c: typeof creditIns.topPaying[0]) => `SAR ${c.totalPaid.toLocaleString()} paid` },
                   { title: 'Highest Outstanding',  icon: Wallet,   color: '#EF4444', customers: creditIns.highestOutstanding, sub: (c: typeof creditIns.topPaying[0]) => `SAR ${c.totalDebt.toLocaleString()} owed` },
                   { title: 'Fastest Paying',       icon: UserCheck,color: '#10B981', customers: creditIns.fastestPaying,      sub: (c: typeof creditIns.topPaying[0]) => `Trust ${c.trustScore}/100` },
                   { title: 'Newest Customers',     icon: Users,    color: '#6366F1', customers: creditIns.newestCustomers,    sub: (c: typeof creditIns.topPaying[0]) => `Joined ${c.createdAt ? c.createdAt.toDate().toLocaleDateString() : '—'}` },
@@ -459,8 +459,8 @@ export default function AIPage() {
               <motion.div variants={item} className={`${cardCls} p-5`}>
                 <h3 className="text-sm font-bold mb-4">Trust Score Distribution</h3>
                 {[
-                  { label: 'Excellent (90–100)', color: '#2ED8C3', count: customerScores.filter(c => c.score >= 90).length },
-                  { label: 'Good (70–89)',        color: '#19B8D3', count: customerScores.filter(c => c.score >= 70 && c.score < 90).length },
+                  { label: 'Excellent (90–100)', color: '#20D6C7', count: customerScores.filter(c => c.score >= 90).length },
+                  { label: 'Good (70–89)',        color: '#0FB8A9', count: customerScores.filter(c => c.score >= 70 && c.score < 90).length },
                   { label: 'Average (50–69)',     color: '#F59E0B', count: customerScores.filter(c => c.score >= 50 && c.score < 70).length },
                   { label: 'High Risk (<50)',     color: '#EF4444', count: customerScores.filter(c => c.score < 50).length },
                 ].map(tier => (
@@ -553,7 +553,7 @@ export default function AIPage() {
               {/* Summary tiles */}
               <motion.div variants={item} className="grid grid-cols-2 gap-3">
                 <div className="rounded-[20px] p-4 border"
-                     style={{ background: 'linear-gradient(135deg, rgba(46,216,195,0.12), rgba(25,184,211,0.08))', borderColor: 'rgba(46,216,195,0.25)' }}>
+                     style={{ background: 'linear-gradient(135deg, rgba(32,214,199,0.12), rgba(25,184,211,0.08))', borderColor: 'rgba(32,214,199,0.25)' }}>
                   <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide mb-1.5">Next 7 Days</p>
                   <p className="text-lg font-black text-foreground">{t('sar')} {cashFlow.next7Total.toLocaleString()}</p>
                   <p className="text-[10px] text-muted-foreground font-medium mt-1">Expected inflow</p>
@@ -578,7 +578,7 @@ export default function AIPage() {
                 ) : (
                   <div className="flex items-end gap-3" style={{ height: 112 }}>
                     {cashFlow.weekly.map((w, i) => (
-                      <Bar key={i} value={w.amount} max={maxCashWeekly} color="#2ED8C3" label={w.label} height={112} />
+                      <Bar key={i} value={w.amount} max={maxCashWeekly} color="#20D6C7" label={w.label} height={112} />
                     ))}
                   </div>
                 )}

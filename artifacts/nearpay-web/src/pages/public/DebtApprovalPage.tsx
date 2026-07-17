@@ -108,7 +108,7 @@ export default function DebtApprovalPage() {
 
       {/* Ambient glow */}
       <div className="absolute top-0 end-0 w-[500px] h-[500px] rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"
-           style={{ background: 'radial-gradient(circle, rgba(46,216,195,0.08), transparent)' }} />
+           style={{ background: 'radial-gradient(circle, rgba(32,214,199,0.08), transparent)' }} />
 
       <div className="flex-1 flex flex-col px-5 py-4 pb-10 overflow-y-auto relative z-10">
         <div className="mb-6 flex justify-center">

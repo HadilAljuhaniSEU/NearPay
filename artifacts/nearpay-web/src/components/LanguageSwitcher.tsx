@@ -65,14 +65,14 @@ export const LanguageSwitcher = () => {
               <span className={lang === 'ar' ? '' : 'pl-5'}>العربية</span>
             </button>
 
-            {/* Urdu — always displayed as "Urdu" in Latin, never Arabic script */}
+            {/* Urdu — always displayed as "Urdu (Coming Soon)" in Latin, never translated */}
             <button
               disabled
-              className="w-full px-4 py-3 text-sm font-medium text-muted-foreground cursor-not-allowed opacity-60 flex items-center justify-between"
+              className="w-full px-4 py-3 text-sm font-medium text-muted-foreground cursor-not-allowed opacity-55 flex items-center gap-2"
             >
               <span className="pl-5">Urdu</span>
-              <span className="text-[9px] bg-secondary px-1.5 py-0.5 rounded-sm uppercase tracking-wider font-bold">
-                Soon
+              <span className="text-[9px] bg-secondary px-2 py-0.5 rounded-full font-bold tracking-wide">
+                Coming Soon
               </span>
             </button>
           </motion.div>

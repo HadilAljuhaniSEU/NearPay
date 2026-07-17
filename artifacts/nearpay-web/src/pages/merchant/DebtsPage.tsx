@@ -134,7 +134,7 @@ export default function DebtsPage() {
           whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.94 }}
           className="absolute bottom-24 end-5 w-14 h-14 rounded-full flex items-center justify-center z-50 border-4 border-background text-navy"
-          style={{ background: 'linear-gradient(135deg, #2ED8C3 0%, #19B8D3 100%)', boxShadow: '0 4px 20px rgba(46,216,195,0.4)' }}
+          style={{ background: 'linear-gradient(135deg, #20D6C7 0%, #0FB8A9 100%)', boxShadow: '0 4px 20px rgba(32,214,199,0.4)' }}
         >
           <Plus size={24} strokeWidth={2.5} />
         </motion.button>

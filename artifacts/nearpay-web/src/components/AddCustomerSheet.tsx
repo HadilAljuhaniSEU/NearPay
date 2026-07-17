@@ -98,8 +98,8 @@ export function AddCustomerSheet({ merchantId, open, onClose, onCreated }: Props
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl flex items-center justify-center"
-                       style={{ background: 'rgba(46,216,195,0.12)' }}>
-                    <UserPlus size={19} style={{ color: '#2ED8C3' }} />
+                       style={{ background: 'rgba(32,214,199,0.12)' }}>
+                    <UserPlus size={19} style={{ color: '#20D6C7' }} />
                   </div>
                   <h2 className="text-lg font-bold">{t('add_customer_title')}</h2>
                 </div>

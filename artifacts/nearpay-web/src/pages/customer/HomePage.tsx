@@ -56,7 +56,7 @@ export default function CustomerHomePage() {
             className="text-white rounded-[24px] p-6 relative overflow-hidden"
             style={{ background: 'linear-gradient(135deg, #0B2341 0%, #143B63 100%)', boxShadow: '0 8px 32px rgba(11,35,65,0.3)' }}>
             <div className="absolute top-0 end-0 w-48 h-48 rounded-full blur-3xl -me-16 -mt-16 pointer-events-none"
-                 style={{ background: 'radial-gradient(circle, rgba(46,216,195,0.2) 0%, transparent 70%)' }} />
+                 style={{ background: 'radial-gradient(circle, rgba(32,214,199,0.2) 0%, transparent 70%)' }} />
             <div className="absolute bottom-0 start-0 w-36 h-36 rounded-full blur-3xl -ms-10 -mb-10 pointer-events-none"
                  style={{ background: 'radial-gradient(circle, rgba(25,184,211,0.1) 0%, transparent 70%)' }} />
             <div className="relative z-10">
@@ -69,7 +69,7 @@ export default function CustomerHomePage() {
               <div className="flex gap-3">
                 <Link href="/customer/debts" className="flex-1">
                   <Button className="w-full h-11 rounded-xl font-bold text-sm"
-                    style={{ background: 'linear-gradient(135deg, #2ED8C3 0%, #19B8D3 100%)', color: '#0B2341', boxShadow: '0 2px 8px rgba(46,216,195,0.3)' }}>
+                    style={{ background: 'linear-gradient(135deg, #20D6C7 0%, #0FB8A9 100%)', color: '#0B2341', boxShadow: '0 2px 8px rgba(32,214,199,0.3)' }}>
                     <CreditCard size={15} className="me-1.5" /> {t('pay_now')}
                   </Button>
                 </Link>
@@ -89,7 +89,7 @@ export default function CustomerHomePage() {
               <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t('active_tabs')}</h2>
               <Link href="/customer/debts">
                 <Button variant="ghost" size="sm" className="text-xs font-bold h-8 rounded-full px-3 hover:bg-secondary"
-                        style={{ color: '#2ED8C3' }}>
+                        style={{ color: '#20D6C7' }}>
                   {t('see_all')} <ChevronRight size={13} className="ms-0.5 rtl-flip" />
                 </Button>
               </Link>

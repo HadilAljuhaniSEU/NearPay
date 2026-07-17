@@ -61,19 +61,22 @@
   --shadow-soft: 0 4px 20px -2px rgba(11, 35, 65, 0.06);
 }
 
+/* ══════════════════════════════════════════════════
+   LIGHT MODE — NearPay 2.0 brand palette
+   Primary: #0B5FFF blue | Accent: #20D6C7 teal
+═══════════════════════════════════════════════════ */
 :root {
-  /* ── NearPay 2.0 palette ── */
-  --background: 213 50% 97%;       /* #F6F9FC */
-  --foreground: 213 71% 15%;       /* #0B2341 */
-  --card: 0 0% 100%;               /* #FFFFFF */
+  --background: 213 50% 97%;        /* #F6F9FC */
+  --foreground: 213 71% 15%;        /* #0B2341 dark navy text */
+  --card: 0 0% 100%;                /* #FFFFFF */
   --card-foreground: 213 71% 15%;
   --card-border: 213 25% 91%;
   --popover: 0 0% 100%;
   --popover-foreground: 213 71% 15%;
   --popover-border: 213 25% 91%;
 
-  /* Primary = Primary Navy */
-  --primary: 213 71% 15%;          /* #0B2341 */
+  /* Primary = NearPay Blue #0B5FFF */
+  --primary: 219 100% 52%;
   --primary-foreground: 0 0% 100%;
 
   --secondary: 213 40% 94%;
@@ -83,10 +86,10 @@
   --accent: 213 35% 94%;
   --accent-foreground: 213 71% 15%;
 
-  /* Teal accent */
-  --teal: 186 70% 46%;             /* #2ED8C3 → mid point toward #19B8D3 */
+  /* Teal accent #20D6C7 */
+  --teal: 175 62% 48%;
   --teal-foreground: 0 0% 100%;
-  --navy: 213 71% 15%;             /* #0B2341 */
+  --navy: 213 71% 15%;              /* #0B2341 */
   --navy-secondary: 210 64% 23%;   /* #143B63 */
 
   --destructive: 0 84% 60%;
@@ -98,8 +101,49 @@
 
   --border: 213 25% 91%;
   --input: 213 25% 91%;
-  --ring: 186 70% 46%;
+  --ring: 219 100% 52%;
   --radius: 20px;
+}
+
+/* ══════════════════════════════════════════════════
+   DARK MODE
+═══════════════════════════════════════════════════ */
+.dark {
+  --background: 213 45% 9%;         /* #0D1929 */
+  --foreground: 210 20% 92%;        /* near-white */
+  --card: 213 40% 13%;              /* #152133 */
+  --card-foreground: 210 20% 92%;
+  --card-border: 213 30% 22%;
+  --popover: 213 40% 13%;
+  --popover-foreground: 210 20% 92%;
+  --popover-border: 213 30% 22%;
+
+  /* Primary = NearPay Blue stays the same */
+  --primary: 219 100% 58%;          /* slightly lighter for dark bg */
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 213 35% 18%;
+  --secondary-foreground: 210 20% 85%;
+  --muted: 213 30% 18%;
+  --muted-foreground: 213 15% 60%;
+  --accent: 213 35% 18%;
+  --accent-foreground: 210 20% 92%;
+
+  --teal: 175 62% 50%;
+  --teal-foreground: 0 0% 100%;
+  --navy: 213 71% 12%;
+  --navy-secondary: 210 64% 16%;
+
+  --destructive: 0 70% 58%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 152 55% 45%;
+  --success-foreground: 0 0% 100%;
+  --warning: 38 85% 55%;
+  --warning-foreground: 0 0% 100%;
+
+  --border: 213 30% 22%;
+  --input: 213 30% 22%;
+  --ring: 219 100% 58%;
 }
 
 @layer base {
@@ -107,7 +151,7 @@
     @apply border-border;
   }
   body {
-    @apply font-sans antialiased bg-zinc-200 text-foreground;
+    @apply font-sans antialiased bg-zinc-200 dark:bg-zinc-900 text-foreground;
   }
   #root {
     @apply min-h-screen flex items-center justify-center;
@@ -136,17 +180,22 @@
    DESIGN TOKENS — Premium Fintech
 ═══════════════════════════════════════════════════ */
 
-/* Gradient: dark hero surfaces */
+/* Gradient: dark hero surfaces (navy) */
 .bg-navy-gradient {
   background: linear-gradient(135deg, #0B2341 0%, #143B63 100%);
 }
 
-/* Gradient: teal CTA buttons */
-.bg-teal-gradient {
-  background: linear-gradient(135deg, #2ED8C3 0%, #19B8D3 100%);
+/* Gradient: blue primary buttons */
+.bg-blue-gradient {
+  background: linear-gradient(135deg, #0B5FFF 0%, #0040CC 100%);
 }
 
-/* Subtle teal shimmer on interactive elements */
+/* Gradient: teal CTA / accent */
+.bg-teal-gradient {
+  background: linear-gradient(135deg, #20D6C7 0%, #0FB8A9 100%);
+}
+
+/* Subtle teal shimmer */
 .bg-teal-subtle {
   background: linear-gradient(135deg, #edfaf8 0%, #e0f7f9 100%);
 }
@@ -163,31 +212,28 @@
   transition: box-shadow 0.2s ease;
 }
 
-/* Stat card gradient accent line */
 .stat-accent-line {
-  background: linear-gradient(90deg, #2ED8C3, #19B8D3);
+  background: linear-gradient(90deg, #0B5FFF, #20D6C7);
 }
 
 /* ══════════════════════════════════════════════════
-   BUTTON OVERRIDES — Teal gradient for primary
+   BUTTON OVERRIDES — Blue gradient for primary
 ═══════════════════════════════════════════════════ */
-
-/* Override shadcn default primary button with teal gradient */
 .btn-primary,
 button[class*="bg-primary"]:not([class*="bg-primary/"]):not([class*="bg-primary-"]) {
-  background: linear-gradient(135deg, #2ED8C3 0%, #19B8D3 100%) !important;
-  color: #0B2341 !important;
+  background: linear-gradient(135deg, #0B5FFF 0%, #0040CC 100%) !important;
+  color: #FFFFFF !important;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(46, 216, 195, 0.35);
+  box-shadow: 0 2px 8px rgba(11, 95, 255, 0.35);
   transition: box-shadow 0.18s ease, transform 0.12s ease;
 }
 button[class*="bg-primary"]:not([class*="bg-primary/"]):not([class*="bg-primary-"]):hover {
-  box-shadow: 0 4px 16px rgba(46, 216, 195, 0.45) !important;
+  box-shadow: 0 4px 16px rgba(11, 95, 255, 0.45) !important;
   transform: translateY(-1px);
 }
 button[class*="bg-primary"]:not([class*="bg-primary/"]):not([class*="bg-primary-"]):active {
   transform: translateY(0);
-  box-shadow: 0 1px 4px rgba(46, 216, 195, 0.3) !important;
+  box-shadow: 0 1px 4px rgba(11, 95, 255, 0.3) !important;
 }
 
 /* ══════════════════════════════════════════════════

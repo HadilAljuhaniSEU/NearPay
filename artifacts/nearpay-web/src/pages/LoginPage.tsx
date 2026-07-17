@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Store, User, ArrowRight, Mail, Lock, Eye, EyeOff,
-  Phone, Building2, ArrowLeft, IdCard, UserCircle2,
+  Phone, Building2, ArrowLeft, IdCard, UserCircle2, MapPin, ChevronDown,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,7 @@ import { resetMerchantPassword } from '../services/authService';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useT } from '../contexts/LanguageContext';
 import { isValidSaudiPhone, normalizeSaudiPhone } from '../utils/phone';
+import { BUSINESS_TYPES, SAUDI_CITIES } from '../services/nearbyService';
 
 type Step = 'form' | 'forgot' | 'signup';
 
@@ -38,16 +39,19 @@ export default function LoginPage() {
   const [forgotError, setForgotError]     = useState<string | null>(null);
 
   // ── Sign-up ──
-  const [suBusinessName, setSuBusinessName] = useState('');
-  const [suCR, setSuCR]                     = useState('');
-  const [suOwnerName, setSuOwnerName]       = useState('');
-  const [suEmail, setSuEmail]               = useState('');
-  const [suPhone, setSuPhone]               = useState('');
-  const [suPassword, setSuPassword]         = useState('');
-  const [suConfirm, setSuConfirm]           = useState('');
-  const [suShowPw, setSuShowPw]             = useState(false);
-  const [suTerms, setSuTerms]               = useState(false);
-  const [signupError, setSignupError]       = useState<string | null>(null);
+  const [suBusinessName, setSuBusinessName]   = useState('');
+  const [suCR, setSuCR]                       = useState('');
+  const [suBusinessType, setSuBusinessType]   = useState('');
+  const [suOwnerName, setSuOwnerName]         = useState('');
+  const [suEmail, setSuEmail]                 = useState('');
+  const [suPhone, setSuPhone]                 = useState('');
+  const [suPassword, setSuPassword]           = useState('');
+  const [suConfirm, setSuConfirm]             = useState('');
+  const [suAddress, setSuAddress]             = useState('');
+  const [suCity, setSuCity]                   = useState('');
+  const [suShowPw, setSuShowPw]               = useState(false);
+  const [suTerms, setSuTerms]                 = useState(false);
+  const [signupError, setSignupError]         = useState<string | null>(null);
 
   const displayError = error ?? hookError;
 
@@ -100,12 +104,15 @@ export default function LoginPage() {
 
     try {
       await register({
-        businessName: suBusinessName,
+        businessName:           suBusinessName,
         commercialRegistration: suCR,
-        ownerName: suOwnerName,
-        email: suEmail,
-        phone: normalizeSaudiPhone(suPhone),
-        password: suPassword,
+        businessType:           suBusinessType,
+        ownerName:              suOwnerName,
+        email:                  suEmail,
+        phone:                  normalizeSaudiPhone(suPhone),
+        password:               suPassword,
+        address:                suAddress,
+        city:                   suCity,
       });
     } catch {}
   };
@@ -127,15 +134,15 @@ export default function LoginPage() {
            style={{ background: 'linear-gradient(160deg, #0B2341 0%, #0E2F53 100%)' }}>
         <div className="absolute inset-0 z-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-[700px] h-[700px] rounded-full blur-[160px] translate-x-1/3 -translate-y-1/3"
-               style={{ background: 'radial-gradient(circle, rgba(46,216,195,0.15), transparent)' }} />
+               style={{ background: 'radial-gradient(circle, rgba(32,214,199,0.15), transparent)' }} />
           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full blur-[140px] -translate-x-1/3 translate-y-1/3"
-               style={{ background: 'radial-gradient(circle, rgba(25,100,200,0.10), transparent)' }} />
+               style={{ background: 'radial-gradient(circle, rgba(11,95,255,0.10), transparent)' }} />
         </div>
         <div className="relative z-10 max-w-lg">
           <NearPayLogo size={48} variant="white" className="mb-12" />
           <h1 className="text-5xl font-bold tracking-tight text-white mb-5 leading-tight">
             {t('simplify_your')}<br />
-            <span style={{ color: '#2ED8C3' }}>{t('merchant_tabs')}</span>
+            <span style={{ color: '#20D6C7' }}>{t('merchant_tabs')}</span>
           </h1>
           <p className="text-lg mb-12 leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
             {t('hero_subtitle')}
@@ -148,15 +155,15 @@ export default function LoginPage() {
               <rect x="100" y="70" width="66" height="7" rx="3.5" fill="white" fillOpacity="0.06" />
               <rect x="40" y="108" width="110" height="10" rx="5" fill="white" fillOpacity="0.07" />
               <rect x="160" y="115" width="200" height="128" rx="20" fill="#143B63" fillOpacity="0.95" />
-              <circle cx="208" cy="163" r="21" fill="#2ED8C3" fillOpacity="0.12" />
+              <circle cx="208" cy="163" r="21" fill="#20D6C7" fillOpacity="0.12" />
               <rect x="240" y="151" width="90" height="9" rx="4.5" fill="white" fillOpacity="0.25" />
-              <rect x="240" y="167" width="66" height="7" rx="3.5" fill="#2ED8C3" fillOpacity="0.4" />
+              <rect x="240" y="167" width="66" height="7" rx="3.5" fill="#20D6C7" fillOpacity="0.4" />
               <rect x="180" y="208" width="110" height="10" rx="5" fill="white" fillOpacity="0.15" />
               <rect x="240" y="50" width="120" height="50" rx="14" fill="white" fillOpacity="0.05" stroke="white" strokeOpacity="0.08" />
               <rect x="256" y="66" width="48" height="8" rx="4" fill="white" fillOpacity="0.1" />
-              <rect x="256" y="80" width="72" height="7" rx="3.5" fill="#2ED8C3" fillOpacity="0.45" />
-              <circle cx="196" cy="115" r="5" fill="#2ED8C3" />
-              <circle cx="196" cy="115" r="5" fill="#2ED8C3" fillOpacity="0.3">
+              <rect x="256" y="80" width="72" height="7" rx="3.5" fill="#20D6C7" fillOpacity="0.45" />
+              <circle cx="196" cy="115" r="5" fill="#20D6C7" />
+              <circle cx="196" cy="115" r="5" fill="#20D6C7" fillOpacity="0.3">
                 <animate attributeName="r" from="5" to="16" dur="2s" repeatCount="indefinite" />
                 <animate attributeName="fillOpacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
               </circle>
@@ -186,15 +193,15 @@ export default function LoginPage() {
                 </div>
                 {forgotSent ? (
                   <div className="text-center py-10 space-y-4">
-                    <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto" style={{ background: 'rgba(46,216,195,0.12)' }}>
-                      <Mail className="w-7 h-7" style={{ color: '#2ED8C3' }} />
+                    <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto" style={{ background: 'rgba(32,214,199,0.12)' }}>
+                      <Mail className="w-7 h-7" style={{ color: '#20D6C7' }} />
                     </div>
                     <p className="font-bold text-base">{t('check_inbox')}</p>
                     <p className="text-sm text-muted-foreground font-medium">
                       {t('reset_link_sent')} <span className="font-bold text-foreground">{forgotEmail}</span>
                     </p>
                     <button onClick={() => { goToStep('form'); setForgotSent(false); setForgotEmail(''); }}
-                      className="text-sm font-bold hover:underline mt-4 block mx-auto" style={{ color: '#2ED8C3' }}>
+                      className="text-sm font-bold hover:underline mt-4 block mx-auto" style={{ color: '#20D6C7' }}>
                       {t('back_to_login')}
                     </button>
                   </div>
@@ -236,6 +243,26 @@ export default function LoginPage() {
                       value={suCR} onChange={(e) => setSuCR(e.target.value)} />
                   </FieldWrap>
 
+                  {/* Business Type */}
+                  <div className="relative">
+                    <div className="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none text-muted-foreground">
+                      <Store size={17} />
+                    </div>
+                    <select
+                      value={suBusinessType}
+                      onChange={(e) => setSuBusinessType(e.target.value)}
+                      className={`w-full ps-11 pe-10 appearance-none ${inputCls} bg-secondary/40 text-foreground`}
+                    >
+                      <option value="">{t('select_business_type')}</option>
+                      {BUSINESS_TYPES.map(bt => (
+                        <option key={bt} value={bt}>{bt}</option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none text-muted-foreground">
+                      <ChevronDown size={15} />
+                    </div>
+                  </div>
+
                   <FieldWrap icon={<UserCircle2 size={17} />}>
                     <Input type="text" placeholder={t('owner_full_name')} className={`ps-11 ${inputCls}`}
                       value={suOwnerName} onChange={(e) => setSuOwnerName(e.target.value)} autoComplete="name" />
@@ -250,6 +277,32 @@ export default function LoginPage() {
                     <Input type="tel" placeholder={t('saudi_phone_placeholder')} className={`ps-11 ${inputCls}`}
                       value={suPhone} onChange={(e) => setSuPhone(e.target.value)} autoComplete="tel" />
                   </FieldWrap>
+
+                  {/* Address */}
+                  <FieldWrap icon={<MapPin size={17} />}>
+                    <Input type="text" placeholder={t('store_address')} className={`ps-11 ${inputCls}`}
+                      value={suAddress} onChange={(e) => setSuAddress(e.target.value)} autoComplete="street-address" />
+                  </FieldWrap>
+
+                  {/* City */}
+                  <div className="relative">
+                    <div className="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none text-muted-foreground">
+                      <MapPin size={17} />
+                    </div>
+                    <select
+                      value={suCity}
+                      onChange={(e) => setSuCity(e.target.value)}
+                      className={`w-full ps-11 pe-10 appearance-none ${inputCls} bg-secondary/40 text-foreground`}
+                    >
+                      <option value="">{t('biz_city')}</option>
+                      {SAUDI_CITIES.map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none text-muted-foreground">
+                      <ChevronDown size={15} />
+                    </div>
+                  </div>
 
                   <div className="relative">
                     <FieldWrap icon={<Lock size={17} />}>
@@ -272,7 +325,7 @@ export default function LoginPage() {
                     <div onClick={() => setSuTerms(v => !v)}
                       className="w-5 h-5 mt-0.5 rounded-md border-2 flex-shrink-0 flex items-center justify-center transition-all"
                       style={suTerms
-                        ? { background: '#2ED8C3', borderColor: '#2ED8C3' }
+                        ? { background: '#20D6C7', borderColor: '#20D6C7' }
                         : { borderColor: 'rgba(0,0,0,0.2)' }}>
                       {suTerms && (
                         <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3.5}>
@@ -282,9 +335,9 @@ export default function LoginPage() {
                     </div>
                     <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors leading-snug">
                       {t('agree_terms')}{' '}
-                      <a href="#" onClick={e => e.stopPropagation()} className="font-bold hover:underline" style={{ color: '#2ED8C3' }}>{t('terms')}</a>
+                      <a href="#" onClick={e => e.stopPropagation()} className="font-bold hover:underline" style={{ color: '#20D6C7' }}>{t('terms')}</a>
                       {' '}&amp;{' '}
-                      <a href="#" onClick={e => e.stopPropagation()} className="font-bold hover:underline" style={{ color: '#2ED8C3' }}>{t('privacy')}</a>
+                      <a href="#" onClick={e => e.stopPropagation()} className="font-bold hover:underline" style={{ color: '#20D6C7' }}>{t('privacy')}</a>
                     </span>
                   </label>
 
@@ -346,7 +399,7 @@ export default function LoginPage() {
                         <label className="flex items-center gap-2 cursor-pointer select-none group">
                           <div onClick={() => setRememberMe(v => !v)}
                             className="w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all"
-                            style={rememberMe ? { background: '#2ED8C3', borderColor: '#2ED8C3' } : { borderColor: 'rgba(0,0,0,0.2)' }}>
+                            style={rememberMe ? { background: '#20D6C7', borderColor: '#20D6C7' } : { borderColor: 'rgba(0,0,0,0.2)' }}>
                             {rememberMe && (
                               <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -355,7 +408,7 @@ export default function LoginPage() {
                           </div>
                           <span className="text-sm font-semibold text-muted-foreground group-hover:text-foreground transition-colors">{t('remember_me')}</span>
                         </label>
-                        <button type="button" onClick={() => goToStep('forgot')} className="text-sm font-bold hover:underline" style={{ color: '#2ED8C3' }}>
+                        <button type="button" onClick={() => goToStep('forgot')} className="text-sm font-bold hover:underline" style={{ color: '#20D6C7' }}>
                           {t('forgot_password')}
                         </button>
                       </div>
@@ -369,7 +422,7 @@ export default function LoginPage() {
 
                       <p className="text-center text-sm text-muted-foreground pt-1">
                         {t('dont_have_account')}{' '}
-                        <button type="button" onClick={() => goToStep('signup')} className="font-bold hover:underline" style={{ color: '#2ED8C3' }}>
+                        <button type="button" onClick={() => goToStep('signup')} className="font-bold hover:underline" style={{ color: '#20D6C7' }}>
                           {t('create_account_link')}
                         </button>
                       </p>
@@ -380,8 +433,8 @@ export default function LoginPage() {
                     <motion.div key="customer-form" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-5">
                       <div className="rounded-[22px] p-6 text-center space-y-3 border border-border/50 bg-secondary/40">
                         <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto border"
-                             style={{ background: 'rgba(46,216,195,0.10)', borderColor: 'rgba(46,216,195,0.2)' }}>
-                          <User size={21} style={{ color: '#2ED8C3' }} />
+                             style={{ background: 'rgba(32,214,199,0.10)', borderColor: 'rgba(32,214,199,0.2)' }}>
+                          <User size={21} style={{ color: '#20D6C7' }} />
                         </div>
                         <p className="text-base font-bold">{t('no_account_needed')}</p>
                         <p className="text-sm text-muted-foreground font-medium leading-relaxed">{t('customer_panel_desc')}</p>

@@ -190,8 +190,8 @@ export default function AnalyticsPage() {
 
   // ── Customer distribution ──────────────────────────────────────────────────
   const distribution = useMemo(() => [
-    { label: t('trust_excellent'), count: customers.filter(c => c.trustScore >= 90).length, color: '#2ED8C3' },
-    { label: t('trust_good'),      count: customers.filter(c => c.trustScore >= 70 && c.trustScore < 90).length, color: '#19B8D3' },
+    { label: t('trust_excellent'), count: customers.filter(c => c.trustScore >= 90).length, color: '#20D6C7' },
+    { label: t('trust_good'),      count: customers.filter(c => c.trustScore >= 70 && c.trustScore < 90).length, color: '#0FB8A9' },
     { label: t('trust_average'),   count: customers.filter(c => c.trustScore >= 50 && c.trustScore < 70).length, color: '#F59E0B' },
     { label: t('risk_high'),       count: customers.filter(c => c.trustScore < 50).length,  color: '#EF4444' },
   ], [customers]);
@@ -231,13 +231,13 @@ export default function AnalyticsPage() {
             className="rounded-[22px] p-5 relative overflow-hidden"
             style={{ background: 'linear-gradient(135deg, #0B2341 0%, #143B63 100%)', boxShadow: '0 4px 16px rgba(11,35,65,0.2)' }}>
             <div className="absolute top-0 end-0 w-20 h-20 rounded-full blur-xl -me-6 -mt-6 pointer-events-none"
-                 style={{ background: 'rgba(46,216,195,0.2)' }} />
+                 style={{ background: 'rgba(32,214,199,0.2)' }} />
             <p className="text-[10px] text-white/70 font-bold uppercase tracking-widest mb-1.5">{t('collected')}</p>
             <p className="text-lg font-bold text-white">{t('sar')} {totalCollected.toLocaleString()}</p>
             {collectionRate > 0 && (
-              <div className="flex items-center gap-1 mt-2.5 w-fit px-2 py-0.5 rounded-md" style={{ background: 'rgba(46,216,195,0.2)' }}>
-                <TrendingUp size={11} style={{ color: '#2ED8C3' }} />
-                <span className="text-[10px] font-bold" style={{ color: '#2ED8C3' }}>{collectionRate}%</span>
+              <div className="flex items-center gap-1 mt-2.5 w-fit px-2 py-0.5 rounded-md" style={{ background: 'rgba(32,214,199,0.2)' }}>
+                <TrendingUp size={11} style={{ color: '#20D6C7' }} />
+                <span className="text-[10px] font-bold" style={{ color: '#20D6C7' }}>{collectionRate}%</span>
               </div>
             )}
           </motion.div>
@@ -290,7 +290,7 @@ export default function AnalyticsPage() {
               initial={{ width: 0 }} animate={{ width: `${collectionRate}%` }}
               transition={{ delay: 0.3, duration: 0.9, type: 'spring' }}
               className="absolute top-0 left-0 h-full rounded-full"
-              style={{ background: 'linear-gradient(90deg, #2ED8C3 0%, #19B8D3 100%)' }}
+              style={{ background: 'linear-gradient(90deg, #20D6C7 0%, #0FB8A9 100%)' }}
             />
           </div>
         </motion.div>
@@ -302,7 +302,7 @@ export default function AnalyticsPage() {
             <h3 className="text-sm font-bold">{t('chart_monthly_debts')}</h3>
             <div className="flex items-center gap-3 text-[10px] font-bold">
               <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm inline-block" style={{ background: '#0B2341' }} />{t('kpi_total_debts')}</span>
-              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm inline-block" style={{ background: '#2ED8C3' }} />{t('chart_monthly_payments')}</span>
+              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm inline-block" style={{ background: '#20D6C7' }} />{t('chart_monthly_payments')}</span>
             </div>
           </div>
           <p className="text-xs text-muted-foreground mb-4">
@@ -316,7 +316,7 @@ export default function AnalyticsPage() {
             <div className="flex items-end gap-2" style={{ height: 128 }}>
               {chartData.map((p, i) => (
                 <DualBar key={i} point={p} maxVal={maxDualVal}
-                  debtColor="rgba(11,35,65,0.5)" payColor="#2ED8C3" height={128} />
+                  debtColor="rgba(11,35,65,0.5)" payColor="#20D6C7" height={128} />
               ))}
             </div>
           )}
@@ -399,12 +399,12 @@ export default function AnalyticsPage() {
           ) : (
             <div className="p-2">
               {topDebtors.map((c, i) => {
-                const trustColor = c.trustScore >= 90 ? '#2ED8C3' : c.trustScore >= 70 ? '#19B8D3' : c.trustScore >= 50 ? '#F59E0B' : '#EF4444';
+                const trustColor = c.trustScore >= 90 ? '#20D6C7' : c.trustScore >= 70 ? '#0FB8A9' : c.trustScore >= 50 ? '#F59E0B' : '#EF4444';
                 return (
                   <div key={c.id} className="flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-secondary/50 transition-colors">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0`}
-                         style={i === 0 ? { background: 'linear-gradient(135deg, #2ED8C3, #19B8D3)', color: '#0B2341' }
-                                : i === 1 ? { background: 'rgba(46,216,195,0.2)', color: '#2ED8C3' }
+                         style={i === 0 ? { background: 'linear-gradient(135deg, #20D6C7, #0FB8A9)', color: '#0B2341' }
+                                : i === 1 ? { background: 'rgba(32,214,199,0.2)', color: '#20D6C7' }
                                 : { background: 'var(--secondary)', color: 'var(--muted-foreground)' }}>
                       {i + 1}
                     </div>

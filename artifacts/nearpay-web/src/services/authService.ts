@@ -85,17 +85,21 @@ export async function checkCRExists(cr: string): Promise<boolean> {
 export interface RegisterMerchantParams {
   businessName: string;
   commercialRegistration: string;
+  businessType?: string;
   ownerName: string;
   email: string;
   phone: string;
   password: string;
+  address?: string;
+  city?: string;
   language?: 'en' | 'ar';
 }
 
 export async function registerMerchant(params: RegisterMerchantParams): Promise<User> {
   const {
-    businessName, commercialRegistration, ownerName,
-    email, phone, password, language = 'en',
+    businessName, commercialRegistration, businessType = '',
+    ownerName, email, phone, password,
+    address = '', city = '', language = 'en',
   } = params;
 
   const credential = await createUserWithEmailAndPassword(auth, email, password);
@@ -107,6 +111,7 @@ export async function registerMerchant(params: RegisterMerchantParams): Promise<
     uid,
     businessName,
     commercialRegistration: commercialRegistration.trim(),
+    businessType,
     ownerName,
     email,
     phone,
@@ -122,8 +127,8 @@ export async function registerMerchant(params: RegisterMerchantParams): Promise<
     // Legacy compat aliases
     name: businessName,
     ownerId: uid,
-    address: '',
-    city: '',
+    address,
+    city,
   });
 
   // Create user linking doc

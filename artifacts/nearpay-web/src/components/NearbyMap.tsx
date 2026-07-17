@@ -84,7 +84,7 @@ export const NearbyMap: React.FC<NearbyMapProps> = ({ userCoords, merchants, onM
           icon={{
             path: google.maps.SymbolPath.CIRCLE,
             scale: 10,
-            fillColor: '#2ED8C3',
+            fillColor: '#20D6C7',
             fillOpacity: 1,
             strokeColor: '#ffffff',
             strokeWeight: 3,
@@ -129,7 +129,7 @@ export const NearbyMap: React.FC<NearbyMapProps> = ({ userCoords, merchants, onM
             <button
               onClick={() => { setSelected(null); onMerchantClick(selected); }}
               className="mt-2 flex items-center gap-1 text-xs font-bold text-teal hover:underline"
-              style={{ color: '#2ED8C3' }}
+              style={{ color: '#20D6C7' }}
             >
               <ExternalLink size={11} /> View Profile
             </button>

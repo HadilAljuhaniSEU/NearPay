@@ -133,7 +133,7 @@ export default function DebtPaymentPage() {
       </div>
 
       <div className="absolute top-0 end-0 w-[500px] h-[500px] rounded-full blur-[130px] pointer-events-none"
-           style={{ background: 'radial-gradient(circle, rgba(46,216,195,0.06), transparent)' }} />
+           style={{ background: 'radial-gradient(circle, rgba(32,214,199,0.06), transparent)' }} />
 
       <div className="flex-1 flex flex-col px-5 py-4 pb-10 overflow-y-auto relative z-10">
         <div className="mb-6 flex justify-center">
@@ -169,7 +169,7 @@ export default function DebtPaymentPage() {
               <div className="rounded-[24px] p-6 text-white relative overflow-hidden"
                    style={{ background: 'linear-gradient(135deg, #0B2341 0%, #143B63 100%)', boxShadow: '0 8px 32px rgba(11,35,65,0.25)' }}>
                 <div className="absolute top-0 start-0 w-40 h-40 rounded-full blur-3xl -ms-10 -mt-10 pointer-events-none"
-                     style={{ background: 'rgba(46,216,195,0.15)' }} />
+                     style={{ background: 'rgba(32,214,199,0.15)' }} />
                 <div className="relative z-10">
                   {debt.referenceNumber && (
                     <div className="flex items-center gap-1.5 mb-3">
@@ -259,7 +259,7 @@ export default function DebtPaymentPage() {
                       {/* TODO: add payment gateway SDK button/logo here per method */}
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                         method === m.value ? 'border-teal' : 'border-border'
-                      }`} style={method === m.value ? { background: '#2ED8C3' } : {}}>
+                      }`} style={method === m.value ? { background: '#20D6C7' } : {}}>
                         {method === m.value && <div className="w-2 h-2 rounded-full bg-white" />}
                       </div>
                     </div>

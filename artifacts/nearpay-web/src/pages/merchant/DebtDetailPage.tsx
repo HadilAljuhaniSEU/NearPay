@@ -147,7 +147,7 @@ export default function DebtDetailPage() {
           <div className="text-center space-y-2">
             <AlertCircle size={40} className="mx-auto text-muted-foreground" />
             <p className="font-bold">{t('debt_not_found')}</p>
-            <button onClick={() => setLocation('/merchant/debts')} className="text-sm font-bold" style={{ color: '#2ED8C3' }}>
+            <button onClick={() => setLocation('/merchant/debts')} className="text-sm font-bold" style={{ color: '#20D6C7' }}>
               {t('view_tab')}
             </button>
           </div>
@@ -205,7 +205,7 @@ export default function DebtDetailPage() {
               isSettled  ? 'bg-secondary/50 border-border' :
               isRejected ? 'bg-destructive/5 border-destructive/20' :
                            'border-teal/20'
-            }`} style={!isOverdue && !isSettled && !isRejected ? { background: 'rgba(46,216,195,0.06)' } : {}}>
+            }`} style={!isOverdue && !isSettled && !isRejected ? { background: 'rgba(32,214,199,0.06)' } : {}}>
               <p className="text-[10px] font-bold text-muted-foreground mb-2 uppercase tracking-widest">
                 {isSettled ? t('settled_amount') : t('amount_due')}
               </p>
@@ -354,7 +354,7 @@ export default function DebtDetailPage() {
                   </div>
                 ))}
                 <div className="relative ps-9">
-                  <div className="absolute start-[11px] top-1 w-2.5 h-2.5 rounded-full ring-4 ring-card" style={{ background: '#2ED8C3' }} />
+                  <div className="absolute start-[11px] top-1 w-2.5 h-2.5 rounded-full ring-4 ring-card" style={{ background: '#20D6C7' }} />
                   <p className="font-bold text-sm text-foreground mb-0.5">{t('initial_entry')}</p>
                   <p className="text-xs text-muted-foreground font-medium">{createdDateStr}</p>
                 </div>
@@ -389,7 +389,7 @@ export default function DebtDetailPage() {
                           </p>
                         </div>
                       </div>
-                      <p className="font-bold text-sm" style={{ color: '#2ED8C3' }}>+{t('sar')} {p.amount}</p>
+                      <p className="font-bold text-sm" style={{ color: '#20D6C7' }}>+{t('sar')} {p.amount}</p>
                     </div>
                   ))}
                 </div>
@@ -448,10 +448,10 @@ export default function DebtDetailPage() {
                   <Input type="number" value={payAmount} min={1} max={debt.remainingAmount}
                     onChange={(e) => setPayAmount(e.target.value)}
                     className="ps-14 h-14 rounded-[18px] text-xl font-bold bg-secondary/50 border-0 focus-visible:ring-2 tracking-tight"
-                    style={{ '--tw-ring-color': '#2ED8C3' } as any} />
+                    style={{ '--tw-ring-color': '#20D6C7' } as any} />
                   <button onClick={() => setPayAmount(String(debt.remainingAmount))}
                     className="absolute inset-y-0 end-0 flex items-center pe-4 text-xs font-bold"
-                    style={{ color: '#2ED8C3' }}>
+                    style={{ color: '#20D6C7' }}>
                     {t('full_payment_btn')}
                   </button>
                 </div>
@@ -465,7 +465,7 @@ export default function DebtDetailPage() {
                           ? 'border-teal text-foreground'
                           : 'border-transparent bg-secondary/70 text-muted-foreground hover:text-foreground'
                       }`}
-                      style={payMethod === m.value ? { background: 'rgba(46,216,195,0.08)' } : {}}>
+                      style={payMethod === m.value ? { background: 'rgba(32,214,199,0.08)' } : {}}>
                       {t(m.labelKey as any)}
                     </button>
                   ))}

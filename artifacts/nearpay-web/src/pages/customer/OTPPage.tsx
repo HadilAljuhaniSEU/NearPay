@@ -152,7 +152,7 @@ export default function CustomerOTPPage() {
       {/* Background blobs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl opacity-20"
-             style={{ background: 'radial-gradient(circle, #2ED8C3, transparent)' }} />
+             style={{ background: 'radial-gradient(circle, #20D6C7, transparent)' }} />
         <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full blur-3xl opacity-10"
              style={{ background: 'radial-gradient(circle, #0B2341, transparent)' }} />
       </div>
@@ -168,8 +168,8 @@ export default function CustomerOTPPage() {
             <motion.div key="phone" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}>
               <div className="bg-card rounded-3xl p-7 shadow-sm border border-border/60">
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5"
-                     style={{ background: 'rgba(46,216,195,0.12)' }}>
-                  <Phone size={22} style={{ color: '#2ED8C3' }} />
+                     style={{ background: 'rgba(32,214,199,0.12)' }}>
+                  <Phone size={22} style={{ color: '#20D6C7' }} />
                 </div>
                 <h2 className="text-xl font-bold tracking-tight mb-1">{t('otp_title')}</h2>
                 <p className="text-sm text-muted-foreground font-medium mb-6">{t('otp_subtitle')}</p>
@@ -207,8 +207,8 @@ export default function CustomerOTPPage() {
                 </button>
 
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5"
-                     style={{ background: 'rgba(46,216,195,0.12)' }}>
-                  <ShieldCheck size={22} style={{ color: '#2ED8C3' }} />
+                     style={{ background: 'rgba(32,214,199,0.12)' }}>
+                  <ShieldCheck size={22} style={{ color: '#20D6C7' }} />
                 </div>
                 <h2 className="text-xl font-bold tracking-tight mb-1">{t('otp_enter_title')}</h2>
                 <p className="text-sm text-muted-foreground font-medium mb-1">{t('otp_sent_to')}</p>
@@ -235,7 +235,7 @@ export default function CustomerOTPPage() {
                 <p className="text-center text-sm text-muted-foreground mt-4 font-medium">
                   {resendCooldown > 0
                     ? <>{t('otp_resend_in')} <span className="font-bold text-foreground">{resendCooldown}s</span></>
-                    : <button onClick={handleResend} className="font-bold hover:underline" style={{ color: '#2ED8C3' }}>{t('otp_resend')}</button>
+                    : <button onClick={handleResend} className="font-bold hover:underline" style={{ color: '#20D6C7' }}>{t('otp_resend')}</button>
                   }
                 </p>
               </div>
@@ -247,8 +247,8 @@ export default function CustomerOTPPage() {
             <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
               <div className="bg-card rounded-3xl p-7 shadow-sm border border-border/60 text-center space-y-4">
                 <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto"
-                     style={{ background: 'rgba(46,216,195,0.12)' }}>
-                  <ShieldCheck size={30} style={{ color: '#2ED8C3' }} />
+                     style={{ background: 'rgba(32,214,199,0.12)' }}>
+                  <ShieldCheck size={30} style={{ color: '#20D6C7' }} />
                 </div>
                 <p className="text-lg font-bold">{t('otp_verified')}</p>
                 <p className="text-sm text-muted-foreground font-medium">{t('otp_redirecting')}</p>

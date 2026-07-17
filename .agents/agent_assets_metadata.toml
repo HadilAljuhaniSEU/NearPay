@@ -6,3 +6,81 @@ id = "GyBhdJE5i5Ojh98iAEx8m"
 uri = "file://artifacts/video-ar/public/audio/bg_music.mp3"
 type = "audio"
 title = "Arabic NearPay background music"
+
+[[outputs]]
+id = "O-vWOCGIEKbgl7idBvY7M"
+uri = "file://artifacts/video-ar-v2/public/audio/bg_music.mp3"
+type = "audio"
+title = "Arabic fintech background music 76s"
+
+[[outputs]]
+id = "LJKij5jz6Xlrma-cHlTDj"
+uri = "file://artifacts/video-ar-v2/public/audio/vo_merchantRegister.mp3"
+type = "audio"
+title = "VO merchantRegister"
+
+[[outputs]]
+id = "9Nl8Gd_soPIkFEOw8AD_2"
+uri = "file://artifacts/video-ar-v2/public/audio/vo_merchantDashboard.mp3"
+type = "audio"
+title = "VO merchantDashboard"
+
+[[outputs]]
+id = "V6NpNFrwrOgcQzzgTvEfR"
+uri = "file://artifacts/video-ar-v2/public/audio/vo_transition.mp3"
+type = "audio"
+title = "VO transition"
+
+[[outputs]]
+id = "QVw-u2aXv0-srb6pI4vxa"
+uri = "file://artifacts/video-ar-v2/public/audio/vo_addDebt.mp3"
+type = "audio"
+title = "VO addDebt"
+
+[[outputs]]
+id = "FmE-grbZ1Mm6S2VQwj4SU"
+uri = "file://artifacts/video-ar-v2/public/audio/vo_success.mp3"
+type = "audio"
+title = "VO success"
+
+[[outputs]]
+id = "pGRwBxkfd2I0sxe9CD8CL"
+uri = "file://artifacts/video-ar-v2/public/audio/vo_customerRegister.mp3"
+type = "audio"
+title = "VO customerRegister"
+
+[[outputs]]
+id = "GdYLvx7JFyCcouKSazSky"
+uri = "file://artifacts/video-ar-v2/public/audio/vo_hook.mp3"
+type = "audio"
+title = "VO hook"
+
+[[outputs]]
+id = "NO4OwuoyI2JE6sAtF8FwI"
+uri = "file://artifacts/video-ar-v2/public/audio/vo_contactOptions.mp3"
+type = "audio"
+title = "VO contactOptions"
+
+[[outputs]]
+id = "9cOnR9Xh19jcDnjsy2hoj"
+uri = "file://artifacts/video-ar-v2/public/audio/vo_merchantProfile.mp3"
+type = "audio"
+title = "VO merchantProfile"
+
+[[outputs]]
+id = "3BxEEPpxQ12N5gutoJf3d"
+uri = "file://artifacts/video-ar-v2/public/audio/vo_nearbyStores.mp3"
+type = "audio"
+title = "VO nearbyStores"
+
+[[outputs]]
+id = "mW54AaOY9V-6yI7ql7XRX"
+uri = "file://artifacts/video-ar-v2/public/audio/vo_outro.mp3"
+type = "audio"
+title = "VO outro"
+
+[[outputs]]
+id = "V4R1u-e-ch1vH43lGfrSQ"
+uri = "file://artifacts/video-ar-v2/public/audio/vo_acceptDebt.mp3"
+type = "audio"
+title = "VO acceptDebt"

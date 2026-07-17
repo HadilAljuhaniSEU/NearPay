@@ -8,6 +8,7 @@ import {
   collection,
   where,
   getDocs,
+  increment,
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../lib/firebase';
@@ -62,6 +63,25 @@ export async function uploadMerchantLogo(
   const storageRef = ref(storage, `merchant_logos/${merchantId}/${file.name}`);
   await uploadBytes(storageRef, file);
   return getDownloadURL(storageRef);
+}
+
+// ─── Update aggregate counters atomically ─────────────────────────────────────
+export async function updateMerchantAggregates(
+  merchantId: string,
+  deltas: {
+    totalOutstandingDelta?: number;
+    totalCollectedDelta?: number;
+    customerCountDelta?: number;
+  }
+): Promise<void> {
+  const updates: Record<string, unknown> = { updatedAt: serverTimestamp() };
+  if (deltas.totalOutstandingDelta !== undefined)
+    updates.totalOutstanding = increment(deltas.totalOutstandingDelta);
+  if (deltas.totalCollectedDelta !== undefined)
+    updates.totalCollected = increment(deltas.totalCollectedDelta);
+  if (deltas.customerCountDelta !== undefined)
+    updates.customerCount = increment(deltas.customerCountDelta);
+  await updateDoc(doc(db, COL, merchantId), updates);
 }
 
 // ─── Settings ─────────────────────────────────────────────────────────────────

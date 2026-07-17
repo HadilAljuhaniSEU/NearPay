@@ -56,16 +56,18 @@ export async function fetchDebtByPaymentToken(token: string): Promise<DebtDoc | 
 // ─── Create ───────────────────────────────────────────────────────────────────
 export async function createDebt(
   data: Omit<DebtDoc, 'id' | 'createdAt' | 'updatedAt' | 'approvalToken' | 'paymentToken'>
-): Promise<string> {
+): Promise<{ id: string; approvalToken: string; paymentToken: string }> {
   const now = serverTimestamp();
+  const approvalToken = generateToken();
+  const paymentToken  = generateToken();
   const ref_ = await addDoc(collection(db, COL), {
     ...data,
-    approvalToken: generateToken(),
-    paymentToken: generateToken(),
+    approvalToken,
+    paymentToken,
     createdAt: now,
     updatedAt: now,
   });
-  return ref_.id;
+  return { id: ref_.id, approvalToken, paymentToken };
 }
 
 // ─── Update status ────────────────────────────────────────────────────────────
@@ -115,6 +117,16 @@ export async function updateDebt(
   data: Partial<Omit<DebtDoc, 'id' | 'createdAt'>>
 ): Promise<void> {
   await updateDoc(doc(db, COL, id), { ...data, updatedAt: serverTimestamp() });
+}
+
+// ─── Real-time listener for single debt ──────────────────────────────────────
+export function subscribeDebt(
+  id: string,
+  callback: (debt: DebtDoc | null) => void
+): Unsubscribe {
+  return onSnapshot(doc(db, COL, id), (snap) => {
+    callback(snap.exists() ? ({ id: snap.id, ...snap.data() } as DebtDoc) : null);
+  });
 }
 
 // ─── Real-time listener ───────────────────────────────────────────────────────

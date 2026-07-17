@@ -13,6 +13,7 @@ import { db } from '../lib/firebase';
 import { PaymentDoc, PaymentMethod } from '../types';
 import { applyPaymentToDebt } from './debtService';
 import { updateCustomer } from './customerService';
+import { updateMerchantAggregates } from './merchantService';
 
 const COL = 'payments';
 
@@ -68,6 +69,12 @@ export async function recordPayment(params: {
   await updateCustomer(params.customerId, {
     totalPaid: params.currentCustomerPaid + params.amount,
     totalDebt: Math.max(0, (params.currentRemaining ?? params.amount) - params.amount),
+  });
+
+  // 4. Update merchant aggregates
+  await updateMerchantAggregates(params.merchantId, {
+    totalOutstandingDelta: -params.amount,
+    totalCollectedDelta: params.amount,
   });
 
   return ref_.id;

@@ -11,10 +11,11 @@ import { DebtDoc } from '../types';
  * E.164 format returned by Firebase phone auth (e.g. +966XXXXXXXXX).
  */
 export function useCustomerDebts() {
-  const [debts, setDebts]             = useState<DebtDoc[]>([]);
-  const [loading, setLoading]         = useState(true);
-  const [phone, setPhone]             = useState<string | null>(null);
+  const [debts, setDebts]               = useState<DebtDoc[]>([]);
+  const [loading, setLoading]           = useState(true);
+  const [phone, setPhone]               = useState<string | null>(null);
   const [customerName, setCustomerName] = useState('');
+  const [error, setError]               = useState<string | null>(null);
 
   // Watch auth state to get customer phone
   useEffect(() => {
@@ -30,15 +31,26 @@ export function useCustomerDebts() {
     if (!phone) { setLoading(false); return; }
 
     setLoading(true);
-    const unsub = subscribeDebtsByCustomerPhone(phone, (data) => {
-      setDebts(data);
-      if (data.length > 0 && !customerName) {
-        setCustomerName(data[0].customerName);
+    setError(null);
+
+    const unsub = subscribeDebtsByCustomerPhone(
+      phone,
+      (data) => {
+        setDebts(data);
+        if (data.length > 0 && !customerName) {
+          setCustomerName(data[0].customerName);
+        }
+        setLoading(false);
+      },
+      (err) => {
+        console.error('[useCustomerDebts] subscription error:', err);
+        setError(err.message);
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    );
+
     return unsub;
   }, [phone]);
 
-  return { debts, loading, phone, customerName };
+  return { debts, loading, phone, customerName, error };
 }

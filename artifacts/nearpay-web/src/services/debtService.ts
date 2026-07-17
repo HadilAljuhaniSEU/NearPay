@@ -7,7 +7,6 @@ import {
   updateDoc,
   query,
   where,
-  orderBy,
   serverTimestamp,
   onSnapshot,
   Unsubscribe,
@@ -18,15 +17,25 @@ import { generateToken, generateReferenceNumber } from '../lib/tokens';
 
 const COL = 'debts';
 
+// ─── Sort helper (client-side — avoids composite index requirement) ────────────
+function sortByCreatedAtDesc(docs: DebtDoc[]): DebtDoc[] {
+  return [...docs].sort((a, b) => {
+    const aT = (a.createdAt as any)?.seconds ?? 0;
+    const bT = (b.createdAt as any)?.seconds ?? 0;
+    return bT - aT;
+  });
+}
+
 // ─── Fetch all for a merchant ─────────────────────────────────────────────────
 export async function fetchDebts(merchantId: string): Promise<DebtDoc[]> {
+  // No orderBy — avoids composite index. Sorted client-side.
   const q = query(
     collection(db, COL),
-    where('merchantId', '==', merchantId),
-    orderBy('createdAt', 'desc')
+    where('merchantId', '==', merchantId)
   );
   const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as DebtDoc));
+  const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as DebtDoc));
+  return sortByCreatedAtDesc(docs);
 }
 
 // ─── Fetch single ─────────────────────────────────────────────────────────────
@@ -134,39 +143,68 @@ export async function updateDebt(
 // ─── Real-time listener by customer phone ────────────────────────────────────
 export function subscribeDebtsByCustomerPhone(
   phone: string,
-  callback: (debts: DebtDoc[]) => void
+  callback: (debts: DebtDoc[]) => void,
+  onError?: (err: Error) => void
 ): Unsubscribe {
+  // Single-field where — no composite index needed.
   const q = query(
     collection(db, COL),
-    where('customerPhone', '==', phone),
-    orderBy('createdAt', 'desc')
+    where('customerPhone', '==', phone)
   );
-  return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as DebtDoc)));
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as DebtDoc));
+      callback(sortByCreatedAtDesc(docs));
+    },
+    (err) => {
+      console.error('[debtService] subscribeDebtsByCustomerPhone error:', err);
+      onError?.(err);
+      callback([]);
+    }
+  );
 }
 
 // ─── Real-time listener for single debt ──────────────────────────────────────
 export function subscribeDebt(
   id: string,
-  callback: (debt: DebtDoc | null) => void
+  callback: (debt: DebtDoc | null) => void,
+  onError?: (err: Error) => void
 ): Unsubscribe {
-  return onSnapshot(doc(db, COL, id), (snap) => {
-    callback(snap.exists() ? ({ id: snap.id, ...snap.data() } as DebtDoc) : null);
-  });
+  return onSnapshot(
+    doc(db, COL, id),
+    (snap) => {
+      callback(snap.exists() ? ({ id: snap.id, ...snap.data() } as DebtDoc) : null);
+    },
+    (err) => {
+      console.error('[debtService] subscribeDebt error:', err);
+      onError?.(err);
+      callback(null);
+    }
+  );
 }
 
-// ─── Real-time listener ───────────────────────────────────────────────────────
+// ─── Real-time listener for all debts of a merchant ──────────────────────────
+// No orderBy — avoids composite index. Sorted client-side.
 export function subscribeDebts(
   merchantId: string,
-  callback: (debts: DebtDoc[]) => void
+  callback: (debts: DebtDoc[]) => void,
+  onError?: (err: Error) => void
 ): Unsubscribe {
   const q = query(
     collection(db, COL),
-    where('merchantId', '==', merchantId),
-    orderBy('createdAt', 'desc')
+    where('merchantId', '==', merchantId)
   );
-  return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as DebtDoc)));
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as DebtDoc));
+      callback(sortByCreatedAtDesc(docs));
+    },
+    (err) => {
+      console.error('[debtService] subscribeDebts error:', err);
+      onError?.(err);
+      callback([]); // unblock UI
+    }
+  );
 }

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User } from 'firebase/auth';
 import { onAuthChange } from '../services/authService';
-import { fetchMerchantByOwner } from '../services/merchantService';
+import { fetchMerchantByOwner, ensureMerchantAggregates } from '../services/merchantService';
 import { MerchantDoc } from '../types';
 
 interface AuthState {
@@ -19,10 +19,10 @@ const AuthContext = createContext<AuthState>({
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser]         = useState<User | null>(null);
   const [merchant, setMerchant] = useState<MerchantDoc | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthChange(async (firebaseUser) => {
@@ -32,6 +32,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (firebaseUser) {
         try {
           const m = await fetchMerchantByOwner(firebaseUser.uid);
+          if (m) {
+            // Ensure aggregate fields exist for legacy accounts registered
+            // before totalOutstanding / totalCollected / customerCount were added.
+            await ensureMerchantAggregates(m.id).catch(() => {
+              // Non-critical — ignore silently
+            });
+          }
           setMerchant(m);
         } catch (err: unknown) {
           console.error('Failed to fetch merchant doc:', err);

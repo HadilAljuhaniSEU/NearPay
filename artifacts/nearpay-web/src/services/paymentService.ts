@@ -4,40 +4,50 @@ import {
   getDocs,
   query,
   where,
-  orderBy,
   serverTimestamp,
   onSnapshot,
   Unsubscribe,
+  Timestamp,
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { PaymentDoc, PaymentMethod } from '../types';
 import { applyPaymentToDebt } from './debtService';
 import { updateCustomer, adjustTrustScore } from './customerService';
 import { updateMerchantAggregates } from './merchantService';
-import { Timestamp } from 'firebase/firestore';
 
 const COL = 'payments';
 
+// ─── Sort helper (client-side — avoids composite index requirement) ────────────
+function sortByCreatedAtDesc(docs: PaymentDoc[]): PaymentDoc[] {
+  return [...docs].sort((a, b) => {
+    const aT = (a.createdAt as any)?.seconds ?? 0;
+    const bT = (b.createdAt as any)?.seconds ?? 0;
+    return bT - aT;
+  });
+}
+
 // ─── Fetch all for a merchant ─────────────────────────────────────────────────
 export async function fetchPayments(merchantId: string): Promise<PaymentDoc[]> {
+  // No orderBy — avoids composite index. Sorted client-side.
   const q = query(
     collection(db, COL),
-    where('merchantId', '==', merchantId),
-    orderBy('createdAt', 'desc')
+    where('merchantId', '==', merchantId)
   );
   const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as PaymentDoc));
+  const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as PaymentDoc));
+  return sortByCreatedAtDesc(docs);
 }
 
 // ─── Fetch for a single debt ──────────────────────────────────────────────────
 export async function fetchPaymentsForDebt(debtId: string): Promise<PaymentDoc[]> {
+  // Single-field where — no composite index needed.
   const q = query(
     collection(db, COL),
-    where('debtId', '==', debtId),
-    orderBy('createdAt', 'desc')
+    where('debtId', '==', debtId)
   );
   const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as PaymentDoc));
+  const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as PaymentDoc));
+  return sortByCreatedAtDesc(docs);
 }
 
 // ─── Record a payment (also updates debt + customer totals) ───────────────────
@@ -91,16 +101,26 @@ export async function recordPayment(params: {
 }
 
 // ─── Real-time listener ───────────────────────────────────────────────────────
+// No orderBy — avoids composite index. Sorted client-side.
 export function subscribePayments(
   merchantId: string,
-  callback: (payments: PaymentDoc[]) => void
+  callback: (payments: PaymentDoc[]) => void,
+  onError?: (err: Error) => void
 ): Unsubscribe {
   const q = query(
     collection(db, COL),
-    where('merchantId', '==', merchantId),
-    orderBy('createdAt', 'desc')
+    where('merchantId', '==', merchantId)
   );
-  return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as PaymentDoc)));
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as PaymentDoc));
+      callback(sortByCreatedAtDesc(docs));
+    },
+    (err) => {
+      console.error('[paymentService] subscribePayments error:', err);
+      onError?.(err);
+      callback([]);
+    }
+  );
 }

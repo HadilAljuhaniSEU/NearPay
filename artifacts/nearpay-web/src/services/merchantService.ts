@@ -30,7 +30,7 @@ export async function fetchMerchantByOwner(uid: string): Promise<MerchantDoc | n
   const direct = await getDoc(doc(db, COL, uid));
   if (direct.exists()) return { id: direct.id, ...direct.data() } as MerchantDoc;
 
-  // Legacy fallback
+  // Legacy fallback — single-field query, no composite index needed
   const q = query(collection(db, COL), where('ownerId', '==', uid));
   const snap = await getDocs(q);
   if (snap.empty) return null;
@@ -52,7 +52,7 @@ export async function updateMerchant(
   id: string,
   data: Partial<Omit<MerchantDoc, 'id' | 'createdAt'>>
 ): Promise<void> {
-  await updateDoc(doc(db, COL, id), { ...data, updatedAt: serverTimestamp() });
+  await setDoc(doc(db, COL, id), { ...data, updatedAt: serverTimestamp() }, { merge: true });
 }
 
 // ─── Upload logo ──────────────────────────────────────────────────────────────
@@ -66,6 +66,10 @@ export async function uploadMerchantLogo(
 }
 
 // ─── Update aggregate counters atomically ─────────────────────────────────────
+// Uses setDoc+merge so this is safe even if the document is missing aggregate
+// fields (e.g. legacy accounts registered before these fields were introduced).
+// Firestore's increment() initialises missing numeric fields to 0 automatically,
+// but setDoc+merge ensures the document itself exists.
 export async function updateMerchantAggregates(
   merchantId: string,
   deltas: {
@@ -81,7 +85,23 @@ export async function updateMerchantAggregates(
     updates.totalCollected = increment(deltas.totalCollectedDelta);
   if (deltas.customerCountDelta !== undefined)
     updates.customerCount = increment(deltas.customerCountDelta);
-  await updateDoc(doc(db, COL, merchantId), updates);
+
+  // setDoc+merge ensures the document exists and increment() works on any field
+  await setDoc(doc(db, COL, merchantId), updates, { merge: true });
+}
+
+// ─── Ensure aggregate fields exist (call on first login for legacy accounts) ──
+export async function ensureMerchantAggregates(merchantId: string): Promise<void> {
+  const snap = await getDoc(doc(db, COL, merchantId));
+  if (!snap.exists()) return;
+  const data = snap.data();
+  const patch: Record<string, unknown> = {};
+  if (data.totalOutstanding === undefined) patch.totalOutstanding = 0;
+  if (data.totalCollected   === undefined) patch.totalCollected   = 0;
+  if (data.customerCount    === undefined) patch.customerCount    = 0;
+  if (Object.keys(patch).length > 0) {
+    await setDoc(doc(db, COL, merchantId), patch, { merge: true });
+  }
 }
 
 // ─── Settings ─────────────────────────────────────────────────────────────────

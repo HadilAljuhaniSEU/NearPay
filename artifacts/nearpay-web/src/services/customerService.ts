@@ -4,30 +4,39 @@ import {
   addDoc,
   getDoc,
   getDocs,
-  updateDoc,
+  setDoc,
   deleteDoc,
   query,
   where,
-  orderBy,
   serverTimestamp,
   onSnapshot,
   Unsubscribe,
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../lib/firebase';
+import { db } from '../lib/firebase';
 import { CustomerDoc } from '../types';
 
 const COL = 'customers';
 
+// ─── Sort helper (client-side — avoids composite index requirement) ────────────
+function sortByCreatedAtDesc(docs: CustomerDoc[]): CustomerDoc[] {
+  return [...docs].sort((a, b) => {
+    const aT = (a.createdAt as any)?.seconds ?? 0;
+    const bT = (b.createdAt as any)?.seconds ?? 0;
+    return bT - aT;
+  });
+}
+
 // ─── Fetch all for a merchant ─────────────────────────────────────────────────
 export async function fetchCustomers(merchantId: string): Promise<CustomerDoc[]> {
+  // NOTE: no orderBy — avoids requiring a composite index in Firestore.
+  // Results are sorted client-side.
   const q = query(
     collection(db, COL),
-    where('merchantId', '==', merchantId),
-    orderBy('createdAt', 'desc')
+    where('merchantId', '==', merchantId)
   );
   const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as CustomerDoc));
+  const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as CustomerDoc));
+  return sortByCreatedAtDesc(docs);
 }
 
 // ─── Fetch single ─────────────────────────────────────────────────────────────
@@ -49,12 +58,16 @@ export async function createCustomer(
   return ref_.id;
 }
 
-// ─── Update ───────────────────────────────────────────────────────────────────
+// ─── Update (setDoc merge — safe even if fields are missing or doc is new) ────
 export async function updateCustomer(
   id: string,
   data: Partial<Omit<CustomerDoc, 'id' | 'createdAt'>>
 ): Promise<void> {
-  await updateDoc(doc(db, COL, id), { ...data, updatedAt: serverTimestamp() });
+  await setDoc(
+    doc(db, COL, id),
+    { ...data, updatedAt: serverTimestamp() },
+    { merge: true }
+  );
 }
 
 // ─── Delete ───────────────────────────────────────────────────────────────────
@@ -62,35 +75,40 @@ export async function deleteCustomer(id: string): Promise<void> {
   await deleteDoc(doc(db, COL, id));
 }
 
-// ─── Upload avatar ────────────────────────────────────────────────────────────
-export async function uploadCustomerAvatar(
-  customerId: string,
-  file: File
-): Promise<string> {
-  const storageRef = ref(storage, `customer_avatars/${customerId}/${file.name}`);
-  await uploadBytes(storageRef, file);
-  return getDownloadURL(storageRef);
-}
-
 // ─── Adjust trust score (clamped 0–100) ─────────────────────────────────────
 export async function adjustTrustScore(customerId: string, delta: number): Promise<void> {
   const customer = await fetchCustomer(customerId);
   if (!customer) return;
   const newScore = Math.max(0, Math.min(100, customer.trustScore + delta));
-  await updateDoc(doc(db, COL, customerId), { trustScore: newScore, updatedAt: serverTimestamp() });
+  await setDoc(
+    doc(db, COL, customerId),
+    { trustScore: newScore, updatedAt: serverTimestamp() },
+    { merge: true }
+  );
 }
 
 // ─── Real-time listener ───────────────────────────────────────────────────────
+// Uses where() only — no orderBy — so no composite index is needed.
+// Documents are sorted client-side after each snapshot.
 export function subscribeCustomers(
   merchantId: string,
-  callback: (customers: CustomerDoc[]) => void
+  callback: (customers: CustomerDoc[]) => void,
+  onError?: (err: Error) => void
 ): Unsubscribe {
   const q = query(
     collection(db, COL),
-    where('merchantId', '==', merchantId),
-    orderBy('createdAt', 'desc')
+    where('merchantId', '==', merchantId)
   );
-  return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() } as CustomerDoc)));
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as CustomerDoc));
+      callback(sortByCreatedAtDesc(docs));
+    },
+    (err) => {
+      console.error('[customerService] subscribeCustomers error:', err);
+      onError?.(err);
+      callback([]); // unblock UI
+    }
+  );
 }

@@ -17,11 +17,11 @@ interface Props {
 
 export function AddCustomerSheet({ merchantId, open, onClose, onCreated }: Props) {
   const t = useT();
-  const [fullName, setFullName]   = useState('');
-  const [phone, setPhone]         = useState('');
-  const [email, setEmail]         = useState('');
-  const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState('');
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone]       = useState('');
+  const [email, setEmail]       = useState('');
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState('');
 
   const reset = () => { setFullName(''); setPhone(''); setEmail(''); setError(''); };
 
@@ -35,20 +35,22 @@ export function AddCustomerSheet({ merchantId, open, onClose, onCreated }: Props
 
     setLoading(true);
     try {
+      const normalizedPhone = normalizeSaudiPhone(phone);
       const id = await createCustomer({
         merchantId,
         fullName: fullName.trim(),
-        phone: normalizeSaudiPhone(phone),
+        phone: normalizedPhone,
         email: email.trim() || undefined,
         trustScore: 80,
         totalDebt: 0,
         totalPaid: 0,
       });
+
       const created: CustomerDoc = {
         id,
         merchantId,
         fullName: fullName.trim(),
-        phone: normalizeSaudiPhone(phone),
+        phone: normalizedPhone,
         email: email.trim() || undefined,
         trustScore: 80,
         totalDebt: 0,
@@ -58,8 +60,17 @@ export function AddCustomerSheet({ merchantId, open, onClose, onCreated }: Props
       };
       reset();
       onCreated(created);
-    } catch {
-      setError(t('load_failed'));
+    } catch (err: unknown) {
+      console.error('[AddCustomerSheet] createCustomer failed:', err);
+      const msg = err instanceof Error ? err.message : String(err);
+      // Show a helpful error if it looks like a Firestore permission error
+      if (msg.includes('permission') || msg.includes('PERMISSION_DENIED')) {
+        setError('Permission denied — check Firestore security rules.');
+      } else if (msg.includes('offline') || msg.includes('unavailable')) {
+        setError('No connection — please check your internet and try again.');
+      } else {
+        setError(t('load_failed'));
+      }
     } finally {
       setLoading(false);
     }

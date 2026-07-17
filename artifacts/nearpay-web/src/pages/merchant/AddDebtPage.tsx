@@ -15,7 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useCustomers } from '../../hooks/useCustomers';
 import { createDebt } from '../../services/debtService';
-import { updateCustomer } from '../../services/customerService';
+import { createCustomer, fetchCustomer, updateCustomer } from '../../services/customerService';
 import { updateMerchantAggregates } from '../../services/merchantService';
 import { CustomerDoc, DebtStatus, ApprovalStatus, PaymentType } from '../../types';
 import { useT } from '../../contexts/LanguageContext';
@@ -87,6 +87,26 @@ export default function AddDebtPage() {
     setSubmitError('');
     setSubmitting(true);
     try {
+      // ── Step A: Ensure customer document exists in Firestore ──────────────
+      // (guards against the case where the customer was created in this session
+      //  but the Firestore write failed silently, or the customer was selected
+      //  from a stale local cache)
+      let customerId = selectedCustomer.id;
+      const existingCustomer = await fetchCustomer(customerId).catch(() => null);
+      if (!existingCustomer) {
+        // Re-create the customer doc so the debt has a valid reference
+        customerId = await createCustomer({
+          merchantId:  merchant.id,
+          fullName:    selectedCustomer.fullName,
+          phone:       selectedCustomer.phone,
+          email:       selectedCustomer.email,
+          trustScore:  selectedCustomer.trustScore ?? 80,
+          totalDebt:   selectedCustomer.totalDebt  ?? 0,
+          totalPaid:   selectedCustomer.totalPaid  ?? 0,
+        });
+      }
+
+      // ── Step B: Create the debt document ─────────────────────────────────
       const dueDateTs = dueDate
         ? Timestamp.fromDate(new Date(dueDate + 'T12:00:00'))
         : null;
@@ -94,7 +114,7 @@ export default function AddDebtPage() {
       const { approvalToken, paymentToken } = await createDebt({
         merchantId:      merchant.id,
         merchantName:    merchant.name,
-        customerId:      selectedCustomer.id,
+        customerId,
         customerName:    selectedCustomer.fullName,
         customerPhone:   selectedCustomer.phone,
         amount:          amountNum,
@@ -106,18 +126,26 @@ export default function AddDebtPage() {
         approvalStatus:  'pending' as ApprovalStatus,
       });
 
-      // Update merchant outstanding
-      await updateMerchantAggregates(merchant.id, { totalOutstandingDelta: amountNum });
-
-      // Update customer totalDebt
-      await updateCustomer(selectedCustomer.id, {
-        totalDebt: (selectedCustomer.totalDebt || 0) + amountNum,
-      });
+      // ── Step C: Update dashboard statistics ──────────────────────────────
+      // These are best-effort — a failure here must not block the success flow.
+      await Promise.allSettled([
+        updateMerchantAggregates(merchant.id, { totalOutstandingDelta: amountNum }),
+        updateCustomer(customerId, {
+          totalDebt: (selectedCustomer.totalDebt || 0) + amountNum,
+        }),
+      ]);
 
       setCreatedLinks({ approvalToken, paymentToken });
     } catch (err) {
-      console.error(err);
-      setSubmitError(t('load_failed'));
+      console.error('[AddDebtPage] handleSubmit error:', err);
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.includes('permission') || msg.includes('PERMISSION_DENIED')) {
+        setSubmitError('Permission denied — check Firestore security rules.');
+      } else if (msg.includes('offline') || msg.includes('unavailable')) {
+        setSubmitError('No connection — please check your internet and try again.');
+      } else {
+        setSubmitError(t('load_failed'));
+      }
     } finally {
       setSubmitting(false);
     }

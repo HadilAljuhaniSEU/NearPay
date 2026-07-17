@@ -17,7 +17,6 @@ export const BottomNav = ({ role }: { role: 'merchant' | 'customer' }) => {
     { id: 'customers', labelKey: 'nav_clients' as const, icon: Users,    path: '/merchant/customers' },
     { id: 'analytics', labelKey: 'nav_stats' as const,   icon: PieChart, path: '/merchant/analytics' },
     { id: 'ai',        labelKey: 'nav_ai' as const,      icon: Sparkles, path: '/merchant/ai' },
-    { id: 'settings',  labelKey: 'nav_menu' as const,    icon: Settings, path: '/merchant/settings' },
   ];
 
   const customerTabs = [

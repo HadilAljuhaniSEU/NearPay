@@ -46,6 +46,7 @@ export default function DebtsPage() {
       <PageHeader
         title={t('store_tabs')}
         subtitle={loading ? t('loading') : `${debts.length}`}
+        showSettings
       />
 
       <div className="page-scroll px-5 py-4">

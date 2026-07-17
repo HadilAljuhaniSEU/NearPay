@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bell, Plus, Users, ArrowRight, ChevronRight, Sparkles,
   CheckCircle2, XCircle, AlertTriangle, Clock, TrendingUp,
-  Wallet, BarChart3, CalendarDays, X, DollarSign,
+  Wallet, BarChart3, CalendarDays, X, DollarSign, Settings,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { StatusBar } from '../../components/StatusBar';
@@ -55,17 +55,20 @@ const NOTIF_CONFIG: Record<string, { icon: React.ElementType; color: string; lab
 
 interface NotifItem { id: string; type: string; name: string; amount: number; ts: number; }
 
-function NotifRow({ item, t }: { item: NotifItem; t: (k: any, ...a: string[]) => string }) {
+function NotifRow({ item, t, isRead }: { item: NotifItem; t: (k: any, ...a: string[]) => string; isRead: boolean }) {
   const cfg = NOTIF_CONFIG[item.type] ?? NOTIF_CONFIG.created;
   const Icon = cfg.icon;
   const timeStr = item.ts ? formatDistanceToNow(new Date(item.ts), { addSuffix: true }) : '';
   return (
-    <div className="flex items-start gap-3 px-3 py-3 rounded-2xl hover:bg-secondary/50 transition-colors">
+    <div className={`flex items-start gap-3 px-3 py-3 rounded-2xl hover:bg-secondary/50 transition-colors relative ${isRead ? 'opacity-70' : ''}`}>
+      {!isRead && (
+        <span className="absolute top-3 end-3 w-2 h-2 rounded-full" style={{ background: cfg.color }} />
+      )}
       <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
            style={{ background: `${cfg.color}18` }}>
         <Icon size={15} style={{ color: cfg.color }} />
       </div>
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 pe-4">
         <p className="text-sm font-bold text-foreground leading-tight">{t(cfg.labelKey as any)}</p>
         <p className="text-xs text-muted-foreground font-medium mt-0.5 truncate">{item.name} · {t('sar')} {item.amount.toLocaleString()}</p>
       </div>
@@ -120,6 +123,14 @@ export default function DashboardPage() {
 
   const [showNotif, setShowNotif] = useState(false);
 
+  // ── Notification read / clear state (persisted in localStorage) ──────────
+  const [readIds, setReadIds] = useState<Set<string>>(() =>
+    new Set(JSON.parse(localStorage.getItem('np_read_notifs') || '[]'))
+  );
+  const [clearedIds, setClearedIds] = useState<Set<string>>(() =>
+    new Set(JSON.parse(localStorage.getItem('np_cleared_notifs') || '[]'))
+  );
+
   // ── Derived KPIs ─────────────────────────────────────────────────────────
   const now  = Date.now();
   const in30 = now + 30 * 24 * 60 * 60 * 1000;
@@ -159,9 +170,28 @@ export default function DashboardPage() {
     return items.sort((a, b) => b.ts - a.ts).slice(0, 12);
   }, [debts]);
 
+  const visibleNotifications = useMemo(
+    () => notifications.filter(n => !clearedIds.has(n.id)),
+    [notifications, clearedIds]);
+
   const urgentCount = useMemo(
-    () => notifications.filter(n => n.type === 'approved' || n.type === 'overdue').length,
-    [notifications]);
+    () => visibleNotifications.filter(n =>
+      (n.type === 'approved' || n.type === 'overdue') && !readIds.has(n.id)
+    ).length,
+    [visibleNotifications, readIds]);
+
+  const handleMarkAllRead = () => {
+    const ids = new Set([...readIds, ...visibleNotifications.map(n => n.id)]);
+    localStorage.setItem('np_read_notifs', JSON.stringify([...ids]));
+    setReadIds(ids);
+  };
+
+  const handleClearAll = () => {
+    const ids = new Set([...clearedIds, ...visibleNotifications.map(n => n.id)]);
+    localStorage.setItem('np_cleared_notifs', JSON.stringify([...ids]));
+    setClearedIds(ids);
+    setShowNotif(false);
+  };
 
   // ── AI Insights (calculated from live data) ───────────────────────────────
   const collectionRate = (totalCollected + totalOutstanding) > 0
@@ -229,6 +259,12 @@ export default function DashboardPage() {
               </span>
             )}
           </Button>
+          <Link href="/merchant/settings">
+            <Button variant="outline" size="icon"
+              className="rounded-full h-9 w-9 bg-card border-border/60 text-foreground">
+              <Settings size={15} />
+            </Button>
+          </Link>
         </div>
 
         {/* Notifications Panel */}
@@ -244,17 +280,32 @@ export default function DashboardPage() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.97 }}
                 transition={{ type: 'spring', damping: 24, stiffness: 300 }}>
-                <div className="px-4 py-3 border-b border-border/60 flex items-center justify-between sticky top-0 bg-card z-10">
-                  <h3 className="text-sm font-bold">{t('notif_title')}</h3>
-                  <button onClick={() => setShowNotif(false)}
-                    className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground">
-                    <X size={12} />
-                  </button>
+                <div className="px-4 py-3 border-b border-border/60 sticky top-0 bg-card z-10">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-bold">{t('notif_title')}</h3>
+                    <button onClick={() => setShowNotif(false)}
+                      className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground">
+                      <X size={12} />
+                    </button>
+                  </div>
+                  {visibleNotifications.length > 0 && (
+                    <div className="flex gap-2">
+                      <button onClick={handleMarkAllRead}
+                        className="text-[10px] font-bold text-primary hover:underline">
+                        {t('mark_all_read')}
+                      </button>
+                      <span className="text-muted-foreground/40 text-[10px]">·</span>
+                      <button onClick={handleClearAll}
+                        className="text-[10px] font-bold text-muted-foreground hover:text-destructive">
+                        {t('clear_notifications')}
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div className="p-2">
-                  {notifications.length === 0
+                  {visibleNotifications.length === 0
                     ? <p className="text-center text-sm text-muted-foreground py-6">{t('notif_empty')}</p>
-                    : notifications.map(n => <NotifRow key={n.id} item={n} t={t} />)
+                    : visibleNotifications.map(n => <NotifRow key={n.id} item={n} t={t} isRead={readIds.has(n.id)} />)
                   }
                 </div>
               </motion.div>

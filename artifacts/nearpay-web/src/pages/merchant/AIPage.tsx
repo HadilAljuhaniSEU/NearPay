@@ -91,14 +91,15 @@ function Bar({ value, max, color, label, height = 96 }: {
 // ─── Risk badge ───────────────────────────────────────────────────────────────
 
 function RiskBadge({ level }: { level: 'low' | 'medium' | 'high' }) {
+  const t = useT();
   const cfg = {
-    low:    { label: 'Low Risk',    bg: 'bg-emerald-500/10', text: 'text-emerald-600 dark:text-emerald-400' },
-    medium: { label: 'Medium Risk', bg: 'bg-amber-500/10',   text: 'text-amber-600 dark:text-amber-400' },
-    high:   { label: 'High Risk',   bg: 'bg-destructive/10', text: 'text-destructive' },
+    low:    { labelKey: 'ai_risk_low'        as const, bg: 'bg-emerald-500/10', text: 'text-emerald-600 dark:text-emerald-400' },
+    medium: { labelKey: 'ai_risk_medium'     as const, bg: 'bg-amber-500/10',   text: 'text-amber-600 dark:text-amber-400' },
+    high:   { labelKey: 'ai_risk_high_label' as const, bg: 'bg-destructive/10', text: 'text-destructive' },
   }[level];
   return (
     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${cfg.bg} ${cfg.text}`}>
-      {cfg.label}
+      {t(cfg.labelKey)}
     </span>
   );
 }
@@ -106,13 +107,14 @@ function RiskBadge({ level }: { level: 'low' | 'medium' | 'high' }) {
 // ─── Action suggestion label ──────────────────────────────────────────────────
 
 function ActionLabel({ action }: { action: CustomerRiskProfile['suggestedAction'] }) {
+  const t = useT();
   const cfg = {
-    safe:         { label: 'Safe Customer',     color: 'text-emerald-500' },
-    remind:       { label: 'Send Reminder',     color: 'text-amber-500'   },
-    reduce_credit:{ label: 'Reduce Credit',     color: 'text-orange-500'  },
-    urgent:       { label: 'Urgent Follow-up',  color: 'text-destructive' },
+    safe:         { labelKey: 'ai_risk_safe'   as const, color: 'text-emerald-500' },
+    remind:       { labelKey: 'ai_risk_remind' as const, color: 'text-amber-500'   },
+    reduce_credit:{ labelKey: 'ai_risk_reduce' as const, color: 'text-orange-500'  },
+    urgent:       { labelKey: 'ai_risk_urgent' as const, color: 'text-destructive' },
   }[action];
-  return <span className={`text-[10px] font-bold ${cfg.color}`}>{cfg.label}</span>;
+  return <span className={`text-[10px] font-bold ${cfg.color}`}>{t(cfg.labelKey)}</span>;
 }
 
 // ─── Insight card ─────────────────────────────────────────────────────────────
@@ -133,14 +135,14 @@ const INSIGHT_COLOR = {
 // ─── Tab definitions ──────────────────────────────────────────────────────────
 
 const TABS = [
-  { id: 'health',   label: 'Financial Health', icon: Wallet   },
-  { id: 'insights', label: 'Smart Insights',   icon: Brain    },
-  { id: 'trust',    label: 'Trust Scores',     icon: Shield   },
-  { id: 'cashflow', label: 'Cash Flow',        icon: TrendingUp },
-  { id: 'risk',     label: 'Risk Analysis',    icon: AlertTriangle },
-] as const;
+  { id: 'health'   as const, labelKey: 'ai_tab_health'   as const, icon: Wallet   },
+  { id: 'insights' as const, labelKey: 'ai_tab_insights'  as const, icon: Brain    },
+  { id: 'trust'    as const, labelKey: 'ai_tab_trust'     as const, icon: Shield   },
+  { id: 'cashflow' as const, labelKey: 'ai_tab_cashflow'  as const, icon: TrendingUp },
+  { id: 'risk'     as const, labelKey: 'ai_tab_risk'      as const, icon: AlertTriangle },
+];
 
-type TabId = typeof TABS[number]['id'];
+type TabId = 'health' | 'insights' | 'trust' | 'cashflow' | 'risk';
 
 // ─── Stagger variants ─────────────────────────────────────────────────────────
 
@@ -189,13 +191,14 @@ export default function AIPage() {
            style={{ background: 'radial-gradient(circle, rgba(32,214,199,0.06) 0%, transparent 70%)' }} />
 
       <PageHeader
-        title="AI & Insights"
-        subtitle="Financial Intelligence"
+        title={t('ai_copilot_title')}
+        subtitle={t('ai_copilot_sub')}
+        showSettings
         action={
           <div className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-bold border"
                style={{ background: 'rgba(32,214,199,0.1)', color: '#20D6C7', borderColor: 'rgba(32,214,199,0.25)' }}>
             <Zap size={11} />
-            Live
+            {t('ai_active')}
           </div>
         }
       />
@@ -217,7 +220,7 @@ export default function AIPage() {
                 }`}
               >
                 <Icon size={12} />
-                {tab.label}
+                {t(tab.labelKey)}
               </button>
             );
           })}

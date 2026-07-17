@@ -3,10 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { createCustomer } from '../services/customerService';
+import { createCustomer, checkPhoneExists } from '../services/customerService';
 import { CustomerDoc } from '../types';
 import { isValidSaudiPhone, normalizeSaudiPhone } from '../utils/phone';
 import { useT } from '../contexts/LanguageContext';
+import { useLocation } from 'wouter';
 
 interface Props {
   merchantId: string;
@@ -17,13 +18,15 @@ interface Props {
 
 export function AddCustomerSheet({ merchantId, open, onClose, onCreated }: Props) {
   const t = useT();
-  const [fullName, setFullName] = useState('');
-  const [phone, setPhone]       = useState('');
-  const [email, setEmail]       = useState('');
-  const [loading, setLoading]   = useState(false);
-  const [error, setError]       = useState('');
+  const [, setLocation] = useLocation();
+  const [fullName, setFullName]               = useState('');
+  const [phone, setPhone]                     = useState('');
+  const [email, setEmail]                     = useState('');
+  const [loading, setLoading]                 = useState(false);
+  const [error, setError]                     = useState('');
+  const [existingCustomerId, setExistingCustomerId] = useState<string | null>(null);
 
-  const reset = () => { setFullName(''); setPhone(''); setEmail(''); setError(''); };
+  const reset = () => { setFullName(''); setPhone(''); setEmail(''); setError(''); setExistingCustomerId(null); };
 
   const handleClose = () => { reset(); onClose(); };
 
@@ -34,8 +37,19 @@ export function AddCustomerSheet({ merchantId, open, onClose, onCreated }: Props
     if (!isValidSaudiPhone(phone)) { setError(t('invalid_saudi_phone')); return; }
 
     setLoading(true);
+    setExistingCustomerId(null);
     try {
       const normalizedPhone = normalizeSaudiPhone(phone);
+
+      // ── Duplicate phone check ────────────────────────────────────────────
+      const existing = await checkPhoneExists(merchantId, normalizedPhone);
+      if (existing) {
+        setError(t('customer_already_exists'));
+        setExistingCustomerId(existing.id);
+        setLoading(false);
+        return;
+      }
+
       const id = await createCustomer({
         merchantId,
         fullName: fullName.trim(),
@@ -147,8 +161,19 @@ export function AddCustomerSheet({ merchantId, open, onClose, onCreated }: Props
               </div>
 
               {error && (
-                <div className="mt-3 p-3 bg-destructive/8 rounded-xl border border-destructive/15">
+                <div className="mt-3 p-3 bg-destructive/8 rounded-xl border border-destructive/15 space-y-2">
                   <p className="text-sm font-semibold text-destructive text-center">{error}</p>
+                  {existingCustomerId && (
+                    <button
+                      onClick={() => {
+                        handleClose();
+                        setLocation(`/merchant/customer/${existingCustomerId}`);
+                      }}
+                      className="w-full text-xs font-bold text-primary underline underline-offset-2 text-center"
+                    >
+                      {t('open_customer_profile')}
+                    </button>
+                  )}
                 </div>
               )}
 

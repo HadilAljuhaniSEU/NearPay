@@ -22,6 +22,7 @@ import AnalyticsPage from './pages/merchant/AnalyticsPage';
 import AIPage from './pages/merchant/AIPage';
 import MerchantSettingsPage from './pages/merchant/SettingsPage';
 import MerchantNearbyPage from './pages/merchant/NearbyPage';
+import CustomerDetailPage from './pages/merchant/CustomerDetailPage';
 // Customer
 import CustomerHomePage from './pages/customer/HomePage';
 import CustomerNearbyPage from './pages/customer/NearbyPage';
@@ -78,6 +79,9 @@ function Router() {
       </Route>
       <Route path="/merchant/nearby">
         <ProtectedRoute><MerchantNearbyPage /></ProtectedRoute>
+      </Route>
+      <Route path="/merchant/customer/:id">
+        <ProtectedRoute><CustomerDetailPage /></ProtectedRoute>
       </Route>
 
       {/* ── Protected customer routes — redirects unauthenticated to /customer/login ── */}

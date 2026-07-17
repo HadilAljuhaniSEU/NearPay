@@ -52,6 +52,7 @@ export default function MerchantNearbyPage() {
       <PageHeader
         title={t('explore_title')}
         subtitle={t('explore_sub')}
+        showSettings
         action={
           <div className="flex bg-secondary p-1 rounded-xl">
             <button

@@ -9,6 +9,7 @@ import { SkeletonCard } from '../../components/SkeletonCard';
 import { AddCustomerSheet } from '../../components/AddCustomerSheet';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useLocation } from 'wouter';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useCustomers } from '../../hooks/useCustomers';
 import { useT } from '../../contexts/LanguageContext';
@@ -27,6 +28,7 @@ function trustScoreToRisk(score: number): 'low' | 'medium' | 'high' {
 export default function CustomersPage() {
   const [search, setSearch] = useState('');
   const [showAddSheet, setShowAddSheet] = useState(false);
+  const [, setLocation] = useLocation();
   const { merchant } = useAuthContext();
   const { customers, loading } = useCustomers(merchant?.id ?? null);
   const t = useT();
@@ -48,6 +50,7 @@ export default function CustomersPage() {
       <PageHeader
         title={t('customers_title')}
         subtitle={loading ? t('loading') : `${customers.length}`}
+        showSettings
         action={
           <Button
             size="icon"
@@ -98,6 +101,7 @@ export default function CustomersPage() {
                       totalDebt={customer.totalDebt}
                       trustScore={customer.trustScore}
                       risk={trustScoreToRisk(customer.trustScore)}
+                      onClick={() => setLocation(`/merchant/customer/${customer.id}`)}
                     />
                   </motion.div>
                 ))

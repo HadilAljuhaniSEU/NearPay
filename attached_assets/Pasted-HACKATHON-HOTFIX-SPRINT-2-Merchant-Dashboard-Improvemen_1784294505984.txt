@@ -1,0 +1,173 @@
+HACKATHON HOTFIX SPRINT 2
+Merchant Dashboard Improvements
+
+This sprint focuses ONLY on merchant usability and critical bug fixes.
+
+Do NOT redesign the entire app.
+Keep the current architecture.
+Improve UX and fix merchant issues.
+
+=================================
+1. MERCHANT MENU
+=================================
+
+Replace the bottom navigation item called "Menu".
+
+Move all settings-related options into a top AppBar action.
+
+Arabic:
+Top RIGHT corner.
+
+English:
+Top LEFT corner.
+
+Use a Settings (⚙️) icon or Profile avatar.
+
+The Settings page should contain:
+
+- My Profile
+- My Stores
+- Employees
+- Language
+- Notifications
+- Security
+- Help & Support
+- Logout
+
+Remove the unnecessary bottom "Menu" tab.
+
+=================================
+2. NEW DEBT
+=================================
+
+Rename:
+
+"New Account"
+
+to
+
+"New Debt"
+
+Arabic:
+
+"تسجيل دين"
+
+Use this wording consistently across the app.
+
+=================================
+3. ADD CUSTOMER BUG
+=================================
+
+Fix customer creation.
+
+Customer creation must succeed even if email is empty.
+
+Email is OPTIONAL.
+
+Never block saving because email is missing.
+
+=================================
+4. DUPLICATE PHONE VALIDATION
+=================================
+
+Inside the SAME store,
+
+Phone numbers must be unique.
+
+If phone already exists:
+
+Show:
+
+"This customer already exists."
+
+Offer to open the existing customer profile.
+
+=================================
+5. CUSTOMER CARD
+=================================
+
+Customer cards must be clickable.
+
+Open Customer Details page.
+
+Display:
+
+- Name
+- Phone
+- Email (if available)
+- Active debts
+- Payment history
+- Notes
+
+=================================
+6. NOTIFICATIONS
+=================================
+
+Improve notification UX.
+
+Add:
+
+- Mark as read
+- Mark all as read
+- Clear notifications
+
+Unread badge should disappear after reading.
+
+=================================
+7. AI PAGE
+=================================
+
+If application language is Arabic,
+
+The AI dashboard must also be Arabic.
+
+No English cards.
+
+No mixed language.
+
+=================================
+8. ANALYTICS
+=================================
+
+Improve empty analytics.
+
+If there is insufficient data,
+
+Show friendly placeholders.
+
+Never show fake statistics.
+
+=================================
+9. CONSISTENCY
+=================================
+
+Every page should have:
+
+Proper loading
+
+Proper empty state
+
+Proper error state
+
+Never leave blank pages.
+
+After implementation,
+
+Test:
+
+✓ Merchant Login
+
+✓ Add Customer
+
+✓ Customer Details
+
+✓ Register Debt
+
+✓ Notifications
+
+✓ Settings
+
+✓ Analytics
+
+No runtime errors.
+No console errors.

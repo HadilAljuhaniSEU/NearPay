@@ -14,7 +14,7 @@ export interface CustomerCardProps {
   risk: 'low' | 'medium' | 'high';
 }
 
-export const CustomerCard = ({ name, phone, avatar, totalDebt, trustScore, risk }: CustomerCardProps) => {
+export const CustomerCard = ({ name, phone, avatar, totalDebt, trustScore, risk, onClick }: CustomerCardProps & { onClick?: () => void }) => {
   const t = useT();
 
   const riskLabelKeys = {
@@ -27,6 +27,7 @@ export const CustomerCard = ({ name, phone, avatar, totalDebt, trustScore, risk 
     <motion.div
       whileHover={{ y: -1 }}
       whileTap={{ scale: 0.985 }}
+      onClick={onClick}
       className="bg-card border border-card-border p-5 rounded-[20px] cursor-pointer flex items-center justify-between gap-4 group"
       style={{ boxShadow: '0 1px 3px rgba(11,35,65,0.06), 0 4px 12px rgba(11,35,65,0.04)' }}
     >

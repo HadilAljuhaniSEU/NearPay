@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { useLocation } from 'wouter';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from './LanguageSwitcher';
 
@@ -11,9 +11,10 @@ interface PageHeaderProps {
   showBack?: boolean;
   onBack?: () => void;
   showLanguage?: boolean;
+  showSettings?: boolean;
 }
 
-export const PageHeader = ({ title, subtitle, action, showBack = false, onBack, showLanguage = false }: PageHeaderProps) => {
+export const PageHeader = ({ title, subtitle, action, showBack = false, onBack, showLanguage = false, showSettings = false }: PageHeaderProps) => {
   const [_, setLocation] = useLocation();
 
   const handleBack = () => {
@@ -34,8 +35,18 @@ export const PageHeader = ({ title, subtitle, action, showBack = false, onBack, 
           {subtitle && <p className="text-sm text-muted-foreground font-medium mt-0.5">{subtitle}</p>}
         </div>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         {showLanguage && <LanguageSwitcher />}
+        {showSettings && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setLocation('/merchant/settings')}
+            className="rounded-full h-9 w-9 bg-card border-border/60 text-foreground hover:bg-secondary"
+          >
+            <Settings size={16} />
+          </Button>
+        )}
         {action}
       </div>
     </div>

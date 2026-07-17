@@ -207,9 +207,19 @@ export default function AnalyticsPage() {
   return (
     <div className="app-container flex flex-col bg-background">
       <StatusBar />
-      <PageHeader title={t('analytics_title')} />
+      <PageHeader title={t('analytics_title')} showSettings />
 
       <div className="page-scroll px-5 py-4 space-y-5">
+
+        {/* Empty state when no data yet */}
+        {!debtsLoading && debts.length === 0 && customers.length === 0 && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            className="bg-card border border-border/60 rounded-[22px] p-10 text-center shadow-sm mt-2">
+            <BarChart3 size={40} className="mx-auto text-muted-foreground/30 mb-4" />
+            <h3 className="text-base font-bold text-foreground mb-1">{t('analytics_empty_title')}</h3>
+            <p className="text-sm text-muted-foreground font-medium">{t('analytics_empty_sub')}</p>
+          </motion.div>
+        )}
 
         {/* Period Selector */}
         <div className="flex gap-2">

@@ -87,6 +87,18 @@ export async function adjustTrustScore(customerId: string, delta: number): Promi
   );
 }
 
+// ─── Check if phone already exists within a merchant ─────────────────────────
+export async function checkPhoneExists(merchantId: string, phone: string): Promise<CustomerDoc | null> {
+  const q = query(
+    collection(db, COL),
+    where('merchantId', '==', merchantId),
+    where('phone', '==', phone)
+  );
+  const snap = await getDocs(q);
+  if (snap.empty) return null;
+  return { id: snap.docs[0].id, ...snap.docs[0].data() } as CustomerDoc;
+}
+
 // ─── Real-time listener ───────────────────────────────────────────────────────
 // Uses where() only — no orderBy — so no composite index is needed.
 // Documents are sorted client-side after each snapshot.

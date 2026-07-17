@@ -1,6 +1,7 @@
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  updateProfile,
   signOut,
   sendPasswordResetEmail,
   onAuthStateChanged,
@@ -161,9 +162,8 @@ export async function registerCustomer(
   displayName: string
 ): Promise<User> {
   const credential = await createUserWithEmailAndPassword(auth, email, password);
-  // Best-effort display name update; non-blocking
+  // Best-effort display name update — non-blocking, does not affect auth success
   try {
-    const { updateProfile } = await import('firebase/auth');
     await updateProfile(credential.user, { displayName: displayName.trim() });
   } catch { /* non-critical */ }
   return credential.user;
@@ -214,18 +214,25 @@ export async function createCustomerDoc(
   email = '',
   displayName = '',
 ): Promise<void> {
-  const ref = doc(db, 'customers', uid);
-  const existing = await getDoc(ref);
-  if (existing.exists()) return; // already created on a previous login
-
-  await setDoc(ref, {
-    uid,
-    phone,
-    email,
-    displayName,
-    createdAt: serverTimestamp(),
-    preferredLanguage,
-  } satisfies Omit<CustomerAuthDoc, 'createdAt'> & Record<string, unknown>);
+  // Write to `customerProfiles` (separate from merchant-side `customers` records)
+  // so Firestore rules for each collection remain independent.
+  const ref = doc(db, 'customerProfiles', uid);
+  try {
+    const existing = await getDoc(ref);
+    if (existing.exists()) return; // already created on a previous login
+    await setDoc(ref, {
+      uid,
+      phone,
+      email,
+      displayName,
+      createdAt: serverTimestamp(),
+      preferredLanguage,
+    });
+  } catch (err) {
+    // Non-blocking: Firebase Auth account is already created.
+    // Firestore profile write failure must not abort the sign-up flow.
+    console.warn('[authService] createCustomerDoc: Firestore write failed (non-fatal):', err);
+  }
 }
 
 // ─── Auth state observer ──────────────────────────────────────────────────────

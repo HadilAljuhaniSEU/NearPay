@@ -4,16 +4,22 @@ import { useAuthContext } from '../contexts/AuthContext';
 import { useT } from '../contexts/LanguageContext';
 import { NearPayIcon } from './NearPayLogo';
 
-export function ProtectedRoute({ children }: { children: React.ReactNode }) {
+export function ProtectedRoute({
+  children,
+  redirectTo = '/login',
+}: {
+  children: React.ReactNode;
+  redirectTo?: string;
+}) {
   const { user, loading } = useAuthContext();
   const [_, setLocation] = useLocation();
   const t = useT();
 
   useEffect(() => {
     if (!loading && !user) {
-      setLocation('/login');
+      setLocation(redirectTo);
     }
-  }, [loading, user, setLocation]);
+  }, [loading, user, redirectTo, setLocation]);
 
   if (loading) {
     return (

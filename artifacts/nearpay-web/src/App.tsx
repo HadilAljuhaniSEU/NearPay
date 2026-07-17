@@ -79,21 +79,21 @@ function Router() {
         <ProtectedRoute><MerchantNearbyPage /></ProtectedRoute>
       </Route>
 
-      {/* ── Protected customer routes — Firebase phone (OTP) auth ── */}
+      {/* ── Protected customer routes — redirects unauthenticated to /customer/login ── */}
       <Route path="/customer/home">
-        <ProtectedRoute><CustomerHomePage /></ProtectedRoute>
+        <ProtectedRoute redirectTo="/customer/login"><CustomerHomePage /></ProtectedRoute>
       </Route>
       <Route path="/customer/nearby">
-        <ProtectedRoute><CustomerNearbyPage /></ProtectedRoute>
+        <ProtectedRoute redirectTo="/customer/login"><CustomerNearbyPage /></ProtectedRoute>
       </Route>
       <Route path="/customer/debts">
-        <ProtectedRoute><CustomerDebtsPage /></ProtectedRoute>
+        <ProtectedRoute redirectTo="/customer/login"><CustomerDebtsPage /></ProtectedRoute>
       </Route>
       <Route path="/customer/payments">
-        <ProtectedRoute><CustomerPaymentsPage /></ProtectedRoute>
+        <ProtectedRoute redirectTo="/customer/login"><CustomerPaymentsPage /></ProtectedRoute>
       </Route>
       <Route path="/customer/profile">
-        <ProtectedRoute><CustomerProfilePage /></ProtectedRoute>
+        <ProtectedRoute redirectTo="/customer/login"><CustomerProfilePage /></ProtectedRoute>
       </Route>
 
       <Route component={NotFound} />

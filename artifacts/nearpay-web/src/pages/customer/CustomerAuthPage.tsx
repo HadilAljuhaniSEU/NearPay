@@ -24,13 +24,6 @@ export default function CustomerAuthPage() {
     }
   }, []);
 
-  // Skip to app if already authenticated
-  useEffect(() => {
-    if (auth.currentUser) {
-      setLocation('/customer/nearby');
-    }
-  }, []);
-
   const [step, setStep]             = useState<Step>('signin');
   const [loading, setLoading]       = useState(false);
   const [error, setError]           = useState('');

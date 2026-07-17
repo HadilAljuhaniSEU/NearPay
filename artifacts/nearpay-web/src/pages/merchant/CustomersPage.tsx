@@ -6,11 +6,13 @@ import { BottomNav } from '../../components/BottomNav';
 import { PageHeader } from '../../components/PageHeader';
 import { CustomerCard } from '../../components/CustomerCard';
 import { SkeletonCard } from '../../components/SkeletonCard';
+import { AddCustomerSheet } from '../../components/AddCustomerSheet';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useCustomers } from '../../hooks/useCustomers';
 import { useT } from '../../contexts/LanguageContext';
+import { CustomerDoc } from '../../types';
 
 function getInitials(name: string): string {
   return name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
@@ -24,9 +26,15 @@ function trustScoreToRisk(score: number): 'low' | 'medium' | 'high' {
 
 export default function CustomersPage() {
   const [search, setSearch] = useState('');
+  const [showAddSheet, setShowAddSheet] = useState(false);
   const { merchant } = useAuthContext();
   const { customers, loading } = useCustomers(merchant?.id ?? null);
   const t = useT();
+
+  // onSnapshot in useCustomers auto-refreshes the list; just close the sheet
+  const handleCustomerCreated = (_customer: CustomerDoc) => {
+    setShowAddSheet(false);
+  };
 
   const filtered = customers.filter(
     (c) =>
@@ -41,7 +49,11 @@ export default function CustomersPage() {
         title={t('customers_title')}
         subtitle={loading ? t('loading') : `${customers.length}`}
         action={
-          <Button size="icon" className="rounded-full h-9 w-9 bg-secondary border border-border/60 text-foreground hover:bg-secondary/80">
+          <Button
+            size="icon"
+            onClick={() => setShowAddSheet(true)}
+            className="rounded-full h-9 w-9 bg-secondary border border-border/60 text-foreground hover:bg-secondary/80"
+          >
             <UserPlus size={17} />
           </Button>
         }
@@ -113,6 +125,15 @@ export default function CustomersPage() {
       </div>
 
       <BottomNav role="merchant" />
+
+      {merchant && (
+        <AddCustomerSheet
+          merchantId={merchant.id}
+          open={showAddSheet}
+          onClose={() => setShowAddSheet(false)}
+          onCreated={handleCustomerCreated}
+        />
+      )}
     </div>
   );
 }

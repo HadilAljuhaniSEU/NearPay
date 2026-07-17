@@ -50,7 +50,9 @@ export async function fetchVisibleMerchants(): Promise<MerchantDoc[]> {
   const snap = await getDocs(collection(db, 'merchants'));
   return snap.docs
     .map((d) => ({ id: d.id, ...d.data() } as MerchantDoc))
-    .filter((m) => m.latitude != null && m.longitude != null);
+    // Only show merchants that have explicitly opted in to discovery (isVisible === true)
+    // and have coordinates set so they can be shown on the map.
+    .filter((m) => m.isVisible === true && m.latitude != null && m.longitude != null);
 }
 
 // ─── Save merchant geo / discovery data ──────────────────────────────────────

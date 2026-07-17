@@ -32,6 +32,9 @@ import CustomerProfilePage from './pages/customer/ProfilePage';
 import CustomerOTPPage from './pages/customer/OTPPage';
 import CustomerAuthPage from './pages/customer/CustomerAuthPage';
 import CustomerComingSoonPage from './pages/customer/ComingSoonPage';
+import CustomerPaymentMethodsPage from './pages/customer/PaymentMethodsPage';
+import CustomerNotificationsPage from './pages/customer/NotificationsPage';
+import CustomerPreferencesPage from './pages/customer/PreferencesPage';
 
 import NotFound from '@/pages/not-found';
 
@@ -99,6 +102,15 @@ function Router() {
       </Route>
       <Route path="/customer/profile">
         <ProtectedRoute redirectTo="/customer/login"><CustomerProfilePage /></ProtectedRoute>
+      </Route>
+      <Route path="/customer/payment-methods">
+        <ProtectedRoute redirectTo="/customer/login"><CustomerPaymentMethodsPage /></ProtectedRoute>
+      </Route>
+      <Route path="/customer/notifications">
+        <ProtectedRoute redirectTo="/customer/login"><CustomerNotificationsPage /></ProtectedRoute>
+      </Route>
+      <Route path="/customer/preferences">
+        <ProtectedRoute redirectTo="/customer/login"><CustomerPreferencesPage /></ProtectedRoute>
       </Route>
       <Route path="/customer/coming-soon">
         <ProtectedRoute redirectTo="/customer/login"><CustomerComingSoonPage /></ProtectedRoute>

@@ -4,3 +4,4 @@
 - [AI & Insights module](ai-insights.md) — local rule-based engine in insightsService.ts; AIPage is full dashboard (5 tabs), no external AI APIs
 - [Brand & Stabilization](brand-stabilization.md) — production stabilization: new brand colors, landing page, logo, dark mode, registration fields
 - [Firestore Operations](firestore-ops.md) — composite index bug, updateDoc vs setDoc+merge, onSnapshot error handlers; all CRUD fixed
+- [Phone Auth & Debt Lookup](phone-auth-debt-lookup.md) — debt lookup uses customerProfiles.phone (NOT user.phoneNumber); phone modal collects phone post-email-login

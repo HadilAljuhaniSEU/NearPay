@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useCustomers } from '../../hooks/useCustomers';
 import { createDebt } from '../../services/debtService';
+import { normalizeSaudiPhone } from '../../utils/phone';
 import { createCustomer, fetchCustomer, updateCustomer } from '../../services/customerService';
 import { updateMerchantAggregates } from '../../services/merchantService';
 import { CustomerDoc, DebtStatus, ApprovalStatus, PaymentType } from '../../types';
@@ -116,7 +117,7 @@ export default function AddDebtPage() {
         merchantName:    merchant.name,
         customerId,
         customerName:    selectedCustomer.fullName,
-        customerPhone:   selectedCustomer.phone,
+        customerPhone:   normalizeSaudiPhone(selectedCustomer.phone),
         amount:          amountNum,
         remainingAmount: amountNum,
         description:     description.trim(),

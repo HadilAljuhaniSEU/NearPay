@@ -1,0 +1,395 @@
+HACKATHON FINAL STABILITY HOTFIX
+Production Readiness Sprint
+
+IMPORTANT
+
+This sprint is ONLY for production stability before hackathon judging.
+
+DO NOT redesign the UI.
+DO NOT change colors.
+DO NOT modify branding.
+DO NOT change navigation except where explicitly requested.
+DO NOT introduce mock data.
+DO NOT hardcode any values.
+
+Your goal is to make the application behave like a polished production MVP.
+
+====================================================
+1. CUSTOMER AUTHENTICATION
+====================================================
+
+Temporarily disable Phone OTP authentication from the UI.
+
+Show:
+
+"Phone Login - Coming Soon"
+
+Keep all OTP code intact for future activation.
+
+The primary authentication method is now:
+
+• Email
+• Password
+
+Support:
+
+• Create Account
+• Login
+• Forgot Password
+• Remember Me
+
+Use Firebase Email Authentication.
+
+After a customer logs in for the first time using email,
+
+check customerProfiles.
+
+If the phone number is missing,
+
+ask the customer once to enter their Saudi mobile number.
+
+Normalize it.
+
+Save it into:
+
+customerProfiles.phone
+
+Never ask again if already saved.
+
+Customer debt lookup must use customerProfiles.phone.
+
+Never depend on FirebaseAuth.user.phoneNumber.
+
+====================================================
+2. PHONE NORMALIZATION
+====================================================
+
+Create one shared utility:
+
+normalizeSaudiPhone()
+
+Every phone number written or read must use it.
+
+Supported inputs:
+
+05XXXXXXXX
+
+5XXXXXXXX
+
+9665XXXXXXXX
+
++9665XXXXXXXX
+
+05 XXX XXXX
+
++966 5XX XXX XXXX
+
+Always store:
+
++9665XXXXXXXX
+
+Use this function everywhere.
+
+====================================================
+3. CUSTOMER CREATION
+====================================================
+
+Customer can be created using:
+
+• Name
+• Phone Number
+
+Email is OPTIONAL.
+
+Remove every validation that blocks saving because email is empty.
+
+Validate email ONLY when the user actually enters one.
+
+Normalize phone before saving.
+
+Save normalized phone inside:
+
+customers.phone
+
+Saving must always succeed.
+
+====================================================
+4. DEBT CREATION
+====================================================
+
+Normalize customer phone before creating debt.
+
+Store:
+
+debts.customerPhone
+
+using normalized format.
+
+Never save raw phone numbers.
+
+====================================================
+5. CUSTOMER DEBT LOOKUP
+====================================================
+
+When customer opens the app:
+
+Read:
+
+customerProfiles.phone
+
+Normalize it.
+
+Query:
+
+debts.customerPhone == customerProfiles.phone
+
+Do not query using FirebaseAuth.user.phoneNumber.
+
+Display every matching debt.
+
+====================================================
+6. DISCOVER PAGE
+====================================================
+
+Nearby page currently returns only one merchant.
+
+Inspect the Firestore query.
+
+Remove any accidental limit().
+
+Return ALL merchants where:
+
+isVisible == true
+
+Display every active merchant.
+
+====================================================
+7. CUSTOMER HOME
+====================================================
+
+Greeting:
+
+If first name exists:
+
+Welcome, Ahmed
+
+Arabic:
+
+مرحباً، أحمد
+
+If name is unavailable:
+
+Welcome
+
+مرحباً بك
+
+Never leave an empty greeting.
+
+Profile avatar:
+
+If no profile image exists,
+
+display the first letter of the customer's display name.
+
+Fallback:
+
+Default user icon.
+
+Never display a question mark.
+
+====================================================
+8. EMPTY STATES
+====================================================
+
+Replace every endless loading spinner.
+
+Use proper empty states.
+
+Examples:
+
+No debts yet.
+
+No payment history.
+
+No notifications.
+
+No payment methods.
+
+No nearby stores.
+
+Never leave loading forever.
+
+====================================================
+9. PROFILE PAGE
+====================================================
+
+Make these pages functional:
+
+Account
+
+Payment Methods
+
+History
+
+Notifications
+
+Preferences
+
+If functionality is not yet implemented,
+
+display proper pages with meaningful empty states.
+
+Never leave dead buttons.
+
+====================================================
+10. AI PAGE
+====================================================
+
+The AI Dashboard must fully follow application language.
+
+Arabic application:
+
+Everything Arabic.
+
+English application:
+
+Everything English.
+
+No mixed language.
+
+====================================================
+11. MERCHANT DASHBOARD
+====================================================
+
+Rename:
+
+New Account
+
+to
+
+New Debt
+
+Arabic:
+
+تسجيل دين
+
+Move the bottom Menu tab into the AppBar.
+
+Use a Settings icon.
+
+Settings should include:
+
+My Profile
+
+My Stores
+
+Employees
+
+Language
+
+Notifications
+
+Security
+
+Help
+
+Logout
+
+====================================================
+12. CUSTOMER DETAILS
+====================================================
+
+Customer cards must open:
+
+Customer Details
+
+Display:
+
+Name
+
+Phone
+
+Outstanding Balance
+
+Payment History
+
+Debt History
+
+Notes
+
+====================================================
+13. MERCHANT NOTIFICATIONS
+====================================================
+
+Add:
+
+Mark as Read
+
+Mark All as Read
+
+Clear Notifications
+
+Unread badge must update automatically.
+
+====================================================
+14. FIRESTORE AUDIT
+====================================================
+
+Verify every Firestore read/write.
+
+Collections:
+
+users
+
+merchants
+
+customerProfiles
+
+customers
+
+debts
+
+No duplicate queries.
+
+No mock data.
+
+No hardcoded users.
+
+All application data must come from Firestore.
+
+====================================================
+15. FINAL TEST
+
+Verify all of the following:
+
+✓ Merchant Login
+
+✓ Customer Login
+
+✓ Customer Registration
+
+✓ Merchant Registration
+
+✓ Customer Creation
+
+✓ Debt Creation
+
+✓ Customer Debt Visibility
+
+✓ Discover Page
+
+✓ Merchant Dashboard
+
+✓ AI Localization
+
+✓ Customer Details
+
+✓ Notifications
+
+✓ Empty States
+
+✓ No runtime errors
+
+✓ No console errors
+
+The application must behave like a polished production-ready hackathon MVP.

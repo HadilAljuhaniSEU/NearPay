@@ -235,6 +235,27 @@ export async function createCustomerDoc(
   }
 }
 
+// ─── Fetch customer profile doc ──────────────────────────────────────────────
+export async function fetchCustomerProfile(uid: string): Promise<{
+  phone?: string;
+  email?: string;
+  displayName?: string;
+  preferredLanguage?: string;
+} | null> {
+  try {
+    const snap = await getDoc(doc(db, 'customerProfiles', uid));
+    return snap.exists() ? (snap.data() as Record<string, string>) : null;
+  } catch {
+    return null;
+  }
+}
+
+// ─── Update customer phone in customerProfiles ────────────────────────────────
+export async function updateCustomerPhone(uid: string, phone: string): Promise<void> {
+  const ref = doc(db, 'customerProfiles', uid);
+  await setDoc(ref, { phone, updatedAt: serverTimestamp() }, { merge: true });
+}
+
 // ─── Auth state observer ──────────────────────────────────────────────────────
 export function onAuthChange(callback: (user: User | null) => void) {
   return onAuthStateChanged(auth, callback);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'wouter';
 import { motion } from 'framer-motion';
-import { LogOut, ShieldCheck, CreditCard, ChevronRight, History, Settings, Bell } from 'lucide-react';
+import { LogOut, ShieldCheck, CreditCard, ChevronRight, History, Settings, Bell, User } from 'lucide-react';
 import { StatusBar } from '../../components/StatusBar';
 import { BottomNav } from '../../components/BottomNav';
 import { PageHeader } from '../../components/PageHeader';
@@ -15,26 +15,28 @@ export default function CustomerProfilePage() {
   const t = useT();
   const { user } = useAuthContext();
 
-  // Derive display values from Firebase auth user (email or phone)
   const email       = user?.email ?? '';
-  const phone       = user?.phoneNumber ?? '';
   const displayName = user?.displayName?.trim() || '';
-  const identifier  = email || phone;
-  const initials    = displayName
+  const identifier  = email;
+  const hasName     = displayName.length > 0;
+  const initials    = hasName
     ? displayName.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase()
-    : (email ? email[0].toUpperCase() : phone.replace(/\D/g, '').slice(-2));
+    : '';
 
   const handleLogout = async () => {
-    try {
-      await signOutMerchant(); // signOut(auth) — works for any Firebase user
-    } catch {
-      // ignore
-    }
+    try { await signOutMerchant(); } catch { /* ignore */ }
     setLocation('/login');
   };
 
   const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } };
   const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } };
+
+  const menuRows: { labelKey: Parameters<typeof t>[0]; icon: typeof CreditCard; route: string }[] = [
+    { labelKey: 'account_payment_methods', icon: CreditCard, route: '/customer/payment-methods' },
+    { labelKey: 'payment_history_title',   icon: History,    route: '/customer/payments' },
+    { labelKey: 'pref_push_notifs',        icon: Bell,       route: '/customer/notifications' },
+    { labelKey: 'preferences_title',       icon: Settings,   route: '/customer/preferences' },
+  ];
 
   return (
     <div className="app-container flex flex-col bg-background">
@@ -49,15 +51,17 @@ export default function CustomerProfilePage() {
                  style={{ background: 'linear-gradient(to bottom, rgba(32,214,199,0.08), transparent)' }} />
             <Avatar className="h-20 w-20 border-4 border-background shadow-md mb-4 relative z-10">
               <AvatarFallback className="bg-foreground text-background text-2xl font-bold">
-                {initials || '?'}
+                {hasName ? initials : <User size={28} />}
               </AvatarFallback>
             </Avatar>
             <h2 className="text-xl font-bold text-foreground mb-1 tracking-tight">
               {displayName || t('customer')}
             </h2>
-            <p className="text-xs font-medium text-muted-foreground bg-secondary/50 px-3 py-1 rounded-full">
-              {identifier}
-            </p>
+            {identifier && (
+              <p className="text-xs font-medium text-muted-foreground bg-secondary/50 px-3 py-1 rounded-full">
+                {identifier}
+              </p>
+            )}
           </motion.div>
 
           {/* NearPay Score */}
@@ -65,7 +69,6 @@ export default function CustomerProfilePage() {
                       style={{ background: 'linear-gradient(135deg, #0B2341 0%, #143B63 100%)', boxShadow: '0 6px 24px rgba(11,35,65,0.25)' }}>
             <div className="absolute top-0 end-0 w-40 h-40 rounded-full blur-2xl -me-10 -mt-10 pointer-events-none"
                  style={{ background: 'radial-gradient(circle, rgba(32,214,199,0.2), transparent)' }} />
-
             <div className="relative z-10 flex items-start gap-4">
               <div className="w-12 h-12 rounded-[16px] flex-shrink-0 flex items-center justify-center border"
                    style={{ background: 'rgba(32,214,199,0.15)', borderColor: 'rgba(32,214,199,0.3)' }}>
@@ -83,15 +86,10 @@ export default function CustomerProfilePage() {
             <div className="px-5 py-3.5 border-b border-border/50 bg-secondary/20">
               <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">{t('account_section')}</h3>
             </div>
-            {[
-              { labelKey: 'account_payment_methods', icon: CreditCard },
-              { labelKey: 'payment_history_title',   icon: History },
-              { labelKey: 'pref_push_notifs',        icon: Bell },
-              { labelKey: 'preferences_title',       icon: Settings },
-            ].map((row, i, arr) => (
+            {menuRows.map((row, i, arr) => (
               <div
                 key={row.labelKey}
-                onClick={() => setLocation('/customer/coming-soon')}
+                onClick={() => setLocation(row.route)}
                 className={`flex items-center justify-between px-5 py-3.5 cursor-pointer hover:bg-secondary/50 transition-colors ${i < arr.length - 1 ? 'border-b border-border/40' : ''}`}
               >
                 <div className="flex items-center gap-3">

@@ -1,14 +1,21 @@
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../lib/firebase';
 import { subscribeDebtsByCustomerPhone } from '../services/debtService';
+import { normalizeSaudiPhone } from '../utils/phone';
 import { DebtDoc } from '../types';
 
 /**
  * Real-time hook for all debts belonging to the currently-authenticated customer.
- * Identifies the customer by their Firebase phone auth phoneNumber.
- * NOTE: The phone format stored in Firestore (customerPhone) must match the
- * E.164 format returned by Firebase phone auth (e.g. +966XXXXXXXXX).
+ *
+ * Identifies the customer by the phone stored in customerProfiles/{uid}.phone
+ * (NOT FirebaseAuth.user.phoneNumber, which is null for email-based auth).
+ *
+ * Flow:
+ *  1. Listen for Firebase auth state.
+ *  2. On sign-in, read customerProfiles/{uid} from Firestore to get the phone.
+ *  3. Normalise the phone to E.164 and subscribe to debts matching that phone.
  */
 export function useCustomerDebts() {
   const [debts, setDebts]               = useState<DebtDoc[]>([]);
@@ -18,19 +25,42 @@ export function useCustomerDebts() {
   const [customerName, setCustomerName] = useState('');
   const [error, setError]               = useState<string | null>(null);
 
-  // Watch auth state to get customer phone
+  // Watch auth state, then read phone from customerProfiles
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      setPhone(user?.phoneNumber ?? null);
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        setPhone(null);
+        setAuthResolved(true);
+        return;
+      }
+
+      try {
+        const snap = await getDoc(doc(db, 'customerProfiles', user.uid));
+        if (snap.exists()) {
+          const data = snap.data();
+          const raw  = (data.phone as string | undefined) || '';
+          setPhone(raw ? normalizeSaudiPhone(raw) : null);
+        } else {
+          setPhone(null);
+        }
+      } catch (err) {
+        console.warn('[useCustomerDebts] could not read customerProfiles:', err);
+        setPhone(null);
+      }
+
       setAuthResolved(true);
     });
+
     return unsub;
   }, []);
 
-  // Subscribe to debts once auth has resolved
+  // Subscribe to debts once auth + phone are resolved
   useEffect(() => {
-    if (!authResolved) return; // still waiting for Firebase to resolve auth
-    if (!phone) { setLoading(false); return; }
+    if (!authResolved) return;
+    if (!phone) {
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -48,7 +78,7 @@ export function useCustomerDebts() {
         console.error('[useCustomerDebts] subscription error:', err);
         setError(err.message);
         setLoading(false);
-      }
+      },
     );
 
     return unsub;

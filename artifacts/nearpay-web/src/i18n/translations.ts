@@ -632,6 +632,37 @@ const translations = {
     ai_no_risk_data_sub: 'Add customers and debts to run risk analysis.',
     // ── Add Customer ──
     customer_email_optional: 'Email (optional)',
+
+    // ── Customer Auth Page ──
+    customer_signin_title: 'Welcome back',
+    customer_signin_subtitle: 'Sign in to your customer account.',
+    customer_signup_title: 'Create account',
+    customer_signup_subtitle: 'Join NearPay as a customer.',
+    customer_password_min: 'Password (min 8 characters)',
+    customer_have_account: 'Already have an account?',
+    // Forgot password
+    customer_forgot_title: 'Reset Password',
+    customer_forgot_sub: "Enter your email and we'll send a reset link.",
+    customer_forgot_btn: 'Send Reset Link',
+    customer_forgot_sent_title: 'Check Your Inbox',
+    customer_forgot_sent_sub: 'A reset link has been sent to your email address.',
+    customer_back_signin: 'Back to Sign In',
+    // Phone collection modal
+    phone_modal_title: 'Add Your Phone Number',
+    phone_modal_sub: 'Enter your Saudi mobile number to see your tabs and debts.',
+    phone_modal_save: 'Save Number',
+    phone_modal_skip: 'Skip for now',
+    // Phone OTP banner
+    phone_login_label: 'Phone Login',
+    phone_login_sub: 'Phone verification will be available in the next release.',
+
+    // ── Customer Profile sub-pages ──
+    notifications_title: 'Notifications',
+    no_payment_methods: 'No payment methods added yet.',
+    payment_methods_sub: 'Payment methods will be available in a future update.',
+    no_notifications: 'No notifications yet.',
+    notifications_sub: 'You\'ll see merchant updates and payment alerts here.',
+    pref_language: 'Language',
   },
 
   ar: {
@@ -1265,6 +1296,37 @@ const translations = {
     ai_no_risk_data_sub: 'أضف عملاء وديوناً لإجراء تحليل المخاطر.',
     // ── Add Customer ──
     customer_email_optional: 'البريد الإلكتروني (اختياري)',
+
+    // ── Customer Auth Page ──
+    customer_signin_title: 'أهلاً بعودتك',
+    customer_signin_subtitle: 'تسجيل الدخول إلى حساب العميل.',
+    customer_signup_title: 'إنشاء حساب',
+    customer_signup_subtitle: 'انضم إلى NearPay كعميل.',
+    customer_password_min: 'كلمة المرور (8 أحرف على الأقل)',
+    customer_have_account: 'هل لديك حساب بالفعل؟',
+    // Forgot password
+    customer_forgot_title: 'إعادة تعيين كلمة المرور',
+    customer_forgot_sub: 'أدخل بريدك وسنرسل رابط إعادة التعيين.',
+    customer_forgot_btn: 'إرسال رابط الإعادة',
+    customer_forgot_sent_title: 'تحقق من بريدك',
+    customer_forgot_sent_sub: 'تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني.',
+    customer_back_signin: 'العودة لتسجيل الدخول',
+    // Phone collection modal
+    phone_modal_title: 'أضف رقم هاتفك',
+    phone_modal_sub: 'أدخل رقم جوالك السعودي لعرض ديونك وحساباتك.',
+    phone_modal_save: 'حفظ الرقم',
+    phone_modal_skip: 'تخطى الآن',
+    // Phone OTP banner
+    phone_login_label: 'تسجيل الدخول بالهاتف',
+    phone_login_sub: 'سيتوفر التحقق عبر الهاتف في الإصدار القادم.',
+
+    // ── Customer Profile sub-pages ──
+    notifications_title: 'الإشعارات',
+    no_payment_methods: 'لم تتم إضافة طرق دفع بعد.',
+    payment_methods_sub: 'ستتوفر طرق الدفع في تحديث قادم.',
+    no_notifications: 'لا توجد إشعارات بعد.',
+    notifications_sub: 'ستظهر هنا تحديثات التجار وإشعارات الدفع.',
+    pref_language: 'اللغة',
   },
 } as const;
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'wouter';
 import { motion } from 'framer-motion';
-import { CreditCard, ChevronRight } from 'lucide-react';
+import { CreditCard, ChevronRight, User } from 'lucide-react';
 import { StatusBar } from '../../components/StatusBar';
 import { BottomNav } from '../../components/BottomNav';
 import { DebtCard } from '../../components/DebtCard';
@@ -32,7 +32,8 @@ export default function CustomerHomePage() {
   const activeDebts  = debts.filter((d) => d.status !== 'settled' && d.status !== 'rejected');
   const totalDue     = activeDebts.reduce((s, d) => s + d.remainingAmount, 0);
   const recentDebts  = activeDebts.slice(0, 2);
-  const initials     = (firstName || customerName) ? getInitials(firstName || customerName) : '?';
+  const hasName      = !!(firstName || customerName);
+  const initials     = hasName ? getInitials(firstName || customerName) : '';
 
   return (
     <div className="app-container flex flex-col bg-background">
@@ -44,7 +45,7 @@ export default function CustomerHomePage() {
           <div className="flex items-center gap-3">
             <Avatar className="h-9 w-9 border border-border/60">
               <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xs">
-                {initials}
+                {hasName ? initials : <User size={15} />}
               </AvatarFallback>
             </Avatar>
             <div>

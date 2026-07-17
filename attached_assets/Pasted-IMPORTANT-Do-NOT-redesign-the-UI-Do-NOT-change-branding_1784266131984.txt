@@ -1,0 +1,251 @@
+IMPORTANT
+
+Do NOT redesign the UI.
+
+Do NOT change branding.
+
+Do NOT change colors.
+
+Keep Firebase Authentication and Firestore exactly as they are.
+
+This prompt is ONLY about implementing the "Near" experience.
+
+==================================================
+
+GOAL
+
+NearPay means "Nearby Payments".
+
+Implement a location-aware merchant discovery experience.
+
+This feature prepares the platform for future merchant onboarding.
+
+==================================================
+
+LOCATION
+
+Ask the user for location permission.
+
+If granted:
+
+Get current GPS location.
+
+If denied:
+
+Allow selecting city manually.
+
+Store merchant coordinates in Firestore.
+
+Use:
+
+latitude
+
+longitude
+
+GeoPoint
+
+==================================================
+
+FIRESTORE
+
+Each merchant document must contain:
+
+latitude
+
+longitude
+
+city
+
+businessType
+
+whatsapp
+
+phone
+
+isVisible = true
+
+==================================================
+
+NEARBY MERCHANTS
+
+Create a page:
+
+Nearby Merchants
+
+Display merchants ordered by nearest distance.
+
+Each merchant card includes:
+
+Business Logo
+
+Business Name
+
+Business Type
+
+Distance
+
+Trust Badge
+
+Open Now / Closed
+
+==================================================
+
+MERCHANT DETAILS
+
+When opening a merchant:
+
+Show:
+
+Business Name
+
+Logo
+
+Description
+
+Commercial Registration
+
+Business Type
+
+Working Hours
+
+Phone
+
+WhatsApp
+
+Location
+
+Trust Score
+
+Number of Active Customers
+
+==================================================
+
+MAP
+
+Integrate Google Maps.
+
+Show:
+
+Current user location.
+
+Nearby merchants.
+
+Custom map markers.
+
+Merchant logo inside marker if available.
+
+==================================================
+
+MAP ACTIONS
+
+Buttons:
+
+Open in Google Maps
+
+Call Merchant
+
+Open WhatsApp
+
+View Merchant Profile
+
+==================================================
+
+FILTERS
+
+Business Type
+
+Distance
+
+Trust Score
+
+Open Now
+
+City
+
+==================================================
+
+SEARCH
+
+Search merchants by:
+
+Business Name
+
+Business Type
+
+City
+
+==================================================
+
+TRUST BADGE
+
+Show:
+
+Verified Merchant
+
+Commercial Registration Verified
+
+High Trust
+
+==================================================
+
+MERCHANT PROFILE
+
+Display:
+
+Store Photos (prepare)
+
+About
+
+Contact
+
+Location
+
+Recent Activity
+
+==================================================
+
+FUTURE PREPARATION
+
+Prepare the architecture for:
+
+Merchant advertising
+
+Featured merchants
+
+Sponsored listings
+
+Customer reviews
+
+Merchant verification
+
+No implementation yet.
+
+Only architecture.
+
+==================================================
+
+RESPONSIVE
+
+The Nearby page must feel like a premium mobile application.
+
+Use Google Maps elegantly.
+
+Large touch targets.
+
+Smooth animations.
+
+==================================================
+
+PERFORMANCE
+
+Load nearby merchants efficiently.
+
+Prepare for Firestore GeoQueries.
+
+Add TODO comments where GeoFirestore can be integrated later.
+
+==================================================
+
+When complete,
+
+stop and wait for the next instructions.

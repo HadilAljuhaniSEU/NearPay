@@ -1,2 +1,3 @@
 - [Customer Journey](customer-journey.md) — approval token in URL, dispute flow, pay full/half/custom, customer phone used to query debts
 - [DebtDoc extended fields](debt-doc-fields.md) — new fields added in customer journey phase; createDebt return type includes referenceNumber
+- [Near / Discovery architecture](near-discovery.md) — geo fields on MerchantDoc, GeoPoint stored, client-side Haversine sort, VITE_GOOGLE_MAPS_KEY env var

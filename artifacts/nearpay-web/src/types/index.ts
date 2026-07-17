@@ -37,6 +37,24 @@ export interface MerchantDoc {
   address?: string;
   city?: string;
   updatedAt?: Timestamp;
+  // ── Geo / Discovery fields ──────────────────────────────────────────────────
+  latitude?: number;
+  longitude?: number;
+  businessType?: string;
+  whatsapp?: string;
+  isVisible?: boolean;
+  workingHours?: { open: string; close: string }; // "HH:MM" 24-h
+  description?: string;
+  // Future-prep (architecture only, not yet implemented):
+  // featured?: boolean;
+  // sponsored?: boolean;
+  // verificationStatus?: 'unverified' | 'pending' | 'verified';
+}
+
+// ─── Discoverable Merchant (with computed distance) ───────────────────────────
+export interface DiscoverableMerchant extends MerchantDoc {
+  /** Kilometres from user, computed client-side; undefined when coords unknown. */
+  distance?: number;
 }
 
 // ─── Customer Auth ────────────────────────────────────────────────────────────

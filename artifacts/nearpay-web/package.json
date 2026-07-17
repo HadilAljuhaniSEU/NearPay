@@ -75,6 +75,7 @@
     "zod": "catalog:"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.20.8",
     "firebase": "^12.16.0"
   }
 }

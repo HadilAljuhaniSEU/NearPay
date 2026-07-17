@@ -1,0 +1,259 @@
+IMPORTANT
+
+Do NOT redesign the UI.
+
+Do NOT modify the existing pages.
+
+Do NOT change branding, colors, typography or layout.
+
+Keep all Firebase Authentication and Firestore integrations exactly as they are.
+
+This prompt is ONLY about implementing the AI & Financial Intelligence module.
+
+==================================================
+
+GOAL
+
+NearPay must provide intelligent financial insights for merchants using existing Firestore data.
+
+Do NOT use OpenAI, Gemini, Claude or any external AI APIs.
+
+Generate insights locally from the merchant's data.
+
+==================================================
+
+AI DASHBOARD
+
+Create a new page:
+
+AI & Insights
+
+Accessible from the Merchant Dashboard.
+
+Sections:
+
+1. Financial Health
+
+2. Smart Insights
+
+3. Trust Score Analytics
+
+4. Cash Flow Forecast
+
+5. Customer Risk Analysis
+
+==================================================
+
+SMART INSIGHTS
+
+Automatically generate useful recommendations based on Firestore data.
+
+Examples:
+
+• "3 customers have overdue debts."
+
+• "Collection rate improved by 12% this month."
+
+• "Most payments arrive between the 20th–25th of the month."
+
+• "Expected cash inflow during the next 7 days: SAR XXXX."
+
+• "Your highest value customer has an Excellent Trust Score."
+
+Generate insights dynamically from available data.
+
+==================================================
+
+TRUST SCORE
+
+Every customer must have a dynamic Trust Score.
+
+Calculate automatically using rules.
+
+Suggested algorithm:
+
+Initial score = 100
+
+Late payment:
+
+-10
+
+Partial payment:
+
+-3
+
+Early payment:
+
++5
+
+More than 3 overdue debts:
+
+-15
+
+Debt disputed:
+
+-8
+
+Display score as:
+
+90–100
+
+Excellent
+
+70–89
+
+Good
+
+50–69
+
+Average
+
+Below 50
+
+High Risk
+
+Show:
+
+Colored badge
+
+Circular progress indicator
+
+History trend
+
+==================================================
+
+CUSTOMER RISK ANALYSIS
+
+Automatically classify:
+
+Low Risk
+
+Medium Risk
+
+High Risk
+
+Display:
+
+Customer Name
+
+Trust Score
+
+Outstanding Debt
+
+Risk Level
+
+Suggested Action
+
+Examples:
+
+Send Reminder
+
+Reduce Credit Limit
+
+Safe Customer
+
+==================================================
+
+EXPECTED CASH FLOW
+
+Estimate incoming cash using:
+
+Due dates
+
+Outstanding balances
+
+Historical payment behavior
+
+Generate:
+
+Next 7 Days
+
+Next 30 Days
+
+Monthly Forecast
+
+Display as modern charts.
+
+==================================================
+
+COLLECTION PERFORMANCE
+
+Show:
+
+Collection Rate
+
+Average Payment Delay
+
+Paid vs Unpaid
+
+Outstanding Debt
+
+Monthly Recovery
+
+==================================================
+
+SMART REMINDERS
+
+Generate reminder suggestions.
+
+Examples:
+
+"Send reminder tomorrow."
+
+"This customer usually pays two days late."
+
+"Follow up with this customer today."
+
+No SMS integration yet.
+
+Only recommendations.
+
+==================================================
+
+MERCHANT CREDIT INSIGHTS
+
+Display:
+
+Top Paying Customers
+
+Most Delayed Customers
+
+Highest Outstanding Balance
+
+Fastest Paying Customers
+
+Newest Customers
+
+==================================================
+
+UI
+
+Use premium dashboard cards.
+
+Modern charts.
+
+Beautiful icons.
+
+Smooth animations.
+
+Dark/light mode compatible.
+
+Fully responsive.
+
+==================================================
+
+PERFORMANCE
+
+All calculations should use Firestore data.
+
+No mock data.
+
+No external AI APIs.
+
+==================================================
+
+Leave TODO comments for future Machine Learning integration.
+
+When finished,
+
+stop and wait for the next instructions.

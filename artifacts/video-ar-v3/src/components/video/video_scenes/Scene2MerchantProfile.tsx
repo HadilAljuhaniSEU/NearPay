@@ -119,7 +119,7 @@ export default function Scene2MerchantProfile() {
           </motion.div>
         ))}
       </div>
-      <Caption text="Your store on the map — visible to nearby customers" />
+      <Caption ar="متجرك على الخريطة — مرئي للعملاء القريبين" en="Your store on the map" />
     </motion.div>
   );
 }

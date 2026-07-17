@@ -142,7 +142,7 @@ export default function Scene6CustomerRegister() {
           )}
         </div>
       </PhoneFrame>
-      <Caption text="Sign up and explore nearby stores" />
+      <Caption ar="سجّل واستكشف المتاجر القريبة" en="Sign up and explore nearby stores" />
     </motion.div>
   );
 }

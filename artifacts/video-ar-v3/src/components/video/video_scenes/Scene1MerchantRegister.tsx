@@ -130,7 +130,7 @@ export default function Scene1MerchantRegister() {
           </motion.div>
         </PhoneFrame>
       </motion.div>
-      <Caption text="Register your business in seconds" />
+      <Caption ar="سجّل نشاطك التجاري في ثوانٍ" en="Register your business in seconds" />
     </motion.div>
   );
 }

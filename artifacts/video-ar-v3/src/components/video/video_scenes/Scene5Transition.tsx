@@ -75,7 +75,7 @@ export default function Scene5Transition() {
         ومن جهة العميل...
       </motion.h2>
 
-      <Caption text="Now, from the customer's side..." />
+      <Caption ar="الآن، من جانب العميل..." en="Now, from the customer's side..." />
     </motion.div>
   );
 }

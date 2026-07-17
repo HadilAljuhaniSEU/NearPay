@@ -157,7 +157,7 @@ export default function Scene3AddDebt() {
           </motion.div>
         </motion.div>
       </PhoneFrame>
-      <Caption text="Log a grocery debt instantly" />
+      <Caption ar="سجّل دين البقالة فوراً" en="Log a grocery debt instantly" />
     </motion.div>
   );
 }

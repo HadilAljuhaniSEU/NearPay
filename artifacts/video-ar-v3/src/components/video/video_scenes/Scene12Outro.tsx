@@ -66,7 +66,7 @@ export default function Scene12Outro() {
         </motion.p>
       </div>
 
-      <Caption text="NearPay — Never lose a Riyal again" />
+      <Caption ar="NearPay — لا تضيع ريالاً بعد الآن" en="Never lose a Riyal again" />
     </motion.div>
   );
 }

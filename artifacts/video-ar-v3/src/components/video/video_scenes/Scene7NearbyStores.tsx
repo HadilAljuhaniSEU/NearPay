@@ -130,7 +130,7 @@ export default function Scene7NearbyStores() {
         </motion.div>
       </div>
 
-      <Caption text="Discover stores by type — all around you" />
+      <Caption ar="اكتشف المتاجر من حولك حسب النوع" en="Discover stores around you" />
     </motion.div>
   );
 }

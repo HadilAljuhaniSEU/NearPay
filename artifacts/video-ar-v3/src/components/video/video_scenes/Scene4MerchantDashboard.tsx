@@ -110,7 +110,7 @@ export default function Scene4MerchantDashboard() {
           </div>
         </div>
       </PhoneFrame>
-      <Caption text="All your debts in one place" />
+      <Caption ar="كل ديونك في مكان واحد" en="All your debts in one place" />
     </motion.div>
   );
 }

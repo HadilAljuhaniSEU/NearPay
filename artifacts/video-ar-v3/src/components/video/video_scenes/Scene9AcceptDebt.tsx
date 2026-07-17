@@ -135,7 +135,7 @@ export default function Scene9AcceptDebt() {
           </motion.div>
         </div>
       </PhoneFrame>
-      <Caption text="Review and accept (or decline) any debt" />
+      <Caption ar="راجع وقبل أو ارفض أي دين" en="Review and accept or decline" />
     </motion.div>
   );
 }

@@ -33,19 +33,19 @@ export const SCENE_DURATIONS: Record<string, number> = {
 };
 
 export const SCENE_COMPONENTS: Record<string, React.ComponentType> = {
-  hook: Scene0Hook,
-  merchantRegister: Scene1MerchantRegister,
-  merchantProfile: Scene2MerchantProfile,
-  addDebt: Scene3AddDebt,
+  hook:              Scene0Hook,
+  merchantRegister:  Scene1MerchantRegister,
+  merchantProfile:   Scene2MerchantProfile,
+  addDebt:           Scene3AddDebt,
   merchantDashboard: Scene4MerchantDashboard,
-  transition: Scene5Transition,
-  customerRegister: Scene6CustomerRegister,
-  nearbyStores: Scene7NearbyStores,
-  contactOptions: Scene8ContactOptions,
-  acceptDebt: Scene9AcceptDebt,
-  payment: Scene10Payment,
-  success: Scene11Success,
-  outro: Scene12Outro,
+  transition:        Scene5Transition,
+  customerRegister:  Scene6CustomerRegister,
+  nearbyStores:      Scene7NearbyStores,
+  contactOptions:    Scene8ContactOptions,
+  acceptDebt:        Scene9AcceptDebt,
+  payment:           Scene10Payment,
+  success:           Scene11Success,
+  outro:             Scene12Outro,
 };
 
 interface VideoTemplateProps {
@@ -58,22 +58,19 @@ interface VideoTemplateProps {
 export default function VideoTemplate({
   durations = SCENE_DURATIONS,
   loop = true,
-  muted = true,
+  muted = false,
   onSceneChange,
 }: VideoTemplateProps) {
   const { currentSceneKey } = useVideoPlayer({ durations, loop });
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Strip _r1/_r2 suffix for component lookup; keep full key for AnimatePresence
   const baseKey = currentSceneKey?.replace(/_r[12]$/, '') ?? '';
   const SceneComponent = SCENE_COMPONENTS[baseKey] ?? null;
 
-  // Notify parent of scene changes
   useEffect(() => {
     onSceneChange?.(currentSceneKey);
   }, [currentSceneKey, onSceneChange]);
 
-  // Sync muted prop imperatively (avoids autoplay policy issues)
   useEffect(() => {
     const el = audioRef.current;
     if (!el) return;
@@ -82,10 +79,19 @@ export default function VideoTemplate({
   }, [muted]);
 
   return (
+    /* Outer shell — full viewport, black letterbox on desktop */
     <div
-      className="w-full h-screen overflow-hidden relative"
-      style={{ backgroundColor: '#0D1929' }}
+      style={{
+        width: '100vw',
+        height: '100vh',
+        background: '#000',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+      }}
     >
+      {/* Hidden audio — plays through browser tab audio (captured by recorder) */}
       <audio
         ref={audioRef}
         src={`${import.meta.env.BASE_URL}audio/composite_audio.mp3`}
@@ -93,9 +99,22 @@ export default function VideoTemplate({
         autoPlay
         loop
       />
-      <AnimatePresence mode="popLayout">
-        {SceneComponent && <SceneComponent key={currentSceneKey} />}
-      </AnimatePresence>
+
+      {/* 9:16 portrait canvas — scales to fill viewport with letterboxing */}
+      <div
+        style={{
+          position: 'relative',
+          width: 'min(100vw, calc(100vh * 9 / 16))',
+          height: 'min(100vh, calc(100vw * 16 / 9))',
+          overflow: 'hidden',
+          backgroundColor: '#0D1929',
+          flexShrink: 0,
+        }}
+      >
+        <AnimatePresence mode="popLayout">
+          {SceneComponent && <SceneComponent key={currentSceneKey} />}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

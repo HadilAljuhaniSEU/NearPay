@@ -108,7 +108,7 @@ export default function Scene8ContactOptions() {
           </motion.div>
         </div>
       </PhoneFrame>
-      <Caption text="WhatsApp, call, or get directions — in one tap" />
+      <Caption ar="واتساب أو اتصال أو موقع — بنقرة واحدة" en="WhatsApp, call, or directions — one tap" />
     </motion.div>
   );
 }

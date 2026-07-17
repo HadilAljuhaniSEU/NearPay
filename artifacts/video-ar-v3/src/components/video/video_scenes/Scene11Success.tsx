@@ -120,7 +120,7 @@ export default function Scene11Success() {
         </div>
       </motion.div>
 
-      <Caption text="Paid! The merchant is notified instantly" />
+      <Caption ar="تم الدفع! يُخطر التاجر فوراً" en="Paid! Merchant notified instantly" />
     </motion.div>
   );
 }

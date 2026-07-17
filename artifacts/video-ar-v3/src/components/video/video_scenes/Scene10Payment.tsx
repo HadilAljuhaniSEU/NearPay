@@ -119,7 +119,7 @@ export default function Scene10Payment() {
           </div>
         </div>
       </PhoneFrame>
-      <Caption text="Pay in full, half, or a custom amount" />
+      <Caption ar="ادفع كلاً أو نصفاً أو مبلغاً مخصصاً" en="Pay in full, half, or custom" />
     </motion.div>
   );
 }

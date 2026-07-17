@@ -53,7 +53,7 @@ export default function Scene0Hook() {
           <motion.div
             className="absolute bg-[#F8FAFC] rounded-[16px] shadow-2xl w-[180px] h-[100px] p-3 flex flex-col justify-between"
             initial={{ opacity: 0, y: 100, rotate: -20, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, rotate: -8, scale: 1, x: -140 }}
+            animate={{ opacity: 1, y: 0, rotate: -8, scale: 1, x: -100 }}
             transition={{ delay: 0.5, type: 'spring', stiffness: 200, damping: 20 }}
             style={{ zIndex: 0 }}
           >
@@ -93,7 +93,7 @@ export default function Scene0Hook() {
           <motion.div
             className="absolute bg-white rounded-[16px] shadow-2xl w-[180px] h-[100px] p-3 flex flex-col justify-between"
             initial={{ opacity: 0, y: 100, rotate: 20, scale: 0.8 }}
-            animate={{ opacity: 1, y: 10, rotate: 6, scale: 1, x: 140 }}
+            animate={{ opacity: 1, y: 10, rotate: 6, scale: 1, x: 100 }}
             transition={{ delay: 1.1, type: 'spring', stiffness: 200, damping: 20 }}
             style={{ zIndex: 20 }}
           >
@@ -110,7 +110,7 @@ export default function Scene0Hook() {
           </motion.div>
         </div>
       </div>
-      <Caption text="Tired of chasing unpaid debts?" />
+      <Caption ar="هل تعبت من متابعة الديون؟" en="Tired of chasing unpaid debts?" />
     </motion.div>
   );
 }

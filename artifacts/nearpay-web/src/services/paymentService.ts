@@ -12,8 +12,9 @@ import {
 import { db } from '../lib/firebase';
 import { PaymentDoc, PaymentMethod } from '../types';
 import { applyPaymentToDebt } from './debtService';
-import { updateCustomer } from './customerService';
+import { updateCustomer, adjustTrustScore } from './customerService';
 import { updateMerchantAggregates } from './merchantService';
+import { Timestamp } from 'firebase/firestore';
 
 const COL = 'payments';
 
@@ -48,6 +49,7 @@ export async function recordPayment(params: {
   currentRemaining: number;
   currentCustomerPaid: number;
   paymentMethod: PaymentMethod;
+  dueDate?: Timestamp | null;
 }): Promise<string> {
   const now = serverTimestamp();
 
@@ -76,6 +78,14 @@ export async function recordPayment(params: {
     totalOutstandingDelta: -params.amount,
     totalCollectedDelta: params.amount,
   });
+
+  // 5. Trust score adjustment
+  const isFullPayment = params.amount >= params.currentRemaining;
+  if (isFullPayment && params.dueDate && params.dueDate.toMillis() > Date.now()) {
+    await adjustTrustScore(params.customerId, 5);  // paid in full before due date
+  } else if (!isFullPayment) {
+    await adjustTrustScore(params.customerId, -3); // partial payment
+  }
 
   return ref_.id;
 }

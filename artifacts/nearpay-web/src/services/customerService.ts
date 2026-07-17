@@ -72,6 +72,14 @@ export async function uploadCustomerAvatar(
   return getDownloadURL(storageRef);
 }
 
+// ─── Adjust trust score (clamped 0–100) ─────────────────────────────────────
+export async function adjustTrustScore(customerId: string, delta: number): Promise<void> {
+  const customer = await fetchCustomer(customerId);
+  if (!customer) return;
+  const newScore = Math.max(0, Math.min(100, customer.trustScore + delta));
+  await updateDoc(doc(db, COL, customerId), { trustScore: newScore, updatedAt: serverTimestamp() });
+}
+
 // ─── Real-time listener ───────────────────────────────────────────────────────
 export function subscribeCustomers(
   merchantId: string,

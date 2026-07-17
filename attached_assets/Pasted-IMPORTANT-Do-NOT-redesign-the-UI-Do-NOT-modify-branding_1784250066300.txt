@@ -1,0 +1,259 @@
+IMPORTANT
+
+Do NOT redesign the UI.
+
+Do NOT modify branding.
+
+Do NOT change colors.
+
+Do NOT touch authentication.
+
+Keep Firebase exactly as it is.
+
+This prompt is ONLY about building the real merchant dashboard using Firestore data.
+
+==================================================
+
+The dashboard must no longer use mock data.
+
+Read all information directly from Firestore.
+
+Use real-time listeners so the dashboard updates automatically.
+
+==================================================
+
+Dashboard Overview Cards
+
+Display:
+
+• Total Outstanding Debt
+
+• Total Collected
+
+• Overdue Debt
+
+• Active Customers
+
+• Total Debts
+
+• Expected Cash Flow
+
+Show values in SAR.
+
+Animate numbers when updated.
+
+==================================================
+
+Debt List
+
+Display every debt created by the merchant.
+
+Columns:
+
+Customer Name
+
+Phone Number
+
+Amount
+
+Remaining Amount
+
+Due Date
+
+Status
+
+Trust Score
+
+Actions
+
+Status colors:
+
+Green = Paid
+
+Yellow = Due Soon
+
+Red = Overdue
+
+Blue = Active
+
+==================================================
+
+Filters
+
+Add filters:
+
+All
+
+Paid
+
+Pending
+
+Overdue
+
+Partially Paid
+
+Search by:
+
+Customer Name
+
+Phone Number
+
+Reference Number
+
+==================================================
+
+Analytics
+
+Generate charts from Firestore.
+
+Collection Rate
+
+Monthly Debt Creation
+
+Monthly Payments
+
+Overdue Trend
+
+Expected Cash Flow
+
+Customer Distribution
+
+Business Performance
+
+==================================================
+
+AI Widget
+
+Create an AI Insights card.
+
+Generate simple smart insights from available Firestore data.
+
+Examples:
+
+"5 customers have overdue payments."
+
+"Collection rate increased by 12%."
+
+"Expected cash inflow this week: SAR 18,500."
+
+"Customer Ahmed has a high Trust Score."
+
+No external AI APIs.
+
+Use calculated summaries.
+
+==================================================
+
+Trust Score
+
+Calculate Trust Score automatically.
+
+Suggested algorithm:
+
+Start from 100.
+
+Late payment:
+
+-10
+
+Partial payment:
+
+-3
+
+Paid before due date:
+
++5
+
+Multiple overdue debts:
+
+Decrease score.
+
+Display:
+
+90–100
+
+Excellent
+
+70–89
+
+Good
+
+50–69
+
+Average
+
+Below 50
+
+High Risk
+
+==================================================
+
+Realtime Updates
+
+When:
+
+New debt added
+
+Debt updated
+
+Payment recorded
+
+Customer approved
+
+Customer rejected
+
+Dashboard updates immediately.
+
+==================================================
+
+Notifications Panel
+
+Inside Dashboard.
+
+Show recent events.
+
+Examples:
+
+Debt created
+
+Payment received
+
+Customer approved debt
+
+Customer rejected debt
+
+Overdue reminder
+
+==================================================
+
+Performance
+
+Use Firestore queries efficiently.
+
+Avoid unnecessary reads.
+
+Lazy load long lists.
+
+==================================================
+
+Responsive
+
+Dashboard must work perfectly on:
+
+Mobile
+
+Tablet
+
+Desktop
+
+Desktop should remain mobile-first.
+
+==================================================
+
+Do not use mock data anymore.
+
+Everything must come from Firestore.
+
+When finished,
+
+stop and wait for the next instructions.

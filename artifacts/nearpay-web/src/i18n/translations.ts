@@ -425,6 +425,39 @@ const translations = {
     not_approved_yet: 'This debt has not been approved yet.',
     debt_rejected: 'This debt was rejected and cannot be paid.',
     payment_failed: 'Payment failed. Please try again.',
+    // ── Dashboard KPIs ──
+    kpi_outstanding: 'Outstanding',
+    kpi_collected: 'Collected',
+    kpi_overdue: 'Overdue',
+    kpi_customers: 'Customers',
+    kpi_total_debts: 'Total Tabs',
+    kpi_cashflow: 'Due Next 30d',
+    // ── Notifications panel ──
+    notif_title: 'Notifications',
+    notif_approved: 'Tab approved',
+    notif_rejected: 'Tab rejected',
+    notif_overdue: 'Overdue alert',
+    notif_settled: 'Tab settled',
+    notif_created: 'New tab',
+    notif_empty: 'No recent activity',
+    // ── AI insights ──
+    ai_insights: 'AI Insights',
+    // ── Trust score tiers ──
+    trust_excellent: 'Excellent',
+    trust_good: 'Good',
+    trust_average: 'Average',
+    // ── Analytics charts ──
+    chart_monthly_debts: 'Debts vs Payments',
+    chart_monthly_payments: 'Payments',
+    chart_overdue_trend: 'Overdue Trend',
+    chart_cashflow: 'Expected Cash Flow',
+    chart_distribution: 'Customer Distribution',
+    business_performance: 'Business Performance',
+    settled_count: 'Settled',
+    pending_approval: 'Pending Approval',
+    avg_debt: 'Avg Tab Amount',
+    no_data_chart: 'No data yet',
+    next_30_days: 'Next 30 Days',
   },
 
   ar: {
@@ -819,6 +852,39 @@ const translations = {
     not_approved_yet: 'لم تتم الموافقة على هذا الدين بعد.',
     debt_rejected: 'رُفض هذا الدين ولا يمكن الدفع.',
     payment_failed: 'فشل الدفع. حاول مجدداً.',
+    // ── Dashboard KPIs ──
+    kpi_outstanding: 'المتبقي',
+    kpi_collected: 'المحصّل',
+    kpi_overdue: 'المتأخر',
+    kpi_customers: 'العملاء',
+    kpi_total_debts: 'إجمالي التبويبات',
+    kpi_cashflow: 'الاستحقاق 30 يوم',
+    // ── Notifications panel ──
+    notif_title: 'الإشعارات',
+    notif_approved: 'تمت الموافقة',
+    notif_rejected: 'تم الرفض',
+    notif_overdue: 'تحذير تأخر',
+    notif_settled: 'تمت التسوية',
+    notif_created: 'تبويب جديد',
+    notif_empty: 'لا يوجد نشاط حديث',
+    // ── AI insights ──
+    ai_insights: 'رؤى الذكاء الاصطناعي',
+    // ── Trust score tiers ──
+    trust_excellent: 'ممتاز',
+    trust_good: 'جيد',
+    trust_average: 'متوسط',
+    // ── Analytics charts ──
+    chart_monthly_debts: 'الديون مقابل المدفوعات',
+    chart_monthly_payments: 'المدفوعات',
+    chart_overdue_trend: 'اتجاه التأخر',
+    chart_cashflow: 'التدفق النقدي المتوقع',
+    chart_distribution: 'توزيع العملاء',
+    business_performance: 'الأداء التجاري',
+    settled_count: 'مُسوَّى',
+    pending_approval: 'بانتظار الموافقة',
+    avg_debt: 'متوسط مبلغ التبويب',
+    no_data_chart: 'لا توجد بيانات بعد',
+    next_30_days: 'الـ 30 يوماً القادمة',
 
     // ── New debt management keys ──
     debt_links_desc: 'أرسل هذه الروابط لعميلك',

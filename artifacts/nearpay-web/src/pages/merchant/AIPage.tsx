@@ -20,7 +20,7 @@ import { useAuthContext }   from '../../contexts/AuthContext';
 import { useDebts }         from '../../hooks/useDebts';
 import { useCustomers }     from '../../hooks/useCustomers';
 import { useMerchantPayments } from '../../hooks/usePayments';
-import { useT }             from '../../contexts/LanguageContext';
+import { useT, useLanguage } from '../../contexts/LanguageContext';
 import {
   computeCustomerTrustScore,
   trustScoreLabel,
@@ -157,15 +157,16 @@ export default function AIPage() {
   const { customers }              = useCustomers(merchant?.id ?? null);
   const { payments }               = useMerchantPayments(merchant?.id ?? null);
   const t = useT();
+  const { lang } = useLanguage();
 
   const [activeTab, setActiveTab] = useState<TabId>('health');
 
   // ── Computed analytics ────────────────────────────────────────────────────
-  const insights    = useMemo(() => generateSmartInsights(debts, customers, payments), [debts, customers, payments]);
+  const insights    = useMemo(() => generateSmartInsights(debts, customers, payments, lang), [debts, customers, payments, lang]);
   const riskProfiles = useMemo(() => buildCustomerRiskProfiles(customers, debts), [customers, debts]);
   const cashFlow    = useMemo(() => buildCashFlowForecast(debts), [debts]);
   const metrics     = useMemo(() => buildCollectionMetrics(debts, payments), [debts, payments]);
-  const reminders   = useMemo(() => generateSmartReminders(debts, customers), [debts, customers]);
+  const reminders   = useMemo(() => generateSmartReminders(debts, customers, lang), [debts, customers, lang]);
   const creditIns   = useMemo(() => buildCreditInsights(customers, debts), [customers, debts]);
 
   // Customer-level trust scores
@@ -268,7 +269,7 @@ export default function AIPage() {
                     <div className="w-7 h-7 rounded-xl flex items-center justify-center bg-emerald-500/10">
                       <CheckCircle2 size={13} className="text-emerald-500" />
                     </div>
-                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide">Paid</p>
+                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide">{t('ai_label_paid')}</p>
                   </div>
                   <p className="text-lg font-black text-foreground">{t('sar')} {metrics.paidTotal.toLocaleString()}</p>
                 </div>
@@ -279,7 +280,7 @@ export default function AIPage() {
                     <div className="w-7 h-7 rounded-xl flex items-center justify-center bg-destructive/10">
                       <CreditCard size={13} className="text-destructive" />
                     </div>
-                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide">Unpaid</p>
+                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide">{t('ai_label_unpaid')}</p>
                   </div>
                   <p className="text-lg font-black text-foreground">{t('sar')} {metrics.unpaidTotal.toLocaleString()}</p>
                 </div>
@@ -290,7 +291,7 @@ export default function AIPage() {
                     <div className="w-7 h-7 rounded-xl flex items-center justify-center bg-amber-500/10">
                       <Clock size={13} className="text-amber-500" />
                     </div>
-                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide">Partial</p>
+                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide">{t('ai_label_partial')}</p>
                   </div>
                   <p className="text-lg font-black text-foreground">{t('sar')} {metrics.partialTotal.toLocaleString()}</p>
                 </div>
@@ -301,19 +302,19 @@ export default function AIPage() {
                     <div className="w-7 h-7 rounded-xl flex items-center justify-center bg-primary/8">
                       <Clock size={13} className="text-primary" />
                     </div>
-                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide">Avg Delay</p>
+                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide">{t('ai_label_avg_delay')}</p>
                   </div>
                   <p className="text-lg font-black text-foreground">
                     {metrics.avgPaymentDelayDays > 0 ? `${metrics.avgPaymentDelayDays}d` : '—'}
                   </p>
-                  <p className="text-[9px] text-muted-foreground font-medium mt-0.5">avg days late</p>
+                  <p className="text-[9px] text-muted-foreground font-medium mt-0.5">{t('ai_avg_days_late')}</p>
                 </div>
               </motion.div>
 
               {/* Monthly Recovery Chart */}
               <motion.div variants={item} className={`${cardCls} p-5`}>
-                <h3 className="text-sm font-bold mb-1">Monthly Recovery</h3>
-                <p className="text-xs text-muted-foreground mb-4">Payments collected per month · SAR</p>
+                <h3 className="text-sm font-bold mb-1">{t('ai_monthly_recovery')}</h3>
+                <p className="text-xs text-muted-foreground mb-4">{t('ai_payments_per_month')}</p>
                 {loading ? (
                   <div className="h-24 flex items-end gap-2">
                     {[1,2,3,4,5,6].map(i => <div key={i} className="flex-1 bg-secondary animate-pulse rounded-lg" style={{ height: `${20+i*8}%` }} />)}
@@ -329,18 +330,18 @@ export default function AIPage() {
 
               {/* Paid vs Unpaid donut-style */}
               <motion.div variants={item} className={`${cardCls} p-5`}>
-                <h3 className="text-sm font-bold mb-4">Paid vs Outstanding</h3>
+                <h3 className="text-sm font-bold mb-4">{t('ai_paid_vs_outstanding')}</h3>
                 {[
-                  { label: 'Paid',    value: metrics.paidTotal,    color: '#20D6C7' },
-                  { label: 'Partial', value: metrics.partialTotal,  color: '#F59E0B' },
-                  { label: 'Unpaid',  value: metrics.unpaidTotal,   color: '#EF4444' },
+                  { labelKey: 'ai_label_paid'    as const, value: metrics.paidTotal,    color: '#20D6C7' },
+                  { labelKey: 'ai_label_partial'  as const, value: metrics.partialTotal,  color: '#F59E0B' },
+                  { labelKey: 'ai_label_unpaid'   as const, value: metrics.unpaidTotal,   color: '#EF4444' },
                 ].map(row => {
                   const total = metrics.paidTotal + metrics.partialTotal + metrics.unpaidTotal;
                   const pct   = total > 0 ? Math.round((row.value / total) * 100) : 0;
                   return (
-                    <div key={row.label} className="mb-3 last:mb-0">
+                    <div key={row.labelKey} className="mb-3 last:mb-0">
                       <div className="flex justify-between text-xs font-medium mb-1.5">
-                        <span className="font-bold text-foreground">{row.label}</span>
+                        <span className="font-bold text-foreground">{t(row.labelKey)}</span>
                         <span className="text-muted-foreground">{pct}% · {t('sar')} {row.value.toLocaleString()}</span>
                       </div>
                       <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
@@ -356,13 +357,13 @@ export default function AIPage() {
               {/* Credit Insights */}
               <motion.div variants={item} className={`${cardCls} overflow-hidden`}>
                 <div className="px-5 py-4 border-b border-border/50 bg-secondary/20">
-                  <h3 className="text-sm font-bold">Merchant Credit Insights</h3>
+                  <h3 className="text-sm font-bold">{t('ai_merchant_credit_insights')}</h3>
                 </div>
                 {[
-                  { title: 'Top Paying',          icon: Star,     color: '#20D6C7', customers: creditIns.topPaying,          sub: (c: typeof creditIns.topPaying[0]) => `SAR ${c.totalPaid.toLocaleString()} paid` },
-                  { title: 'Highest Outstanding',  icon: Wallet,   color: '#EF4444', customers: creditIns.highestOutstanding, sub: (c: typeof creditIns.topPaying[0]) => `SAR ${c.totalDebt.toLocaleString()} owed` },
-                  { title: 'Fastest Paying',       icon: UserCheck,color: '#10B981', customers: creditIns.fastestPaying,      sub: (c: typeof creditIns.topPaying[0]) => `Trust ${c.trustScore}/100` },
-                  { title: 'Newest Customers',     icon: Users,    color: '#6366F1', customers: creditIns.newestCustomers,    sub: (c: typeof creditIns.topPaying[0]) => `Joined ${c.createdAt ? c.createdAt.toDate().toLocaleDateString() : '—'}` },
+                  { titleKey: 'ai_top_paying'          as const, icon: Star,     color: '#20D6C7', customers: creditIns.topPaying,          sub: (c: typeof creditIns.topPaying[0]) => `${t('sar')} ${c.totalPaid.toLocaleString()} ${t('ai_paid_subtitle')}` },
+                  { titleKey: 'ai_highest_outstanding'  as const, icon: Wallet,   color: '#EF4444', customers: creditIns.highestOutstanding, sub: (c: typeof creditIns.topPaying[0]) => `${t('sar')} ${c.totalDebt.toLocaleString()} ${t('ai_owed_subtitle')}` },
+                  { titleKey: 'ai_fastest_paying'       as const, icon: UserCheck,color: '#10B981', customers: creditIns.fastestPaying,      sub: (c: typeof creditIns.topPaying[0]) => `${t('ai_trust_prefix')} ${c.trustScore}/100` },
+                  { titleKey: 'ai_newest_customers'     as const, icon: Users,    color: '#6366F1', customers: creditIns.newestCustomers,    sub: (c: typeof creditIns.topPaying[0]) => `${t('ai_joined_subtitle')} ${c.createdAt ? c.createdAt.toDate().toLocaleDateString() : '—'}` },
                 ].map((section, si) => (
                   <div key={si} className={si > 0 ? 'border-t border-border/40' : ''}>
                     <div className="flex items-center gap-2 px-5 pt-4 pb-2">
@@ -370,10 +371,10 @@ export default function AIPage() {
                            style={{ background: `${section.color}18` }}>
                         <section.icon size={11} style={{ color: section.color }} />
                       </div>
-                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">{section.title}</p>
+                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">{t(section.titleKey)}</p>
                     </div>
                     {section.customers.length === 0 ? (
-                      <p className="px-5 pb-4 text-xs text-muted-foreground">No data yet</p>
+                      <p className="px-5 pb-4 text-xs text-muted-foreground">{t('ai_no_data_yet')}</p>
                     ) : (
                       <div className="px-3 pb-3 space-y-1">
                         {section.customers.slice(0, 3).map((c, i) => (
@@ -404,8 +405,8 @@ export default function AIPage() {
               {insights.length === 0 && (
                 <motion.div variants={item} className={`${cardCls} p-8 text-center`}>
                   <Brain size={32} className="mx-auto text-muted-foreground/40 mb-3" />
-                  <p className="text-sm font-bold text-muted-foreground">No insights yet</p>
-                  <p className="text-xs text-muted-foreground/70 mt-1">Add customers and debts to generate intelligent recommendations.</p>
+                  <p className="text-sm font-bold text-muted-foreground">{t('ai_no_insights_yet')}</p>
+                  <p className="text-xs text-muted-foreground/70 mt-1">{t('ai_no_insights_sub')}</p>
                 </motion.div>
               )}
               {insights.map(ins => {
@@ -434,7 +435,7 @@ export default function AIPage() {
                 <motion.div variants={item} className={`${cardCls} overflow-hidden`}>
                   <div className="px-5 py-4 border-b border-border/50 bg-secondary/20 flex items-center gap-2">
                     <Bell size={14} className="text-amber-500" />
-                    <h3 className="text-sm font-bold">Smart Reminders</h3>
+                    <h3 className="text-sm font-bold">{t('ai_smart_reminders')}</h3>
                     <span className="ml-auto text-[10px] font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-full">
                       {reminders.length}
                     </span>
@@ -460,16 +461,16 @@ export default function AIPage() {
 
               {/* Distribution summary */}
               <motion.div variants={item} className={`${cardCls} p-5`}>
-                <h3 className="text-sm font-bold mb-4">Trust Score Distribution</h3>
+                <h3 className="text-sm font-bold mb-4">{t('ai_trust_distribution')}</h3>
                 {[
-                  { label: 'Excellent (90–100)', color: '#20D6C7', count: customerScores.filter(c => c.score >= 90).length },
-                  { label: 'Good (70–89)',        color: '#0FB8A9', count: customerScores.filter(c => c.score >= 70 && c.score < 90).length },
-                  { label: 'Average (50–69)',     color: '#F59E0B', count: customerScores.filter(c => c.score >= 50 && c.score < 70).length },
-                  { label: 'High Risk (<50)',     color: '#EF4444', count: customerScores.filter(c => c.score < 50).length },
+                  { labelKey: 'ai_trust_excellent_tier' as const, color: '#20D6C7', count: customerScores.filter(c => c.score >= 90).length },
+                  { labelKey: 'ai_trust_good_tier'       as const, color: '#0FB8A9', count: customerScores.filter(c => c.score >= 70 && c.score < 90).length },
+                  { labelKey: 'ai_trust_average_tier'    as const, color: '#F59E0B', count: customerScores.filter(c => c.score >= 50 && c.score < 70).length },
+                  { labelKey: 'ai_trust_high_risk_tier'  as const, color: '#EF4444', count: customerScores.filter(c => c.score < 50).length },
                 ].map(tier => (
-                  <div key={tier.label} className="mb-3 last:mb-0">
+                  <div key={tier.labelKey} className="mb-3 last:mb-0">
                     <div className="flex justify-between text-xs font-medium mb-1.5">
-                      <span className="font-bold text-foreground">{tier.label}</span>
+                      <span className="font-bold text-foreground">{t(tier.labelKey)}</span>
                       <span className="text-muted-foreground">{tier.count} / {customerScores.length}</span>
                     </div>
                     <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
@@ -486,7 +487,7 @@ export default function AIPage() {
               {customerScores.length === 0 ? (
                 <motion.div variants={item} className={`${cardCls} p-8 text-center`}>
                   <Shield size={32} className="mx-auto text-muted-foreground/40 mb-3" />
-                  <p className="text-sm font-bold text-muted-foreground">No customers yet</p>
+                  <p className="text-sm font-bold text-muted-foreground">{t('ai_no_customers_yet')}</p>
                 </motion.div>
               ) : (
                 <motion.div variants={container} className="space-y-3">
@@ -494,10 +495,10 @@ export default function AIPage() {
                     const color  = trustScoreColor(score);
                     const badge  = trustScoreLabel(score);
                     const badgeLabelMap = {
-                      excellent: 'Excellent',
-                      good:      'Good',
-                      average:   'Average',
-                      high_risk: 'High Risk',
+                      excellent: t('ai_badge_excellent'),
+                      good:      t('ai_badge_good'),
+                      average:   t('ai_badge_average'),
+                      high_risk: t('ai_high_risk_tile'),
                     };
                     return (
                       <motion.div key={customer.id} variants={item}
@@ -520,7 +521,7 @@ export default function AIPage() {
                             </span>
                             {customer.totalDebt > 0 && (
                               <span className="text-[10px] text-muted-foreground font-medium">
-                                {t('sar')} {customer.totalDebt.toLocaleString()} owed
+                                {t('sar')} {customer.totalDebt.toLocaleString()} {t('ai_owed')}
                               </span>
                             )}
                           </div>
@@ -539,10 +540,10 @@ export default function AIPage() {
               {/* Algorithm note */}
               <motion.div variants={item} className="rounded-[16px] border border-border/40 bg-secondary/30 p-4">
                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">
-                  <Info size={10} /> How Trust Scores Work
+                  <Info size={10} /> {t('ai_how_trust_works')}
                 </p>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Starts at <strong>100</strong>. Penalties: late payment −10, partial payment −3, dispute −8, &gt;3 overdue −15. Bonus: early payment +5.
+                  {t('ai_trust_algo')}
                   {/* TODO ML: replace with trained model */}
                 </p>
               </motion.div>
@@ -557,27 +558,27 @@ export default function AIPage() {
               <motion.div variants={item} className="grid grid-cols-2 gap-3">
                 <div className="rounded-[20px] p-4 border"
                      style={{ background: 'linear-gradient(135deg, rgba(32,214,199,0.12), rgba(25,184,211,0.08))', borderColor: 'rgba(32,214,199,0.25)' }}>
-                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide mb-1.5">Next 7 Days</p>
+                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide mb-1.5">{t('ai_next_7_days')}</p>
                   <p className="text-lg font-black text-foreground">{t('sar')} {cashFlow.next7Total.toLocaleString()}</p>
-                  <p className="text-[10px] text-muted-foreground font-medium mt-1">Expected inflow</p>
+                  <p className="text-[10px] text-muted-foreground font-medium mt-1">{t('ai_expected_inflow')}</p>
                 </div>
                 <div className={`${cardCls} p-4`}>
-                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide mb-1.5">Next 30 Days</p>
+                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide mb-1.5">{t('ai_next_30_days_tile')}</p>
                   <p className="text-lg font-black text-foreground">{t('sar')} {cashFlow.next30Total.toLocaleString()}</p>
-                  <p className="text-[10px] text-muted-foreground font-medium mt-1">Expected inflow</p>
+                  <p className="text-[10px] text-muted-foreground font-medium mt-1">{t('ai_expected_inflow')}</p>
                 </div>
               </motion.div>
 
               {/* Weekly forecast bar chart */}
               <motion.div variants={item} className={`${cardCls} p-5`}>
-                <h3 className="text-sm font-bold mb-1">Weekly Forecast</h3>
-                <p className="text-xs text-muted-foreground mb-4">Next 4 weeks · SAR</p>
+                <h3 className="text-sm font-bold mb-1">{t('ai_weekly_forecast')}</h3>
+                <p className="text-xs text-muted-foreground mb-4">{t('ai_next_4_weeks')}</p>
                 {loading ? (
                   <div className="h-28 flex items-end gap-3">
                     {[1,2,3,4].map(i => <div key={i} className="flex-1 bg-secondary animate-pulse rounded-lg" style={{ height: `${25+i*12}%` }} />)}
                   </div>
                 ) : cashFlow.weekly.every(w => w.amount === 0) ? (
-                  <p className="text-center text-sm text-muted-foreground py-4">No upcoming due dates</p>
+                  <p className="text-center text-sm text-muted-foreground py-4">{t('ai_no_upcoming_dates')}</p>
                 ) : (
                   <div className="flex items-end gap-3" style={{ height: 112 }}>
                     {cashFlow.weekly.map((w, i) => (
@@ -589,14 +590,14 @@ export default function AIPage() {
 
               {/* Monthly forecast bar chart */}
               <motion.div variants={item} className={`${cardCls} p-5`}>
-                <h3 className="text-sm font-bold mb-1">Monthly Forecast</h3>
-                <p className="text-xs text-muted-foreground mb-4">Next 3 months · SAR</p>
+                <h3 className="text-sm font-bold mb-1">{t('ai_monthly_forecast')}</h3>
+                <p className="text-xs text-muted-foreground mb-4">{t('ai_next_3_months')}</p>
                 {loading ? (
                   <div className="h-28 flex items-end gap-3">
                     {[1,2,3].map(i => <div key={i} className="flex-1 bg-secondary animate-pulse rounded-lg" style={{ height: `${30+i*15}%` }} />)}
                   </div>
                 ) : cashFlow.monthly.every(m => m.amount === 0) ? (
-                  <p className="text-center text-sm text-muted-foreground py-4">No upcoming debts with due dates</p>
+                  <p className="text-center text-sm text-muted-foreground py-4">{t('ai_no_upcoming_debts')}</p>
                 ) : (
                   <div className="flex items-end gap-4" style={{ height: 112 }}>
                     {cashFlow.monthly.map((m, i) => (
@@ -609,11 +610,10 @@ export default function AIPage() {
               {/* Forecast notes */}
               <motion.div variants={item} className="rounded-[16px] border border-border/40 bg-secondary/30 p-4">
                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">
-                  <Info size={10} /> Forecast Method
+                  <Info size={10} /> {t('ai_forecast_method')}
                 </p>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Forecast uses due dates and remaining balances on active debts.
-                  Historical payment behaviour (early/late patterns) is used to weight confidence.
+                  {t('ai_forecast_desc')}
                   {/* TODO ML: integrate survival analysis for payment timing prediction */}
                 </p>
               </motion.div>
@@ -627,15 +627,15 @@ export default function AIPage() {
               {/* Risk summary tiles */}
               <motion.div variants={item} className="grid grid-cols-3 gap-2">
                 {[
-                  { label: 'Low Risk',    count: riskProfiles.filter(r => r.riskLevel === 'low').length,    color: '#10B981', bg: 'rgba(16,185,129,0.1)',  icon: UserCheck },
-                  { label: 'Medium',      count: riskProfiles.filter(r => r.riskLevel === 'medium').length, color: '#F59E0B', bg: 'rgba(245,158,11,0.1)',  icon: AlertTriangle },
-                  { label: 'High Risk',   count: riskProfiles.filter(r => r.riskLevel === 'high').length,   color: '#EF4444', bg: 'rgba(239,68,68,0.1)',   icon: UserX },
+                  { labelKey: 'ai_low_risk_tile'  as const, count: riskProfiles.filter(r => r.riskLevel === 'low').length,    color: '#10B981', bg: 'rgba(16,185,129,0.1)',  icon: UserCheck },
+                  { labelKey: 'ai_medium_tile'     as const, count: riskProfiles.filter(r => r.riskLevel === 'medium').length, color: '#F59E0B', bg: 'rgba(245,158,11,0.1)',  icon: AlertTriangle },
+                  { labelKey: 'ai_high_risk_tile'  as const, count: riskProfiles.filter(r => r.riskLevel === 'high').length,   color: '#EF4444', bg: 'rgba(239,68,68,0.1)',   icon: UserX },
                 ].map(tile => (
-                  <div key={tile.label} className="rounded-[18px] p-3 border text-center"
+                  <div key={tile.labelKey} className="rounded-[18px] p-3 border text-center"
                        style={{ background: tile.bg, borderColor: `${tile.color}30` }}>
                     <tile.icon size={18} className="mx-auto mb-1.5" style={{ color: tile.color }} />
                     <p className="text-xl font-black" style={{ color: tile.color }}>{tile.count}</p>
-                    <p className="text-[9px] font-bold text-muted-foreground mt-0.5">{tile.label}</p>
+                    <p className="text-[9px] font-bold text-muted-foreground mt-0.5">{t(tile.labelKey)}</p>
                   </div>
                 ))}
               </motion.div>
@@ -644,8 +644,8 @@ export default function AIPage() {
               {riskProfiles.length === 0 ? (
                 <motion.div variants={item} className={`${cardCls} p-8 text-center`}>
                   <Users size={32} className="mx-auto text-muted-foreground/40 mb-3" />
-                  <p className="text-sm font-bold text-muted-foreground">No customers yet</p>
-                  <p className="text-xs text-muted-foreground/70 mt-1">Add customers and debts to run risk analysis.</p>
+                  <p className="text-sm font-bold text-muted-foreground">{t('ai_no_customers_yet')}</p>
+                  <p className="text-xs text-muted-foreground/70 mt-1">{t('ai_no_risk_data_sub')}</p>
                 </motion.div>
               ) : (
                 <motion.div variants={container} className="space-y-3">

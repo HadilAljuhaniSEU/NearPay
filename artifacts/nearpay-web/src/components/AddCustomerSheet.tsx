@@ -152,11 +152,13 @@ export function AddCustomerSheet({ merchantId, open, onClose, onCreated }: Props
                   dir="ltr"
                 />
                 <Input
-                  type="email"
-                  placeholder={t('customer_email_label')}
+                  type="text"
+                  placeholder={t('customer_email_optional')}
                   className={inputCls}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  autoCapitalize="none"
+                  autoCorrect="off"
                 />
               </div>
 

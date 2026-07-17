@@ -58,7 +58,9 @@ export default function CustomerAuthPage() {
     setLoading(true);
     try {
       await signInCustomer(siEmail, siPassword);
-      setLocation(redirectTo);
+      const pending = sessionStorage.getItem('np_pending_return');
+      if (pending) sessionStorage.removeItem('np_pending_return');
+      setLocation(pending || redirectTo);
     } catch (err: unknown) {
       setError(mapAuthError(err));
     } finally {
@@ -77,7 +79,9 @@ export default function CustomerAuthPage() {
     try {
       const user = await registerCustomer(suEmail, suPassword, suName);
       await createCustomerDoc(user.uid, '', 'en', suEmail, suName);
-      setLocation(redirectTo);
+      const pending = sessionStorage.getItem('np_pending_return');
+      if (pending) sessionStorage.removeItem('np_pending_return');
+      setLocation(pending || redirectTo);
     } catch (err: unknown) {
       setError(mapAuthError(err));
     } finally {

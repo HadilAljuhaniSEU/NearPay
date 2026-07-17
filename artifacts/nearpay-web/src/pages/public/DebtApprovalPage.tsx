@@ -37,6 +37,8 @@ export default function DebtApprovalPage() {
     const unsub = onAuthStateChanged(auth, (user: FirebaseUser | null) => {
       unsub();
       if (!user) {
+        // Save the pending approval URL so it survives the login/OTP flow
+        sessionStorage.setItem('np_pending_return', `/debt/approve/${token}`);
         setLocation(`/customer/otp?redirect=${encodeURIComponent(`/debt/approve/${token}`)}`);
       } else {
         setState('loading');

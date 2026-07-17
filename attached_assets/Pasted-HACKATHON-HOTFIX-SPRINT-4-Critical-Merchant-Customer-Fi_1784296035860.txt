@@ -1,0 +1,121 @@
+HACKATHON HOTFIX SPRINT 4
+Critical Merchant & Customer Fixes
+
+This sprint fixes only critical production issues.
+Do NOT redesign the UI.
+Do NOT change colors.
+Do NOT add new features.
+
+====================================
+1. AI PAGE LOCALIZATION
+====================================
+
+The AI dashboard MUST fully respect the application language.
+
+If app language is Arabic:
+
+- Every title must be Arabic.
+- Every description must be Arabic.
+- Every card must be Arabic.
+- Every button must be Arabic.
+
+No English text should remain.
+
+If language changes to English,
+the page must update immediately.
+
+====================================
+2. CUSTOMER APPROVAL LINK
+====================================
+
+Current behavior:
+
+Customer opens the WhatsApp approval link.
+
+The app redirects to Login/OTP.
+
+After login nothing happens.
+
+This is incorrect.
+
+Required behavior:
+
+If the customer is not authenticated:
+
+Save the pending action.
+
+Redirect to Login.
+
+After successful authentication,
+
+Automatically continue the original approval flow.
+
+The customer should immediately see the debt details.
+
+Allow:
+
+Approve debt
+
+Reject debt
+
+View merchant
+
+Never lose the original request after login.
+
+====================================
+3. ADD CUSTOMER
+====================================
+
+Customer creation still requires email.
+
+This is a bug.
+
+Email MUST be OPTIONAL.
+
+Customer can be created using ONLY:
+
+- Full Name
+- Phone Number
+
+Email can be empty.
+
+Saving must succeed without email.
+
+====================================
+4. VALIDATION
+====================================
+
+Update form validation.
+
+Do NOT validate email if it is empty.
+
+Only validate email format when user actually enters one.
+
+====================================
+5. CUSTOMER CREATION
+====================================
+
+After creating a customer without email,
+
+Immediately save successfully.
+
+Refresh customer list automatically.
+
+No error dialogs.
+
+====================================
+6. TESTS
+
+Verify:
+
+✓ AI page fully translated.
+
+✓ Customer created with only phone + name.
+
+✓ Approval link survives login.
+
+✓ No runtime errors.
+
+✓ No console errors.
+
+Application must behave like a production app.

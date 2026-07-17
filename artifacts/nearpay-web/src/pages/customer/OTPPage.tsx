@@ -118,8 +118,12 @@ export default function CustomerOTPPage() {
       const user = credential.user;
       // Upsert the Firestore customer auth doc (no-op if already exists)
       await createCustomerDoc(user.uid, normalizeSaudiPhone(phone));
+      // Prefer sessionStorage pending redirect (set by DebtApprovalPage before login)
+      const pendingReturn = sessionStorage.getItem('np_pending_return');
+      if (pendingReturn) sessionStorage.removeItem('np_pending_return');
+      const destination = pendingReturn || redirectTo;
       setStep('success');
-      setTimeout(() => setLocation(redirectTo), 1200);
+      setTimeout(() => setLocation(destination), 1200);
     } catch (err: unknown) {
       setError(mapOTPError(err));
     } finally {

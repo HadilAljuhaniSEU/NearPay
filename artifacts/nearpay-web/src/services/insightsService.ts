@@ -172,7 +172,9 @@ export function generateSmartInsights(
   debts: DebtDoc[],
   customers: CustomerDoc[],
   _payments: PaymentDoc[], // reserved for future ML pattern analysis
+  lang: string = 'en',
 ): SmartInsight[] {
+  const ar = lang === 'ar';
   const now    = Date.now();
   const in7    = now + 7  * 86_400_000;
   const in30   = now + 30 * 86_400_000;
@@ -215,8 +217,12 @@ export function generateSmartInsights(
       id: 'overdue',
       type: 'danger',
       priority: 1,
-      title: `${uniqueOverdue} customer${uniqueOverdue > 1 ? 's have' : ' has'} overdue debts`,
-      body: `Total overdue: SAR ${overdueAmount.toLocaleString()}. Send payment reminders now.`,
+      title: ar
+        ? `${uniqueOverdue} ${uniqueOverdue > 1 ? 'عملاء لديهم' : 'عميل لديه'} ديون متأخرة`
+        : `${uniqueOverdue} customer${uniqueOverdue > 1 ? 's have' : ' has'} overdue debts`,
+      body: ar
+        ? `إجمالي المتأخرات: ${overdueAmount.toLocaleString()} ريال. أرسل تذكيرات الدفع الآن.`
+        : `Total overdue: SAR ${overdueAmount.toLocaleString()}. Send payment reminders now.`,
     });
   }
 
@@ -226,12 +232,20 @@ export function generateSmartInsights(
       id: 'collection_delta',
       type: collectionDelta >= 0 ? 'success' : 'warning',
       priority: 2,
-      title: collectionDelta >= 0
-        ? `Collection rate improved by ${collectionDelta}% this month`
-        : `Collection rate dropped by ${Math.abs(collectionDelta)}% this month`,
-      body: collectionDelta >= 0
-        ? `SAR ${thisMonthCollected.toLocaleString()} collected so far this month.`
-        : `Consider increasing follow-up frequency.`,
+      title: ar
+        ? (collectionDelta >= 0
+            ? `تحسّن معدل التحصيل بنسبة ${collectionDelta}% هذا الشهر`
+            : `انخفض معدل التحصيل بنسبة ${Math.abs(collectionDelta)}% هذا الشهر`)
+        : (collectionDelta >= 0
+            ? `Collection rate improved by ${collectionDelta}% this month`
+            : `Collection rate dropped by ${Math.abs(collectionDelta)}% this month`),
+      body: ar
+        ? (collectionDelta >= 0
+            ? `${thisMonthCollected.toLocaleString()} ريال تم تحصيلها حتى الآن هذا الشهر.`
+            : `فكّر في زيادة تواتر المتابعة.`)
+        : (collectionDelta >= 0
+            ? `SAR ${thisMonthCollected.toLocaleString()} collected so far this month.`
+            : `Consider increasing follow-up frequency.`),
     });
   }
 
@@ -241,8 +255,10 @@ export function generateSmartInsights(
       id: 'cashflow_7',
       type: 'info',
       priority: 3,
-      title: 'Expected cash inflow — next 7 days',
-      body: `SAR ${next7Expected.toLocaleString()} due from ${activeDebts.filter(d => d.dueDate && d.dueDate.toMillis() > now && d.dueDate.toMillis() <= in7).length} customers.`,
+      title: ar ? 'التدفق النقدي المتوقع — الـ 7 أيام القادمة' : 'Expected cash inflow — next 7 days',
+      body: ar
+        ? `${next7Expected.toLocaleString()} ريال مستحقة من ${activeDebts.filter(d => d.dueDate && d.dueDate.toMillis() > now && d.dueDate.toMillis() <= in7).length} عملاء.`
+        : `SAR ${next7Expected.toLocaleString()} due from ${activeDebts.filter(d => d.dueDate && d.dueDate.toMillis() > now && d.dueDate.toMillis() <= in7).length} customers.`,
     });
   }
 
@@ -252,8 +268,12 @@ export function generateSmartInsights(
       id: 'pending',
       type: 'warning',
       priority: 4,
-      title: `${pendingDebts.length} tab${pendingDebts.length > 1 ? 's' : ''} awaiting customer approval`,
-      body: 'Remind customers to approve their tabs to activate them.',
+      title: ar
+        ? `${pendingDebts.length} ${pendingDebts.length > 1 ? 'حسابات تنتظر' : 'حساب ينتظر'} موافقة العميل`
+        : `${pendingDebts.length} tab${pendingDebts.length > 1 ? 's' : ''} awaiting customer approval`,
+      body: ar
+        ? 'ذكّر العملاء بالموافقة على حساباتهم لتفعيلها.'
+        : 'Remind customers to approve their tabs to activate them.',
     });
   }
 
@@ -263,8 +283,12 @@ export function generateSmartInsights(
       id: 'disputed',
       type: 'danger',
       priority: 5,
-      title: `${disputedDebts.length} disputed debt${disputedDebts.length > 1 ? 's' : ''} require attention`,
-      body: 'Review disputed tabs and contact customers to resolve disagreements.',
+      title: ar
+        ? `${disputedDebts.length} ${disputedDebts.length > 1 ? 'ديون متنازع عليها تحتاج' : 'دين متنازع عليه يحتاج'} إلى اهتمام`
+        : `${disputedDebts.length} disputed debt${disputedDebts.length > 1 ? 's' : ''} require attention`,
+      body: ar
+        ? 'راجع الحسابات المتنازع عليها وتواصل مع العملاء لحل الخلافات.'
+        : 'Review disputed tabs and contact customers to resolve disagreements.',
     });
   }
 
@@ -274,8 +298,12 @@ export function generateSmartInsights(
       id: 'high_risk',
       type: 'warning',
       priority: 6,
-      title: `${highRiskCustomers} high-risk customer${highRiskCustomers > 1 ? 's' : ''}`,
-      body: 'Consider reducing credit limits or requiring earlier payment for these accounts.',
+      title: ar
+        ? `${highRiskCustomers} ${highRiskCustomers > 1 ? 'عملاء عالية' : 'عميل عالي'} المخاطر`
+        : `${highRiskCustomers} high-risk customer${highRiskCustomers > 1 ? 's' : ''}`,
+      body: ar
+        ? 'فكّر في تقليل حدود الائتمان أو طلب سداد أبكر لهذه الحسابات.'
+        : 'Consider reducing credit limits or requiring earlier payment for these accounts.',
     });
   }
 
@@ -285,8 +313,12 @@ export function generateSmartInsights(
       id: 'excellent',
       type: 'success',
       priority: 7,
-      title: `${excellentCustomers} customer${excellentCustomers > 1 ? 's have' : ' has'} Excellent Trust Score`,
-      body: 'These accounts are reliable payers — consider offering them higher credit limits.',
+      title: ar
+        ? `${excellentCustomers} ${excellentCustomers > 1 ? 'عملاء لديهم' : 'عميل لديه'} درجة ثقة ممتازة`
+        : `${excellentCustomers} customer${excellentCustomers > 1 ? 's have' : ' has'} Excellent Trust Score`,
+      body: ar
+        ? 'هؤلاء العملاء يدفعون بانتظام — فكّر في منحهم حدوداً ائتمانية أعلى.'
+        : 'These accounts are reliable payers — consider offering them higher credit limits.',
     });
   }
 
@@ -296,8 +328,10 @@ export function generateSmartInsights(
       id: 'cashflow_30',
       type: 'info',
       priority: 8,
-      title: 'Next 30 days forecast',
-      body: `SAR ${next30Expected.toLocaleString()} expected across active tabs.`,
+      title: ar ? 'توقعات الـ 30 يومًا القادمة' : 'Next 30 days forecast',
+      body: ar
+        ? `${next30Expected.toLocaleString()} ريال متوقعة عبر الحسابات النشطة.`
+        : `SAR ${next30Expected.toLocaleString()} expected across active tabs.`,
     });
   }
 
@@ -307,8 +341,10 @@ export function generateSmartInsights(
       id: 'on_track',
       type: 'success',
       priority: 9,
-      title: 'All active tabs are on track',
-      body: `${activeDebts.length} active tab${activeDebts.length > 1 ? 's' : ''} with no overdue accounts.`,
+      title: ar ? 'جميع الحسابات النشطة على المسار الصحيح' : 'All active tabs are on track',
+      body: ar
+        ? `${activeDebts.length} حساب نشط بدون أي حسابات متأخرة.`
+        : `${activeDebts.length} active tab${activeDebts.length > 1 ? 's' : ''} with no overdue accounts.`,
     });
   }
 
@@ -411,7 +447,9 @@ export function buildCollectionMetrics(
 export function generateSmartReminders(
   debts: DebtDoc[],
   customers: CustomerDoc[],
+  lang: string = 'en',
 ): SmartReminder[] {
+  const ar = lang === 'ar';
   const now     = Date.now();
   const in1Day  = now + 86_400_000;
   const in3Days = now + 3 * 86_400_000;
@@ -436,23 +474,31 @@ export function generateSmartReminders(
         customerName: name,
         urgency:      daysOverdue > 7 ? 'high' : 'medium',
         daysOverdue,
-        message: isChronicLate
-          ? `${name} usually pays ${Math.round(usuallyLate / customerDebts.length * 3)} days late — follow up today.`
-          : `Follow up with ${name}: SAR ${d.remainingAmount.toLocaleString()} is ${daysOverdue} day${daysOverdue > 1 ? 's' : ''} overdue.`,
+        message: ar
+          ? (isChronicLate
+              ? `${name} عادةً ما يتأخر في السداد — تابع معه اليوم.`
+              : `تابع مع ${name}: ${d.remainingAmount.toLocaleString()} ريال متأخرة بـ ${daysOverdue} ${daysOverdue > 1 ? 'أيام' : 'يوم'}.`)
+          : (isChronicLate
+              ? `${name} usually pays ${Math.round(usuallyLate / customerDebts.length * 3)} days late — follow up today.`
+              : `Follow up with ${name}: SAR ${d.remainingAmount.toLocaleString()} is ${daysOverdue} day${daysOverdue > 1 ? 's' : ''} overdue.`),
       });
     } else if (d.dueDate && d.dueDate.toMillis() > now && d.dueDate.toMillis() <= in1Day) {
       reminders.push({
         customerId:   d.customerId,
         customerName: name,
         urgency:      'medium',
-        message:      `Send reminder to ${name}: SAR ${d.remainingAmount.toLocaleString()} due tomorrow.`,
+        message: ar
+            ? `أرسل تذكيراً لـ ${name}: ${d.remainingAmount.toLocaleString()} ريال مستحقة غداً.`
+            : `Send reminder to ${name}: SAR ${d.remainingAmount.toLocaleString()} due tomorrow.`,
       });
     } else if (d.dueDate && d.dueDate.toMillis() > now && d.dueDate.toMillis() <= in3Days) {
       reminders.push({
         customerId:   d.customerId,
         customerName: name,
         urgency:      'low',
-        message:      `Upcoming: ${name} owes SAR ${d.remainingAmount.toLocaleString()} due in 3 days.`,
+        message: ar
+            ? `قادم: ${name} مدين بـ ${d.remainingAmount.toLocaleString()} ريال خلال 3 أيام.`
+            : `Upcoming: ${name} owes SAR ${d.remainingAmount.toLocaleString()} due in 3 days.`,
       });
     }
   });

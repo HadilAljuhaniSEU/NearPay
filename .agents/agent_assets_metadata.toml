@@ -8,12 +8,6 @@ type = "audio"
 title = "Arabic NearPay background music"
 
 [[outputs]]
-id = "O-vWOCGIEKbgl7idBvY7M"
-uri = "file://artifacts/video-ar-v2/public/audio/bg_music.mp3"
-type = "audio"
-title = "Arabic fintech background music 76s"
-
-[[outputs]]
 id = "LJKij5jz6Xlrma-cHlTDj"
 uri = "file://artifacts/video-ar-v2/public/audio/vo_merchantRegister.mp3"
 type = "audio"
@@ -80,7 +74,7 @@ type = "audio"
 title = "VO outro"
 
 [[outputs]]
-id = "V4R1u-e-ch1vH43lGfrSQ"
-uri = "file://artifacts/video-ar-v2/public/audio/vo_acceptDebt.mp3"
+id = "3m6t6ouMyydoT0ib-wztc"
+uri = "file://artifacts/video-ar-v3/public/audio/bg_music.mp3"
 type = "audio"
-title = "VO acceptDebt"
+title = "NearPay Arabic fintech background 76s"

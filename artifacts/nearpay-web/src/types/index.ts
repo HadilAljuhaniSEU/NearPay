@@ -13,17 +13,29 @@ export interface UserDoc {
 // ─── Merchant ────────────────────────────────────────────────────────────────
 export interface MerchantDoc {
   id: string;
-  name: string;
+  // Registration fields
+  merchantId: string;         // same as Firestore doc id / Firebase UID
+  ownerName: string;
+  storeName: string;
+  commercialRegistration: string;
+  businessType: string;
+  city: string;
   phone: string;
   email: string;
-  category: string;
+  // Legacy / aggregated
+  name: string;               // kept for backward compat (= storeName)
+  category: string;           // kept for backward compat (= businessType)
   address: string;
-  city: string;
   logoUrl?: string;
   totalOutstanding: number;
   totalCollected: number;
   customerCount: number;
-  ownerId: string; // Firebase Auth UID
+  ownerId: string;            // Firebase Auth UID
+  // Onboarding status
+  status: 'pending' | 'active' | 'suspended';
+  verified: boolean;
+  trustScore: number;         // 0–100
+  location: { lat: number; lng: number } | null;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }

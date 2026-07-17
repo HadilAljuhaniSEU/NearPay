@@ -67,33 +67,56 @@ export async function createUserDoc(
 }
 
 // ─── Register new merchant ────────────────────────────────────────────────────
-export async function registerMerchant(
-  email: string,
-  password: string,
-  businessName: string,
-  phone: string
-): Promise<User> {
+export interface RegisterMerchantParams {
+  email: string;
+  password: string;
+  ownerName: string;
+  storeName: string;
+  commercialRegistration: string;
+  businessType: string;
+  city: string;
+  phone: string;
+}
+
+export async function registerMerchant(params: RegisterMerchantParams): Promise<User> {
+  const {
+    email, password, ownerName, storeName,
+    commercialRegistration, businessType, city, phone,
+  } = params;
+
   const credential = await createUserWithEmailAndPassword(auth, email, password);
   const uid = credential.user.uid;
   const now = serverTimestamp();
 
-  // Create merchant document (UID doubles as merchantId for simplicity)
+  // Create merchant document in `merchants` collection
   await setDoc(doc(db, 'merchants', uid), {
-    name: businessName,
+    merchantId: uid,
+    ownerName,
+    storeName,
+    commercialRegistration,
+    businessType,
+    city,
     phone,
     email,
-    category: 'general',
+    // Legacy fields kept for backward compat
+    name: storeName,
+    category: businessType,
     address: '',
-    city: '',
+    logoUrl: null,
     totalOutstanding: 0,
     totalCollected: 0,
     customerCount: 0,
     ownerId: uid,
+    // Onboarding status
+    status: 'pending',
+    verified: false,
+    trustScore: 0,
+    location: null,
     createdAt: now,
     updatedAt: now,
   });
 
-  // Create user doc
+  // Create user doc linking Firebase Auth UID → merchant doc
   await createUserDoc(uid, email, uid);
 
   return credential.user;

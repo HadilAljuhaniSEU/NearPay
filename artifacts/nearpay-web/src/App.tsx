@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 import { AuthProvider } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { useAuthContext } from './contexts/AuthContext';
+import { NearPayIcon } from './components/NearPayLogo';
 
 // Pages
 import LoginPage from './pages/LoginPage';
@@ -34,18 +36,40 @@ import NotFound from '@/pages/not-found';
 
 const queryClient = new QueryClient();
 
+/** Splash screen — shown at "/" while Firebase resolves auth state. */
 function RootRedirect() {
   const [_, setLocation] = useLocation();
+  const { user, loading } = useAuthContext();
+
   useEffect(() => {
-    const role = localStorage.getItem('nearpay_role');
-    if (role === 'merchant') {
+    if (loading) return; // wait for Firebase to resolve
+    if (user) {
+      localStorage.setItem('nearpay_role', 'merchant');
       setLocation('/merchant/dashboard');
-    } else if (role === 'customer') {
-      setLocation('/customer/nearby');
     } else {
-      setLocation('/login');
+      const role = localStorage.getItem('nearpay_role');
+      if (role === 'customer') {
+        setLocation('/customer/nearby');
+      } else {
+        setLocation('/login');
+      }
     }
-  }, [setLocation]);
+  }, [loading, user, setLocation]);
+
+  // Show branded splash while resolving
+  if (loading) {
+    return (
+      <div className="app-container flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-5">
+          <div className="relative">
+            <NearPayIcon size={52} />
+            <div className="absolute -inset-3 border-2 border-teal/30 rounded-full animate-spin border-t-teal" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return null;
 }
 

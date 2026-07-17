@@ -1,0 +1,172 @@
+Do NOT redesign the UI.
+
+Do NOT change colors.
+
+Do NOT change branding.
+
+Keep Firebase exactly as it is.
+
+This prompt is ONLY about authentication and merchant onboarding.
+
+====================================================
+
+AUTHENTICATION FLOW
+
+The application currently allows users to access pages without authentication.
+
+This is incorrect.
+
+Implement a proper authentication flow.
+
+Application startup:
+
+Splash Screen
+
+↓
+
+Check Firebase Authentication
+
+↓
+
+If user is logged in:
+
+Go to Dashboard.
+
+If user is NOT logged in:
+
+Go to Login.
+
+Nobody can access protected pages without login.
+
+====================================================
+
+MERCHANT SIGN UP
+
+Create a professional merchant registration screen.
+
+Required fields:
+
+Owner Full Name
+
+Store Name
+
+Commercial Registration Number (CR)
+
+Business Type
+
+City
+
+Phone Number
+
+Email
+
+Password
+
+Confirm Password
+
+Checkbox:
+
+"I agree to the Terms & Privacy"
+
+Create Account button.
+
+====================================================
+
+FIREBASE
+
+When Create Account is pressed:
+
+1.
+
+Create Firebase Authentication account.
+
+2.
+
+Create Firestore document.
+
+Collection:
+
+merchants
+
+Store:
+
+merchantId
+
+ownerName
+
+storeName
+
+commercialRegistration
+
+businessType
+
+city
+
+phone
+
+email
+
+createdAt
+
+status
+
+verified
+
+trustScore
+
+location (nullable)
+
+====================================================
+
+LOGIN
+
+Merchant Login
+
+Email
+
+Password
+
+Forgot Password
+
+Remember Me
+
+Login button
+
+====================================================
+
+LOGOUT
+
+Add Logout inside Settings.
+
+Clear session.
+
+Return to Login.
+
+====================================================
+
+SECURITY
+
+Protect every merchant page.
+
+Dashboard
+
+Analytics
+
+AI
+
+Customers
+
+Debts
+
+Settings
+
+Nearby
+
+If user isn't authenticated:
+
+Redirect to Login.
+
+====================================================
+
+After finishing Authentication,
+stop and wait for the next instructions.

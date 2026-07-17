@@ -53,6 +53,22 @@ const translations = {
     passwords_no_match: 'Passwords do not match.',
     password_too_short: 'Password must be at least 6 characters.',
     reset_email_failed: 'Could not send reset email. Check the address and try again.',
+    must_agree_terms: 'Please agree to the Terms & Privacy to continue.',
+
+    // Sign-up extra fields
+    owner_full_name: 'Owner Full Name',
+    store_name_reg: 'Store Name',
+    cr_number: 'Commercial Registration (CR)',
+    select_business_type: 'Select business type',
+    city_field: 'City',
+    agree_terms: 'I agree to the',
+    biz_type_grocery: 'Grocery',
+    biz_type_restaurant: 'Restaurant',
+    biz_type_pharmacy: 'Pharmacy',
+    biz_type_electronics: 'Electronics',
+    biz_type_clothing: 'Clothing',
+    biz_type_services: 'Services',
+    biz_type_other: 'Other',
 
     // ── Bottom Navigation ──
     nav_home: 'Home',
@@ -413,6 +429,22 @@ const translations = {
     passwords_no_match: 'كلمتا المرور غير متطابقتين.',
     password_too_short: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل.',
     reset_email_failed: 'تعذر إرسال البريد. تحقق من العنوان وحاول مجدداً.',
+    must_agree_terms: 'يرجى الموافقة على الشروط والخصوصية للمتابعة.',
+
+    // Sign-up extra fields
+    owner_full_name: 'الاسم الكامل للمالك',
+    store_name_reg: 'اسم المتجر',
+    cr_number: 'رقم السجل التجاري',
+    select_business_type: 'اختر نوع النشاط',
+    city_field: 'المدينة',
+    agree_terms: 'أوافق على',
+    biz_type_grocery: 'بقالة',
+    biz_type_restaurant: 'مطعم',
+    biz_type_pharmacy: 'صيدلية',
+    biz_type_electronics: 'إلكترونيات',
+    biz_type_clothing: 'ملابس',
+    biz_type_services: 'خدمات',
+    biz_type_other: 'أخرى',
 
     // ── Bottom Navigation ──
     nav_home: 'الرئيسية',

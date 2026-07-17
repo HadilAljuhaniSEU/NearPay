@@ -14,7 +14,7 @@ const fadeIn   = { hidden: { opacity: 0 },         show: { opacity: 1, transitio
 
 const FEATURES = [
   { icon: ShieldCheck, label: 'Trusted by merchants',  color: '#20D6C7' },
-  { icon: TrendingUp,  label: 'Track collections',     color: '#0B5FFF' },
+  { icon: TrendingUp,  label: 'Track collections',     color: '#19B8D3' },
   { icon: MapPin,      label: 'Near your customers',   color: '#20D6C7' },
 ] as const;
 
@@ -51,7 +51,7 @@ export default function LandingPage() {
 
       {/* ── Ambient background blobs ── */}
       <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-[100px] pointer-events-none"
-           style={{ background: 'radial-gradient(circle, rgba(11,95,255,0.12) 0%, transparent 70%)' }} />
+           style={{ background: 'radial-gradient(circle, rgba(46,216,195,0.12) 0%, transparent 70%)' }} />
       <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full blur-[100px] pointer-events-none"
            style={{ background: 'radial-gradient(circle, rgba(32,214,199,0.10) 0%, transparent 70%)' }} />
 
@@ -90,7 +90,7 @@ export default function LandingPage() {
 
             <h1 className="text-3xl font-extrabold tracking-tight text-foreground leading-tight mb-3">
               {t('simplify_your')}<br />
-              <span style={{ background: 'linear-gradient(135deg, #0B5FFF, #20D6C7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              <span style={{ background: 'linear-gradient(135deg, #2ED8C3, #19B8D3)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 {t('merchant_tabs')}
               </span>
             </h1>
@@ -116,13 +116,13 @@ export default function LandingPage() {
               <svg width="100%" height="100%" viewBox="0 0 220 140" fill="none">
                 {/* Card 1 */}
                 <rect x="10" y="8"  width="120" height="70" rx="12" fill="currentColor" fillOpacity="0.05" stroke="currentColor" strokeOpacity="0.08" />
-                <circle cx="38"  cy="37" r="13" fill="#0B5FFF" fillOpacity="0.15" />
+                <circle cx="38"  cy="37" r="13" fill="#2ED8C3" fillOpacity="0.15" />
                 <rect x="60"  y="30" width="55" height="7" rx="3.5" fill="currentColor" fillOpacity="0.12" />
                 <rect x="60"  y="43" width="38" height="5" rx="2.5" fill="#20D6C7" fillOpacity="0.5" />
                 <rect x="20"  y="62" width="70" height="7" rx="3.5" fill="currentColor" fillOpacity="0.08" />
 
                 {/* Card 2 */}
-                <rect x="90" y="48" width="120" height="80" rx="12" fill="#0B5FFF" fillOpacity="0.12" stroke="#0B5FFF" strokeOpacity="0.2" />
+                <rect x="90" y="48" width="120" height="80" rx="12" fill="#19B8D3" fillOpacity="0.12" stroke="#19B8D3" strokeOpacity="0.2" />
                 <circle cx="118" cy="78" r="13" fill="#20D6C7" fillOpacity="0.2" />
                 <rect x="140" y="71" width="55" height="7" rx="3.5" fill="white" fillOpacity="0.25" />
                 <rect x="140" y="84" width="38" height="5" rx="2.5" fill="#20D6C7" fillOpacity="0.6" />
@@ -146,7 +146,7 @@ export default function LandingPage() {
               variants={fadeUp}
               onClick={() => setLocation('/login')}
               className="w-full h-14 rounded-2xl flex items-center justify-between px-5 font-bold text-sm text-white shadow-lg hover:opacity-90 transition-opacity active:scale-[0.98]"
-              style={{ background: 'linear-gradient(135deg, #0B5FFF 0%, #0040CC 100%)', boxShadow: '0 4px 16px rgba(11,95,255,0.35)' }}
+              style={{ background: 'linear-gradient(135deg, #2ED8C3 0%, #19B8D3 100%)', boxShadow: '0 4px 16px rgba(46,216,195,0.35)' }}
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center">

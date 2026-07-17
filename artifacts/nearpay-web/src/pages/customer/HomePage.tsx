@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useT } from '../../contexts/LanguageContext';
 import { useCustomerDebts } from '../../hooks/useCustomerDebts';
+import { useAuthContext } from '../../contexts/AuthContext';
 
 function getInitials(name: string) {
   return name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
@@ -21,11 +22,17 @@ const item      = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } };
 export default function CustomerHomePage() {
   const t = useT();
   const { debts, loading, customerName } = useCustomerDebts();
+  const { user } = useAuthContext();
+
+  // Prefer Firebase auth displayName first name, fall back to merchant-entered name
+  const firstName = user?.displayName?.trim().split(/\s+/)[0]
+    ?? customerName?.trim().split(/\s+/)[0]
+    ?? '';
 
   const activeDebts  = debts.filter((d) => d.status !== 'settled' && d.status !== 'rejected');
   const totalDue     = activeDebts.reduce((s, d) => s + d.remainingAmount, 0);
   const recentDebts  = activeDebts.slice(0, 2);
-  const initials     = customerName ? getInitials(customerName) : '?';
+  const initials     = (firstName || customerName) ? getInitials(firstName || customerName) : '?';
 
   return (
     <div className="app-container flex flex-col bg-background">
@@ -41,9 +48,11 @@ export default function CustomerHomePage() {
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">{t('greeting')}</p>
+              {firstName && (
+                <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">{t('greeting')}</p>
+              )}
               <h1 className="text-sm font-bold text-foreground leading-tight">
-                {customerName || t('customer_label')}
+                {firstName || t('hello')}
               </h1>
             </div>
           </div>
@@ -113,9 +122,14 @@ export default function CustomerHomePage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 bg-card rounded-[20px] border border-border/60">
-                <p className="text-sm font-semibold text-muted-foreground">{t('no_debts_customer')}</p>
-                <p className="text-xs text-muted-foreground/60 mt-1">{t('no_debts_customer_sub')}</p>
+              <div className="py-12 bg-card rounded-[20px] border border-border/60 flex flex-col items-center gap-3 text-center px-5">
+                <div className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center">
+                  <CreditCard size={22} className="text-muted-foreground/50" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-foreground">{t('no_debts_customer')}</p>
+                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed max-w-[240px]">{t('no_debts_customer_sub')}</p>
+                </div>
               </div>
             )}
           </motion.div>

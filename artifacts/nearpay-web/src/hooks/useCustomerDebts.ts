@@ -14,6 +14,7 @@ export function useCustomerDebts() {
   const [debts, setDebts]               = useState<DebtDoc[]>([]);
   const [loading, setLoading]           = useState(true);
   const [phone, setPhone]               = useState<string | null>(null);
+  const [authResolved, setAuthResolved] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [error, setError]               = useState<string | null>(null);
 
@@ -21,13 +22,14 @@ export function useCustomerDebts() {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       setPhone(user?.phoneNumber ?? null);
+      setAuthResolved(true);
     });
     return unsub;
   }, []);
 
-  // Subscribe to debts once we have the phone
+  // Subscribe to debts once auth has resolved
   useEffect(() => {
-    if (phone === null) return; // still resolving auth
+    if (!authResolved) return; // still waiting for Firebase to resolve auth
     if (!phone) { setLoading(false); return; }
 
     setLoading(true);
@@ -50,7 +52,7 @@ export function useCustomerDebts() {
     );
 
     return unsub;
-  }, [phone]);
+  }, [phone, authResolved]);
 
   return { debts, loading, phone, customerName, error };
 }

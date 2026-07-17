@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { StatusBar } from '../../components/StatusBar';
 import { BottomNav } from '../../components/BottomNav';
 import { PageHeader } from '../../components/PageHeader';
-import { ReceiptText, CheckCircle2, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ReceiptText, CheckCircle2, Clock, Store } from 'lucide-react';
 import { useT } from '../../contexts/LanguageContext';
 import { useCustomerDebts } from '../../hooks/useCustomerDebts';
 import { fetchPaymentsForDebt } from '../../services/paymentService';
@@ -100,6 +102,22 @@ export default function CustomerPaymentsPage() {
                   </span>
                 </motion.div>
               ))
+            ) : debts.length === 0 ? (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                className="text-center py-16 flex flex-col items-center gap-3 px-6">
+                <div className="w-14 h-14 bg-secondary rounded-full flex items-center justify-center">
+                  <Store size={22} className="text-muted-foreground" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-foreground">{t('no_pending_payments')}</h3>
+                </div>
+                <Link href="/customer/nearby" className="mt-1">
+                  <Button size="sm" className="rounded-xl font-bold px-5"
+                    style={{ background: 'linear-gradient(135deg,#20D6C7,#0FB8A9)', color: '#0B2341' }}>
+                    {t('discover_stores_btn')}
+                  </Button>
+                </Link>
+              </motion.div>
             ) : (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                 className="text-center py-16 flex flex-col items-center">

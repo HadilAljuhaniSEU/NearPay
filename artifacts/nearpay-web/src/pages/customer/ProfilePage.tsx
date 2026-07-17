@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'wouter';
 import { motion } from 'framer-motion';
-import { LogOut, ShieldCheck, CreditCard, ChevronRight, CheckCircle2, History, Settings, Bell } from 'lucide-react';
+import { LogOut, ShieldCheck, CreditCard, ChevronRight, History, Settings, Bell } from 'lucide-react';
 import { StatusBar } from '../../components/StatusBar';
 import { BottomNav } from '../../components/BottomNav';
 import { PageHeader } from '../../components/PageHeader';
@@ -66,24 +66,15 @@ export default function CustomerProfilePage() {
             <div className="absolute top-0 end-0 w-40 h-40 rounded-full blur-2xl -me-10 -mt-10 pointer-events-none"
                  style={{ background: 'radial-gradient(circle, rgba(32,214,199,0.2), transparent)' }} />
 
-            <div className="relative z-10 flex items-center justify-between">
-              <div>
-                <h3 className="text-[10px] font-bold opacity-80 uppercase tracking-widest mb-1">{t('nearpay_score')}</h3>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-5xl font-black tracking-tighter">—</span>
-                  <span className="text-lg font-bold opacity-60">/100</span>
-                </div>
-              </div>
-              <div className="w-14 h-14 rounded-[18px] flex items-center justify-center border"
+            <div className="relative z-10 flex items-start gap-4">
+              <div className="w-12 h-12 rounded-[16px] flex-shrink-0 flex items-center justify-center border"
                    style={{ background: 'rgba(32,214,199,0.15)', borderColor: 'rgba(32,214,199,0.3)' }}>
-                <ShieldCheck size={30} style={{ color: '#20D6C7' }} />
+                <ShieldCheck size={26} style={{ color: '#20D6C7' }} />
               </div>
-            </div>
-
-            <div className="mt-5 pt-4 border-t border-white/15 flex items-center gap-2 text-xs font-bold rounded-xl px-3 py-2"
-                 style={{ background: 'rgba(32,214,199,0.1)' }}>
-              <CheckCircle2 size={15} style={{ color: '#20D6C7' }} />
-              <span style={{ color: '#20D6C7' }}>{t('excellent_history')}</span>
+              <div>
+                <h3 className="text-[10px] font-bold opacity-80 uppercase tracking-widest mb-1.5">{t('nearpay_score')}</h3>
+                <p className="text-sm text-white/70 leading-snug">{t('trust_score_placeholder')}</p>
+              </div>
             </div>
           </motion.div>
 
@@ -100,6 +91,7 @@ export default function CustomerProfilePage() {
             ].map((row, i, arr) => (
               <div
                 key={row.labelKey}
+                onClick={() => setLocation('/customer/coming-soon')}
                 className={`flex items-center justify-between px-5 py-3.5 cursor-pointer hover:bg-secondary/50 transition-colors ${i < arr.length - 1 ? 'border-b border-border/40' : ''}`}
               >
                 <div className="flex items-center gap-3">

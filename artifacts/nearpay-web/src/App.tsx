@@ -30,6 +30,7 @@ import CustomerPaymentsPage from './pages/customer/PaymentsPage';
 import CustomerProfilePage from './pages/customer/ProfilePage';
 import CustomerOTPPage from './pages/customer/OTPPage';
 import CustomerAuthPage from './pages/customer/CustomerAuthPage';
+import CustomerComingSoonPage from './pages/customer/ComingSoonPage';
 
 import NotFound from '@/pages/not-found';
 
@@ -94,6 +95,9 @@ function Router() {
       </Route>
       <Route path="/customer/profile">
         <ProtectedRoute redirectTo="/customer/login"><CustomerProfilePage /></ProtectedRoute>
+      </Route>
+      <Route path="/customer/coming-soon">
+        <ProtectedRoute redirectTo="/customer/login"><CustomerComingSoonPage /></ProtectedRoute>
       </Route>
 
       <Route component={NotFound} />

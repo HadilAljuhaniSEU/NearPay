@@ -1,0 +1,162 @@
+HACKATHON HOTFIX SPRINT 1
+
+This sprint is ONLY for stability and user experience before judging.
+
+Do NOT redesign the app.
+Do NOT change colors.
+Do NOT add new features.
+Only fix the following issues.
+
+=========================
+1. CUSTOMER HOME
+=========================
+
+A newly registered customer has no debts.
+
+Do NOT show loading forever.
+
+Instead show a proper empty state:
+
+Title:
+"No debts yet"
+
+Description:
+"You don't have any debts yet. Once a merchant records a debt using your phone number, it will automatically appear here."
+
+Show an illustration/icon.
+
+=========================
+2. PAYMENT PAGE
+=========================
+
+If the customer has no debts:
+
+Do NOT show empty loading.
+
+Show:
+
+"No pending payments."
+
+Button:
+"Discover Stores"
+
+=========================
+3. HISTORY PAGE
+=========================
+
+If there are no records:
+
+Show:
+
+"No transaction history yet."
+
+Do NOT show loading.
+
+=========================
+4. CUSTOMER GREETING
+=========================
+
+Remove:
+
+Hello @customer
+
+Use:
+
+Hello, {First Name}
+
+If first name does not exist:
+
+Hello!
+
+Never display "@customer".
+
+=========================
+5. TRUST SCORE
+=========================
+
+Never show fake scores.
+
+If customer has no history:
+
+Display:
+
+"Trust Score will appear after your first completed transaction."
+
+No fake 80/100.
+
+=========================
+6. DISCOVER PAGE
+=========================
+
+Load ALL active stores from Firestore.
+
+Do not return only one store.
+
+=========================
+7. MAP
+=========================
+
+If Google Maps key is missing:
+
+Never display an error.
+
+Instead show:
+
+"Map is temporarily unavailable."
+
+The page must continue working normally.
+
+=========================
+8. PROFILE MENU
+=========================
+
+For pages not implemented yet:
+
+Payment Methods
+Notifications
+History
+Preferences
+
+Open a clean "Coming Soon" screen.
+
+Never leave dead buttons.
+
+=========================
+9. TRANSLATIONS
+=========================
+
+When app language is Arabic,
+
+Every new text added in this sprint must also be Arabic.
+
+No mixed English/Arabic.
+
+=========================
+10. LOADING
+=========================
+
+Remove every infinite spinner.
+
+Every loading state must end with either:
+
+- data
+- empty state
+- error state
+
+Never spin forever.
+
+After implementing:
+
+Run the app.
+
+Verify manually:
+
+✓ New customer
+✓ Home
+✓ History
+✓ Payments
+✓ Discover
+✓ Profile
+
+No console errors.
+No runtime errors.

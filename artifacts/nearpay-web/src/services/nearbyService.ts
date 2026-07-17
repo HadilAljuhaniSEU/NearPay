@@ -2,9 +2,7 @@ import {
   collection,
   doc,
   getDocs,
-  query,
   updateDoc,
-  where,
   GeoPoint,
   serverTimestamp,
 } from 'firebase/firestore';
@@ -46,13 +44,13 @@ export type SaudiCity = (typeof SAUDI_CITIES)[number];
 //       `geohash` field to each merchant doc (via updateMerchantGeoData), and
 //       query `geoCollection(db).near({ center, radius })` instead of getDocs.
 //       Reference: https://github.com/MichaelSolati/geofirestore-js
+// Fetches all merchants that have coordinates set.
+// isVisible flag is not required — any merchant with lat/lng appears in Discover.
 export async function fetchVisibleMerchants(): Promise<MerchantDoc[]> {
-  const q = query(
-    collection(db, 'merchants'),
-    where('isVisible', '==', true),
-  );
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as MerchantDoc));
+  const snap = await getDocs(collection(db, 'merchants'));
+  return snap.docs
+    .map((d) => ({ id: d.id, ...d.data() } as MerchantDoc))
+    .filter((m) => m.latitude != null && m.longitude != null);
 }
 
 // ─── Save merchant geo / discovery data ──────────────────────────────────────

@@ -1,25 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'wouter';
+import { useParams, useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, XCircle, AlertCircle, Loader2, Store, Calendar, FileText } from 'lucide-react';
+import { User, onAuthStateChanged } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
 import { NearPayLogo } from '../../components/NearPayLogo';
 import { fetchDebtByApprovalToken, updateDebtApproval } from '../../services/debtService';
+import { auth } from '../../lib/firebase';
 import { DebtDoc } from '../../types';
 import { useT } from '../../contexts/LanguageContext';
 
-type PageState = 'loading' | 'ready' | 'approving' | 'approved' | 'rejected' | 'already_handled' | 'error';
+type PageState = 'auth_check' | 'loading' | 'ready' | 'approving' | 'approved' | 'rejected' | 'already_handled' | 'error';
 
 export default function DebtApprovalPage() {
   const params = useParams<{ token: string }>();
   const token  = params.token;
   const t      = useT();
+  const [_, setLocation] = useLocation();
 
   const [debt,     setDebt]     = useState<DebtDoc | null>(null);
-  const [state,    setState]    = useState<PageState>('loading');
+  const [state,    setState]    = useState<PageState>('auth_check');
   const [errorMsg, setErrorMsg] = useState('');
 
+  // ── Step 1: check customer authentication ────────────────────────────────────
   useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user: User | null) => {
+      unsub(); // one-shot
+      if (!user) {
+        // Save this page's path so OTPPage can redirect back after auth
+        const redirectPath = `/debt/approve/${token}`;
+        setLocation(`/customer/otp?redirect=${encodeURIComponent(redirectPath)}`);
+      } else {
+        setState('loading');
+      }
+    });
+    return unsub;
+  }, [token]);
+
+  // ── Step 2: load debt once authenticated ─────────────────────────────────────
+  useEffect(() => {
+    if (state !== 'loading') return;
     if (!token) { setState('error'); setErrorMsg(t('invalid_link')); return; }
     fetchDebtByApprovalToken(token)
       .then((d) => {
@@ -29,7 +49,7 @@ export default function DebtApprovalPage() {
         setState('ready');
       })
       .catch(() => { setState('error'); setErrorMsg(t('load_failed')); });
-  }, [token]);
+  }, [state, token]);
 
   const handleApprove = async () => {
     if (!debt) return;
@@ -65,8 +85,8 @@ export default function DebtApprovalPage() {
         </div>
 
         <AnimatePresence mode="wait">
-          {/* Loading */}
-          {(state === 'loading' || state === 'approving') && (
+          {/* Auth checking / loading / approving */}
+          {(state === 'auth_check' || state === 'loading' || state === 'approving') && (
             <motion.div key="loading" initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.92 }}
               className="bg-card border border-border/60 rounded-[28px] p-10 flex flex-col items-center gap-5 shadow-sm text-center">
               <div className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center">
@@ -135,12 +155,12 @@ export default function DebtApprovalPage() {
           {['already_handled', 'approved', 'rejected', 'error'].includes(state) && (
             <motion.div key="status" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
               className="bg-card border border-border/60 rounded-[28px] p-8 flex flex-col items-center text-center shadow-sm">
-              <div className={`w-18 h-18 rounded-full flex items-center justify-center mb-5 ${
+              <div className={`rounded-full flex items-center justify-center mb-5 ${
                 state === 'approved'  ? 'bg-success/10 text-success' :
                 state === 'rejected' || state === 'error' ? 'bg-destructive/10 text-destructive' :
                 'bg-secondary text-muted-foreground'
               }`} style={{ width: 72, height: 72 }}>
-                {state === 'approved'       && <CheckCircle2 size={36} />}
+                {state === 'approved'        && <CheckCircle2 size={36} />}
                 {(state === 'rejected' || state === 'error') && <XCircle size={36} />}
                 {state === 'already_handled' && <AlertCircle size={36} />}
               </div>

@@ -69,6 +69,24 @@ const translations = {
     biz_type_clothing: 'Clothing',
     biz_type_services: 'Services',
     biz_type_other: 'Other',
+    saudi_phone_placeholder: 'Saudi mobile: 05XXXXXXXX',
+    invalid_saudi_phone: 'Enter a valid Saudi mobile number (05XXXXXXXX or +9665XXXXXXXX)',
+    password_min_8: 'Password must be at least 8 characters.',
+
+    // OTP / Customer Phone Auth
+    otp_title: 'Verify Your Number',
+    otp_subtitle: 'Enter your Saudi mobile number to continue.',
+    otp_send_btn: 'Send OTP',
+    otp_enter_title: 'Enter OTP',
+    otp_sent_to: 'A 6-digit code was sent to',
+    otp_placeholder: '· · · · · ·',
+    otp_verify_btn: 'Verify',
+    otp_resend: 'Resend code',
+    otp_resend_in: 'Resend in',
+    otp_change_number: 'Change number',
+    otp_verified: 'Verified!',
+    otp_redirecting: 'Taking you back…',
+    otp_too_short: 'Enter the full 6-digit code.',
 
     // ── Bottom Navigation ──
     nav_home: 'Home',
@@ -445,6 +463,24 @@ const translations = {
     biz_type_clothing: 'ملابس',
     biz_type_services: 'خدمات',
     biz_type_other: 'أخرى',
+    saudi_phone_placeholder: 'الجوال السعودي: 05XXXXXXXX',
+    invalid_saudi_phone: 'أدخل رقم جوال سعودي صحيح (05XXXXXXXX أو +9665XXXXXXXX)',
+    password_min_8: 'يجب أن تكون كلمة المرور 8 أحرف على الأقل.',
+
+    // OTP / Customer Phone Auth
+    otp_title: 'تحقق من رقمك',
+    otp_subtitle: 'أدخل رقم جوالك السعودي للمتابعة.',
+    otp_send_btn: 'إرسال الرمز',
+    otp_enter_title: 'أدخل رمز التحقق',
+    otp_sent_to: 'تم إرسال رمز مكون من 6 أرقام إلى',
+    otp_placeholder: '· · · · · ·',
+    otp_verify_btn: 'تحقق',
+    otp_resend: 'إعادة الإرسال',
+    otp_resend_in: 'إعادة الإرسال خلال',
+    otp_change_number: 'تغيير الرقم',
+    otp_verified: 'تم التحقق!',
+    otp_redirecting: 'جارٍ التوجيه…',
+    otp_too_short: 'أدخل رمز التحقق المكون من 6 أرقام كاملاً.',
 
     // ── Bottom Navigation ──
     nav_home: 'الرئيسية',

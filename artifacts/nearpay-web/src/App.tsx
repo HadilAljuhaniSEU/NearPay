@@ -31,6 +31,7 @@ import CustomerNearbyPage from './pages/customer/NearbyPage';
 import CustomerDebtsPage from './pages/customer/DebtsPage';
 import CustomerPaymentsPage from './pages/customer/PaymentsPage';
 import CustomerProfilePage from './pages/customer/ProfilePage';
+import CustomerOTPPage from './pages/customer/OTPPage';
 
 import NotFound from '@/pages/not-found';
 
@@ -111,6 +112,9 @@ function Router() {
       <Route path="/merchant/nearby">
         <ProtectedRoute><MerchantNearbyPage /></ProtectedRoute>
       </Route>
+
+      {/* ── Customer OTP auth (public) ── */}
+      <Route path="/customer/otp" component={CustomerOTPPage} />
 
       {/* ── Customer routes — no Firebase auth needed ── */}
       <Route path="/customer/home" component={CustomerHomePage} />

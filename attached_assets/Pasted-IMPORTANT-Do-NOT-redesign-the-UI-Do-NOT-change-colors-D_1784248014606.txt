@@ -1,0 +1,277 @@
+IMPORTANT:
+
+Do NOT redesign the UI.
+
+Do NOT change colors.
+
+Do NOT change the current layout.
+
+Keep everything exactly as it is visually.
+
+Your task is ONLY to implement a real authentication system using Firebase.
+
+==================================================
+
+Use the Firebase project already configured.
+
+Use:
+
+Firebase Authentication
+
+Firestore Database
+
+Firebase Storage (prepare only)
+
+==================================================
+
+Authentication Requirements
+
+There are two completely different user types.
+
+1) Merchant
+
+2) Customer
+
+==================================================
+
+MERCHANT AUTHENTICATION
+
+Merchant MUST create an account before accessing the dashboard.
+
+Merchant Sign Up fields:
+
+Business Name *
+
+Commercial Registration Number (CR Number) *
+
+Owner Full Name *
+
+Email *
+
+Saudi Mobile Number *
+
+Password *
+
+Confirm Password *
+
+Accept Terms
+
+Create Account
+
+Validation:
+
+Business Name required
+
+Commercial Registration required
+
+Email valid
+
+Saudi phone validation
+
+Password >= 8 chars
+
+Passwords match
+
+Duplicate email not allowed
+
+Duplicate Commercial Registration not allowed
+
+==================================================
+
+When merchant account is created:
+
+Create Firebase Auth user.
+
+Create Firestore document:
+
+merchants/{uid}
+
+Fields:
+
+uid
+
+businessName
+
+commercialRegistration
+
+ownerName
+
+email
+
+phone
+
+role = merchant
+
+createdAt
+
+status = active
+
+language = en
+
+trustScore = 100
+
+==================================================
+
+Merchant Login
+
+Login with:
+
+Email
+
+Password
+
+Remember me
+
+Forgot password
+
+Use Firebase Auth.
+
+==================================================
+
+Forgot Password
+
+Use Firebase reset password email.
+
+==================================================
+
+Auto Login
+
+If authenticated
+
+Skip login
+
+Go directly to dashboard.
+
+==================================================
+
+CUSTOMER AUTHENTICATION
+
+Customers should NOT create accounts manually.
+
+Customers receive approval/payment links.
+
+When customer opens the link:
+
+If not authenticated
+
+Ask for:
+
+Saudi Mobile Number
+
+Receive OTP
+
+Verify OTP
+
+Login automatically.
+
+If authenticated already
+
+Skip OTP.
+
+==================================================
+
+Use Firebase Phone Authentication.
+
+Prepare reCAPTCHA for web.
+
+==================================================
+
+Customer Firestore document:
+
+customers/{uid}
+
+Fields:
+
+uid
+
+phone
+
+displayName
+
+createdAt
+
+preferredLanguage
+
+==================================================
+
+Session
+
+Persist login.
+
+Do not ask user every launch.
+
+==================================================
+
+Firestore Collections
+
+merchants
+
+customers
+
+debts
+
+payments
+
+notifications
+
+trust_scores
+
+==================================================
+
+Security
+
+Only merchant can access his own data.
+
+Customers can only read debts assigned to them.
+
+==================================================
+
+Routing
+
+Merchant
+
+Login
+
+↓
+
+Dashboard
+
+Customer
+
+OTP
+
+↓
+
+Customer Home
+
+==================================================
+
+Language
+
+Current language selector must continue working.
+
+When Firebase user logs in
+
+Save preferred language.
+
+==================================================
+
+DO NOT use fake authentication.
+
+Everything must use Firebase Authentication.
+
+==================================================
+
+If Firebase Phone Authentication is not fully configured yet,
+
+prepare the complete implementation,
+
+show a clear TODO comment,
+
+and keep the app runnable.
+
+Do not remove existing pages.
+
+Do not redesign UI.
+
+Only add the authentication flow and connect it to Firebase.

@@ -3,8 +3,7 @@ import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Store, User, ArrowRight, Mail, Lock, Eye, EyeOff,
-  Phone, Building2, ArrowLeft, IdCard, MapPin, UserCircle2,
-  Briefcase, CheckSquare,
+  Phone, Building2, ArrowLeft, IdCard, UserCircle2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,21 +12,17 @@ import { useAuth } from '../hooks/useAuth';
 import { resetMerchantPassword } from '../services/authService';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useT } from '../contexts/LanguageContext';
+import { isValidSaudiPhone, normalizeSaudiPhone } from '../utils/phone';
 
 type Step = 'form' | 'forgot' | 'signup';
-
-const BUSINESS_TYPES = [
-  'grocery', 'restaurant', 'pharmacy', 'electronics',
-  'clothing', 'services', 'other',
-] as const;
 
 export default function LoginPage() {
   const [_, setLocation] = useLocation();
   const { signIn, register, actionLoading, error: hookError } = useAuth();
   const t = useT();
 
-  const [role, setRole]   = useState<'merchant' | 'customer'>('merchant');
-  const [step, setStep]   = useState<Step>('form');
+  const [role, setRole] = useState<'merchant' | 'customer'>('merchant');
+  const [step, setStep] = useState<Step>('form');
 
   // ── Login ──
   const [email, setEmail]           = useState('');
@@ -43,18 +38,16 @@ export default function LoginPage() {
   const [forgotError, setForgotError]     = useState<string | null>(null);
 
   // ── Sign-up ──
-  const [suOwnerName, setSuOwnerName]   = useState('');
-  const [suStoreName, setSuStoreName]   = useState('');
-  const [suCR, setSuCR]                 = useState('');
-  const [suBizType, setSuBizType]       = useState('');
-  const [suCity, setSuCity]             = useState('');
-  const [suPhone, setSuPhone]           = useState('');
-  const [suEmail, setSuEmail]           = useState('');
-  const [suPassword, setSuPassword]     = useState('');
-  const [suConfirm, setSuConfirm]       = useState('');
-  const [suShowPw, setSuShowPw]         = useState(false);
-  const [suTerms, setSuTerms]           = useState(false);
-  const [signupError, setSignupError]   = useState<string | null>(null);
+  const [suBusinessName, setSuBusinessName] = useState('');
+  const [suCR, setSuCR]                     = useState('');
+  const [suOwnerName, setSuOwnerName]       = useState('');
+  const [suEmail, setSuEmail]               = useState('');
+  const [suPhone, setSuPhone]               = useState('');
+  const [suPassword, setSuPassword]         = useState('');
+  const [suConfirm, setSuConfirm]           = useState('');
+  const [suShowPw, setSuShowPw]             = useState(false);
+  const [suTerms, setSuTerms]               = useState(false);
+  const [signupError, setSignupError]       = useState<string | null>(null);
 
   const displayError = error ?? hookError;
 
@@ -88,32 +81,31 @@ export default function LoginPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setSignupError(null);
-    if (!suOwnerName || !suStoreName || !suCR || !suBizType || !suCity || !suPhone || !suEmail || !suPassword) {
-      setSignupError(t('fill_all_fields'));
-      return;
+
+    if (!suBusinessName || !suCR || !suOwnerName || !suEmail || !suPhone || !suPassword || !suConfirm) {
+      setSignupError(t('fill_all_fields')); return;
+    }
+    if (!isValidSaudiPhone(suPhone)) {
+      setSignupError(t('invalid_saudi_phone')); return;
+    }
+    if (suPassword.length < 8) {
+      setSignupError(t('password_min_8')); return;
     }
     if (suPassword !== suConfirm) {
-      setSignupError(t('passwords_no_match'));
-      return;
-    }
-    if (suPassword.length < 6) {
-      setSignupError(t('password_too_short'));
-      return;
+      setSignupError(t('passwords_no_match')); return;
     }
     if (!suTerms) {
-      setSignupError(t('must_agree_terms'));
-      return;
+      setSignupError(t('must_agree_terms')); return;
     }
+
     try {
       await register({
-        email: suEmail,
-        password: suPassword,
-        ownerName: suOwnerName,
-        storeName: suStoreName,
+        businessName: suBusinessName,
         commercialRegistration: suCR,
-        businessType: suBizType,
-        city: suCity,
-        phone: suPhone,
+        ownerName: suOwnerName,
+        email: suEmail,
+        phone: normalizeSaudiPhone(suPhone),
+        password: suPassword,
       });
     } catch {}
   };
@@ -234,56 +226,31 @@ export default function LoginPage() {
                 </div>
 
                 <form onSubmit={handleSignup} className="space-y-3">
-                  {/* Owner Full Name */}
-                  <FieldWrap icon={<UserCircle2 size={17} />}>
-                    <Input type="text" placeholder={t('owner_full_name')} className={`ps-11 ${inputCls}`}
-                      value={suOwnerName} onChange={(e) => setSuOwnerName(e.target.value)} autoComplete="name" />
-                  </FieldWrap>
-
-                  {/* Store Name */}
                   <FieldWrap icon={<Building2 size={17} />}>
-                    <Input type="text" placeholder={t('store_name_reg')} className={`ps-11 ${inputCls}`}
-                      value={suStoreName} onChange={(e) => setSuStoreName(e.target.value)} autoComplete="organization" />
+                    <Input type="text" placeholder={t('business_name')} className={`ps-11 ${inputCls}`}
+                      value={suBusinessName} onChange={(e) => setSuBusinessName(e.target.value)} autoComplete="organization" />
                   </FieldWrap>
 
-                  {/* CR Number */}
                   <FieldWrap icon={<IdCard size={17} />}>
                     <Input type="text" placeholder={t('cr_number')} className={`ps-11 ${inputCls}`}
                       value={suCR} onChange={(e) => setSuCR(e.target.value)} />
                   </FieldWrap>
 
-                  {/* Business Type — native select styled to match inputs */}
-                  <FieldWrap icon={<Briefcase size={17} />}>
-                    <select
-                      className={`w-full ps-11 pe-4 ${inputCls} appearance-none bg-secondary/40 text-foreground`}
-                      value={suBizType} onChange={(e) => setSuBizType(e.target.value)}
-                    >
-                      <option value="" disabled>{t('select_business_type')}</option>
-                      {BUSINESS_TYPES.map(bt => (
-                        <option key={bt} value={bt}>{t(`biz_type_${bt}` as any)}</option>
-                      ))}
-                    </select>
+                  <FieldWrap icon={<UserCircle2 size={17} />}>
+                    <Input type="text" placeholder={t('owner_full_name')} className={`ps-11 ${inputCls}`}
+                      value={suOwnerName} onChange={(e) => setSuOwnerName(e.target.value)} autoComplete="name" />
                   </FieldWrap>
 
-                  {/* City */}
-                  <FieldWrap icon={<MapPin size={17} />}>
-                    <Input type="text" placeholder={t('city_field')} className={`ps-11 ${inputCls}`}
-                      value={suCity} onChange={(e) => setSuCity(e.target.value)} />
-                  </FieldWrap>
-
-                  {/* Phone */}
-                  <FieldWrap icon={<Phone size={17} />}>
-                    <Input type="tel" placeholder={t('phone_number')} className={`ps-11 ${inputCls}`}
-                      value={suPhone} onChange={(e) => setSuPhone(e.target.value)} autoComplete="tel" />
-                  </FieldWrap>
-
-                  {/* Email */}
                   <FieldWrap icon={<Mail size={17} />}>
                     <Input type="email" placeholder={t('email_address')} className={`ps-11 ${inputCls}`}
                       value={suEmail} onChange={(e) => setSuEmail(e.target.value)} autoComplete="email" />
                   </FieldWrap>
 
-                  {/* Password */}
+                  <FieldWrap icon={<Phone size={17} />}>
+                    <Input type="tel" placeholder={t('saudi_phone_placeholder')} className={`ps-11 ${inputCls}`}
+                      value={suPhone} onChange={(e) => setSuPhone(e.target.value)} autoComplete="tel" />
+                  </FieldWrap>
+
                   <div className="relative">
                     <FieldWrap icon={<Lock size={17} />}>
                       <Input type={suShowPw ? 'text' : 'password'} placeholder={t('password')} className={`ps-11 pe-11 ${inputCls}`}
@@ -295,16 +262,15 @@ export default function LoginPage() {
                     </button>
                   </div>
 
-                  {/* Confirm Password */}
                   <FieldWrap icon={<Lock size={17} />}>
                     <Input type={suShowPw ? 'text' : 'password'} placeholder={t('confirm_password')} className={`ps-11 ${inputCls}`}
                       value={suConfirm} onChange={(e) => setSuConfirm(e.target.value)} autoComplete="new-password" />
                   </FieldWrap>
 
                   {/* Terms checkbox */}
-                  <label className="flex items-center gap-3 cursor-pointer select-none group px-0.5 pt-1">
+                  <label className="flex items-start gap-3 cursor-pointer select-none group px-0.5 pt-1">
                     <div onClick={() => setSuTerms(v => !v)}
-                      className="w-5 h-5 rounded-md border-2 flex-shrink-0 flex items-center justify-center transition-all"
+                      className="w-5 h-5 mt-0.5 rounded-md border-2 flex-shrink-0 flex items-center justify-center transition-all"
                       style={suTerms
                         ? { background: '#2ED8C3', borderColor: '#2ED8C3' }
                         : { borderColor: 'rgba(0,0,0,0.2)' }}>
@@ -314,7 +280,7 @@ export default function LoginPage() {
                         </svg>
                       )}
                     </div>
-                    <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors leading-tight">
+                    <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors leading-snug">
                       {t('agree_terms')}{' '}
                       <a href="#" onClick={e => e.stopPropagation()} className="font-bold hover:underline" style={{ color: '#2ED8C3' }}>{t('terms')}</a>
                       {' '}&amp;{' '}
@@ -322,10 +288,10 @@ export default function LoginPage() {
                     </span>
                   </label>
 
-                  {(signupError ?? hookError) && <ErrorBox msg={signupError ?? hookError!} />}
+                  {(signupError ?? hookError) && <ErrorBox msg={(signupError ?? hookError)!} />}
 
                   <Button type="submit" className="w-full h-12 rounded-2xl text-sm font-bold mt-1"
-                    disabled={!suOwnerName || !suStoreName || !suEmail || !suPassword || actionLoading}>
+                    disabled={!suBusinessName || !suEmail || !suPassword || actionLoading}>
                     {actionLoading ? <LoadingDots /> : <>{t('create_account_btn')} <ArrowRight className="ms-2 rtl-flip" size={17} /></>}
                   </Button>
                 </form>
@@ -358,7 +324,6 @@ export default function LoginPage() {
                 </div>
 
                 <AnimatePresence mode="wait">
-                  {/* ── Merchant login ── */}
                   {role === 'merchant' && (
                     <motion.form key="merchant-form" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
                       onSubmit={handleMerchantLogin} className="space-y-3.5">
@@ -411,7 +376,6 @@ export default function LoginPage() {
                     </motion.form>
                   )}
 
-                  {/* ── Customer panel ── */}
                   {role === 'customer' && (
                     <motion.div key="customer-form" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-5">
                       <div className="rounded-[22px] p-6 text-center space-y-3 border border-border/50 bg-secondary/40">
@@ -444,13 +408,10 @@ export default function LoginPage() {
   );
 }
 
-// ── Small shared primitives ────────────────────────────────────────────────────
 function FieldWrap({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
   return (
     <div className="relative">
-      <div className="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none text-muted-foreground">
-        {icon}
-      </div>
+      <div className="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none text-muted-foreground">{icon}</div>
       {children}
     </div>
   );

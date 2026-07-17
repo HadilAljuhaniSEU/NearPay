@@ -13,31 +13,39 @@ export interface UserDoc {
 // ─── Merchant ────────────────────────────────────────────────────────────────
 export interface MerchantDoc {
   id: string;
-  // Registration fields
-  merchantId: string;         // same as Firestore doc id / Firebase UID
-  ownerName: string;
-  storeName: string;
+  // Core registration (doc stored at merchants/{uid})
+  uid: string;
+  businessName: string;
   commercialRegistration: string;
-  businessType: string;
-  city: string;
-  phone: string;
+  ownerName: string;
   email: string;
-  // Legacy / aggregated
-  name: string;               // kept for backward compat (= storeName)
-  category: string;           // kept for backward compat (= businessType)
-  address: string;
-  logoUrl?: string;
+  phone: string;
+  role: 'merchant';
+  status: 'active' | 'suspended';
+  language: 'en' | 'ar';
+  trustScore: number;   // 0–100, starts at 100
+  createdAt: Timestamp;
+  // Aggregate / operational fields (default 0)
   totalOutstanding: number;
   totalCollected: number;
   customerCount: number;
-  ownerId: string;            // Firebase Auth UID
-  // Onboarding status
-  status: 'pending' | 'active' | 'suspended';
-  verified: boolean;
-  trustScore: number;         // 0–100
-  location: { lat: number; lng: number } | null;
+  // Legacy compat aliases used by existing pages
+  name: string;         // = businessName
+  ownerId: string;      // = uid
+  // Optional
+  logoUrl?: string;
+  address?: string;
+  city?: string;
+  updatedAt?: Timestamp;
+}
+
+// ─── Customer Auth ────────────────────────────────────────────────────────────
+export interface CustomerAuthDoc {
+  uid: string;
+  phone: string;
+  displayName: string;
   createdAt: Timestamp;
-  updatedAt: Timestamp;
+  preferredLanguage: 'en' | 'ar';
 }
 
 // ─── Branch ──────────────────────────────────────────────────────────────────

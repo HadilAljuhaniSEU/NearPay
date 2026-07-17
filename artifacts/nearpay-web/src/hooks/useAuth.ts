@@ -6,8 +6,11 @@ import {
   resetMerchantPassword,
   registerMerchant,
   RegisterMerchantParams,
+  checkCRExists,
+  updateMerchantLanguage,
 } from '../services/authService';
 import { useAuthContext } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface UseAuthReturn {
   user: ReturnType<typeof useAuthContext>['user'];
@@ -22,17 +25,20 @@ interface UseAuthReturn {
 }
 
 export function useAuth(): UseAuthReturn {
-  const { user, merchant, loading: authLoading, error: ctxError } = useAuthContext();
+  const { user, merchant, loading: authLoading } = useAuthContext();
+  const { lang } = useLanguage();
   const [actionLoading, setActionLoading] = useState(false);
-  const [error, setError] = useState<string | null>(ctxError);
+  const [error, setError] = useState<string | null>(null);
   const [_, setLocation] = useLocation();
 
   const signIn = async (email: string, password: string, rememberMe: boolean) => {
     setActionLoading(true);
     setError(null);
     try {
-      await signInMerchant(email, password, rememberMe);
+      const u = await signInMerchant(email, password, rememberMe);
       localStorage.setItem('nearpay_role', 'merchant');
+      // Persist current language preference to Firestore
+      await updateMerchantLanguage(u.uid, lang);
       setLocation('/merchant/dashboard');
     } catch (err: unknown) {
       setError(mapFirebaseError(err));
@@ -45,7 +51,13 @@ export function useAuth(): UseAuthReturn {
     setActionLoading(true);
     setError(null);
     try {
-      await registerMerchant(params);
+      // Check for duplicate CR before creating the account
+      const crTaken = await checkCRExists(params.commercialRegistration);
+      if (crTaken) {
+        setError(mapFirebaseError({ code: 'nearpay/cr-already-exists' }));
+        return;
+      }
+      await registerMerchant({ ...params, language: lang });
       localStorage.setItem('nearpay_role', 'merchant');
       setLocation('/merchant/dashboard');
     } catch (err: unknown) {
@@ -80,32 +92,23 @@ export function useAuth(): UseAuthReturn {
     }
   };
 
-  return {
-    user,
-    merchant,
-    authLoading,
-    actionLoading,
-    error,
-    signIn,
-    signOut,
-    sendPasswordReset,
-    register,
-  };
+  return { user, merchant, authLoading, actionLoading, error, signIn, signOut, sendPasswordReset, register };
 }
 
-// ─── Map Firebase error codes to user-friendly messages ──────────────────────
+// ─── Map error codes to user-friendly messages ────────────────────────────────
 function mapFirebaseError(err: unknown): string {
   const code = (err as { code?: string })?.code ?? '';
   const map: Record<string, string> = {
-    'auth/invalid-credential':    'Incorrect email or password.',
-    'auth/user-not-found':        'No account found with this email.',
-    'auth/wrong-password':        'Incorrect password.',
-    'auth/too-many-requests':     'Too many attempts. Please try again later.',
-    'auth/user-disabled':         'This account has been disabled.',
-    'auth/invalid-email':         'Invalid email address.',
-    'auth/email-already-in-use':  'An account with this email already exists.',
-    'auth/weak-password':         'Password must be at least 6 characters.',
-    'auth/network-request-failed':'Network error. Check your connection.',
+    'auth/invalid-credential':        'Incorrect email or password.',
+    'auth/user-not-found':            'No account found with this email.',
+    'auth/wrong-password':            'Incorrect password.',
+    'auth/too-many-requests':         'Too many attempts. Please try again later.',
+    'auth/user-disabled':             'This account has been disabled.',
+    'auth/invalid-email':             'Invalid email address.',
+    'auth/email-already-in-use':      'An account with this email already exists.',
+    'auth/weak-password':             'Password must be at least 8 characters.',
+    'auth/network-request-failed':    'Network error. Check your connection.',
+    'nearpay/cr-already-exists':      'A merchant with this Commercial Registration already exists.',
   };
   return map[code] ?? 'Something went wrong. Please try again.';
 }

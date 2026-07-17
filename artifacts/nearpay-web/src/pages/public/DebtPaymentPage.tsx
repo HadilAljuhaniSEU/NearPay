@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'wouter';
+import { useParams, useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, AlertCircle, Loader2, CreditCard } from 'lucide-react';
+import { User, onAuthStateChanged } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
 import { NearPayLogo } from '../../components/NearPayLogo';
 import { fetchDebtByPaymentToken } from '../../services/debtService';
 import { recordPayment } from '../../services/paymentService';
+import { auth } from '../../lib/firebase';
 import { DebtDoc, PaymentMethod } from '../../types';
 import { useT } from '../../contexts/LanguageContext';
 
-type PageState = 'loading' | 'ready' | 'paying' | 'paid' | 'already_paid' | 'error';
+type PageState = 'auth_check' | 'loading' | 'ready' | 'paying' | 'paid' | 'already_paid' | 'error';
 
 const PAYMENT_METHODS: { value: PaymentMethod; label: string; color: string }[] = [
   { value: 'stcpay',        label: 'STC Pay',             color: '#4F008C' },
@@ -21,13 +23,30 @@ export default function DebtPaymentPage() {
   const params = useParams<{ token: string }>();
   const token  = params.token;
   const t      = useT();
+  const [_, setLocation] = useLocation();
 
   const [debt,     setDebt]     = useState<DebtDoc | null>(null);
-  const [state,    setState]    = useState<PageState>('loading');
+  const [state,    setState]    = useState<PageState>('auth_check');
   const [errorMsg, setErrorMsg] = useState('');
   const [method,   setMethod]   = useState<PaymentMethod>('stcpay');
 
+  // ── Step 1: check customer authentication ────────────────────────────────────
   useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user: User | null) => {
+      unsub(); // one-shot
+      if (!user) {
+        const redirectPath = `/debt/pay/${token}`;
+        setLocation(`/customer/otp?redirect=${encodeURIComponent(redirectPath)}`);
+      } else {
+        setState('loading');
+      }
+    });
+    return unsub;
+  }, [token]);
+
+  // ── Step 2: load debt once authenticated ─────────────────────────────────────
+  useEffect(() => {
+    if (state !== 'loading') return;
     if (!token) { setState('error'); setErrorMsg(t('invalid_link')); return; }
     fetchDebtByPaymentToken(token)
       .then((d) => {
@@ -39,7 +58,7 @@ export default function DebtPaymentPage() {
         setState('ready');
       })
       .catch(() => { setState('error'); setErrorMsg(t('load_failed')); });
-  }, [token]);
+  }, [state, token]);
 
   const handlePay = async () => {
     if (!debt) return;
@@ -77,8 +96,8 @@ export default function DebtPaymentPage() {
         </div>
 
         <AnimatePresence mode="wait">
-          {/* Loading */}
-          {(state === 'loading' || state === 'paying') && (
+          {/* Auth check / loading / paying */}
+          {(state === 'auth_check' || state === 'loading' || state === 'paying') && (
             <motion.div key="loading" initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.92 }}
               className="bg-card border border-border/60 rounded-[28px] p-10 flex flex-col items-center gap-5 shadow-sm text-center">
               <div className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center">
@@ -135,10 +154,7 @@ export default function DebtPaymentPage() {
                 </div>
               </div>
 
-              <Button
-                className="w-full h-14 rounded-[18px] font-bold gap-2"
-                onClick={handlePay}
-              >
+              <Button className="w-full h-14 rounded-[18px] font-bold gap-2" onClick={handlePay}>
                 <CreditCard size={20} />
                 {t('pay_now')} {t('sar')} {debt.remainingAmount}
               </Button>

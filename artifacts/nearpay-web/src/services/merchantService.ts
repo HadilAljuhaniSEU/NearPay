@@ -23,7 +23,13 @@ export async function fetchMerchant(id: string): Promise<MerchantDoc | null> {
 }
 
 // ─── Fetch by owner UID ───────────────────────────────────────────────────────
+// New docs are stored at merchants/{uid}, so direct fetch is preferred.
+// Falls back to a query on ownerId for any legacy documents.
 export async function fetchMerchantByOwner(uid: string): Promise<MerchantDoc | null> {
+  const direct = await getDoc(doc(db, COL, uid));
+  if (direct.exists()) return { id: direct.id, ...direct.data() } as MerchantDoc;
+
+  // Legacy fallback
   const q = query(collection(db, COL), where('ownerId', '==', uid));
   const snap = await getDocs(q);
   if (snap.empty) return null;

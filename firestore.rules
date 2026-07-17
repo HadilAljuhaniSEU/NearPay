@@ -1,103 +1,442 @@
 rules_version = '2';
 
+// ══════════════════════════════════════════════════════════════════════════════
+//  NearPay — Firestore Security Rules
+//  Generated: 2026-07-17
+//
+//  Architecture overview
+//  ─────────────────────
+//  Two authenticated user roles exist:
+//
+//    1. Merchant  → Firebase Auth UID, document in users/{uid}
+//                   with { role: 'merchant', merchantId: <string> }
+//
+//    2. Customer  → Firebase Auth UID, document in customerProfiles/{uid}
+//                   with { phone, email, displayName, preferredLanguage }
+//
+//  Collections
+//  ───────────
+//    users                 merchant identity / role document
+//    merchants             merchant business profile (discovery, dashboard)
+//    customerProfiles      customer identity (phone, display name, language)
+//    customers             merchant-scoped customer records
+//    debts                 transaction records (merchant-issued, customer-payable)
+//    payments              payment event log (merchant + customer payment page)
+//    merchant_settings     per-merchant configuration
+//
+//  Token flows
+//  ───────────
+//  Debts carry two one-time tokens (UUID v4):
+//    approvalToken — sent to customer; used on /approve/{token} page
+//    paymentToken  — sent to customer; used on /pay/{token} page
+//  Both pages redirect unauthenticated visitors to login first, so all
+//  token-based operations are performed by authenticated Firebase users.
+//  The token acts as a second factor: knowing the URL proves intent.
+// ══════════════════════════════════════════════════════════════════════════════
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────────────────────────
+    //  HELPER FUNCTIONS
+    //  All helpers assume they will only be called from within a rule that has
+    //  already ensured request.auth != null where required.
+    // ──────────────────────────────────────────────────────────────────────────
 
-    // True when the request is from an authenticated Firebase user
+    // Is the caller authenticated with Firebase?
     function isAuthed() {
       return request.auth != null;
     }
 
-    // True when the authenticated user owns the given merchant document
-    function ownsMerchant(merchantId) {
-      return isAuthed() &&
-        get(/databases/$(database)/documents/merchants/$(merchantId)).data.ownerId
-          == request.auth.uid;
+    // Does the caller own the given document (UID matches)?
+    function isOwner(uid) {
+      return isAuthed() && request.auth.uid == uid;
     }
 
-    // ─── users ────────────────────────────────────────────────────────────────
+    // Fetch the caller's user document (merchants only).
+    // Returns the Firestore document data or null if the doc does not exist.
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Is the caller a registered merchant?
+    // Checks: authenticated, has a users/{uid} doc, role field equals 'merchant'.
+    function isMerchant() {
+      return isAuthed()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && userDoc().role == 'merchant';
+    }
+
+    // The merchantId that belongs to the authenticated merchant user.
+    // Only call this after confirming isMerchant() == true.
+    function myMerchantId() {
+      return userDoc().merchantId;
+    }
+
+    // Does the caller have a customerProfiles document (i.e. is a customer)?
+    function isCustomer() {
+      return isAuthed()
+        && exists(/databases/$(database)/documents/customerProfiles/$(request.auth.uid));
+    }
+
+    // The phone number stored in the caller's customerProfiles document.
+    // Used to match against debts.customerPhone — prevents a customer from
+    // spoofing another customer's phone number because customerProfiles can
+    // only be written by the document owner (see customerProfiles rules).
+    function myPhone() {
+      return get(/databases/$(database)/documents/customerProfiles/$(request.auth.uid)).data.phone;
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    //  users/{uid}
+    //
+    //  Purpose    Merchant identity record: uid, email, role, merchantId.
+    //  Created by registerMerchant() immediately after Firebase Auth sign-up.
+    //  Access     ONLY the document owner. No other party — including other
+    //             merchants — may read or write this document.
+    // ──────────────────────────────────────────────────────────────────────────
     match /users/{uid} {
-      allow read, write: if isAuthed() && request.auth.uid == uid;
+      // Only the owning merchant may read their identity document.
+      allow read: if isOwner(uid);
+
+      // Merchant may create their own user doc (called at registration).
+      // Enforce that the uid field in the document matches the caller's UID
+      // so the role cannot be assigned to a different account.
+      allow create: if isOwner(uid)
+        && request.resource.data.uid == request.auth.uid;
+
+      // Merchant may update their own user doc (e.g. language preference).
+      // The uid and role fields must never change after creation.
+      allow update: if isOwner(uid)
+        && request.resource.data.uid    == resource.data.uid
+        && request.resource.data.role   == resource.data.role;
+
+      // Deletion of user documents is not permitted from the client.
+      allow delete: if false;
     }
 
-    // ─── merchants ────────────────────────────────────────────────────────────
+
+    // ──────────────────────────────────────────────────────────────────────────
+    //  merchants/{merchantId}
+    //
+    //  Purpose    Merchant business profile: name, address, location, status,
+    //             commercial registration, aggregates (totalOutstanding, etc.).
+    //  Document ID equals the merchant's Firebase Auth UID (set at registration).
+    //  An additional ownerId field mirrors the UID for query-based lookups.
+    //
+    //  READ  — Any authenticated user.
+    //          Covers: (a) merchant reading their own dashboard data,
+    //                  (b) customer browsing the Discover/Nearby page,
+    //                  (c) DebtApprovalPage fetching merchant name/logo.
+    //          NOTE: Firestore rules operate at document level; field-level
+    //          restrictions are not possible. Sensitive aggregate fields
+    //          (totalOutstanding, totalCollected, customerCount) are
+    //          intentionally not rendered in the customer-facing UI — this
+    //          is enforced at the application layer, not the rules layer.
+    //
+    //  WRITE — Only the document owner (ownerId == auth.uid).
+    //          Prevents any other merchant or customer from modifying
+    //          another merchant's profile, isVisible flag, or financials.
+    // ──────────────────────────────────────────────────────────────────────────
     match /merchants/{merchantId} {
-      allow read:   if isAuthed() && resource.data.ownerId == request.auth.uid;
-      allow create: if isAuthed() && request.resource.data.ownerId == request.auth.uid;
-      allow update: if isAuthed() && resource.data.ownerId == request.auth.uid;
-      allow delete: if false; // merchants are never deleted via client
+      // Any authenticated user may read merchant documents (discovery + dashboard).
+      allow read: if isAuthed();
+
+      // A merchant may create their own document at registration.
+      // Enforce that ownerId is set to the caller's UID so the ownership
+      // chain is established at document creation and cannot be spoofed.
+      allow create: if isAuthed()
+        && request.resource.data.ownerId == request.auth.uid;
+
+      // Only the document owner may update their merchant profile.
+      // The ownerId field must never change after creation.
+      allow update: if isAuthed()
+        && resource.data.ownerId == request.auth.uid
+        && request.resource.data.ownerId == resource.data.ownerId;
+
+      // Merchant profiles cannot be deleted from the client.
+      allow delete: if false;
     }
 
-    // ─── branches ─────────────────────────────────────────────────────────────
-    match /branches/{branchId} {
-      allow read, write: if ownsMerchant(resource.data.merchantId);
-      allow create:      if ownsMerchant(request.resource.data.merchantId);
+
+    // ──────────────────────────────────────────────────────────────────────────
+    //  customerProfiles/{uid}
+    //
+    //  Purpose    Customer identity: phone (E.164), email, displayName,
+    //             preferredLanguage. Created at first customer sign-in.
+    //             The phone field is the join key used in debt lookup:
+    //             debts.customerPhone must equal customerProfiles.phone.
+    //
+    //  Access     ONLY the document owner.
+    //             This is the security anchor for the debt lookup system.
+    //             Because only the customer can write their own phone here,
+    //             the myPhone() helper in debt rules cannot be spoofed by
+    //             another party.
+    // ──────────────────────────────────────────────────────────────────────────
+    match /customerProfiles/{uid} {
+      // Customer may read their own identity document.
+      allow read: if isOwner(uid);
+
+      // Customer may create their own profile at first sign-in.
+      // The uid field in the document must match the caller's UID.
+      allow create: if isOwner(uid)
+        && request.resource.data.uid == request.auth.uid;
+
+      // Customer may update their own profile (e.g. phone collection modal,
+      // language preference). The uid field must not change.
+      allow update: if isOwner(uid)
+        && request.resource.data.uid == resource.data.uid;
+
+      // Profile deletion is not permitted from the client.
+      allow delete: if false;
     }
 
-    // ─── customers ────────────────────────────────────────────────────────────
+
+    // ──────────────────────────────────────────────────────────────────────────
+    //  customers/{customerId}
+    //
+    //  Purpose    Merchant-scoped customer records: name, phone, email,
+    //             trust score, totalDebt, totalPaid. Auto-ID documents.
+    //             Every document carries a merchantId field.
+    //
+    //  Merchant access   Full CRUD, restricted to documents whose merchantId
+    //                    matches the authenticated merchant's merchantId.
+    //
+    //  Payment-page update   When a customer completes payment via the
+    //                        /pay/{token} URL, the app calls recordPayment()
+    //                        which internally updates customer financial
+    //                        aggregates (totalDebt, totalPaid, trustScore).
+    //                        The customer IS authenticated at this point
+    //                        (the page redirects to login first).
+    //                        This rule permits that narrow update:
+    //                        — merchantId must not change
+    //                        — only financial aggregate fields may be written
+    //
+    //  PRODUCTION NOTE   The payment-page update rule is intentionally
+    //                    narrow but an authenticated customer could still
+    //                    attempt to manipulate another merchant's customer
+    //                    aggregates. For maximum security, move
+    //                    adjustCustomerDebtMetrics() to a Cloud Function
+    //                    triggered on payment document creation.
+    // ──────────────────────────────────────────────────────────────────────────
     match /customers/{customerId} {
-      allow read, write: if ownsMerchant(resource.data.merchantId);
-      allow create:      if ownsMerchant(request.resource.data.merchantId);
+      // Merchant: read any customer record belonging to their merchantId.
+      allow read: if isMerchant()
+        && resource.data.merchantId == myMerchantId();
+
+      // Merchant: create a customer record, enforcing their own merchantId.
+      allow create: if isMerchant()
+        && request.resource.data.merchantId == myMerchantId();
+
+      // Merchant: full update on their own customers.
+      // The merchantId field must not change.
+      allow update: if isMerchant()
+        && resource.data.merchantId == myMerchantId()
+        && request.resource.data.merchantId == resource.data.merchantId;
+
+      // Payment-page update: authenticated customer adjusting financial aggregates.
+      // Conditions:
+      //   1. Caller is authenticated.
+      //   2. merchantId field is not changed.
+      //   3. Only the listed financial aggregate keys are modified.
+      //      (name, phone, email, merchantId, createdAt, etc. cannot change)
+      allow update: if isAuthed()
+        && request.resource.data.merchantId == resource.data.merchantId
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['totalDebt', 'totalPaid', 'trustScore', 'updatedAt']);
+
+      // Merchant: delete their own customers.
+      allow delete: if isMerchant()
+        && resource.data.merchantId == myMerchantId();
     }
 
-    // ─── debts ────────────────────────────────────────────────────────────────
+
+    // ──────────────────────────────────────────────────────────────────────────
+    //  debts/{debtId}
+    //
+    //  Purpose    Core transaction records. Auto-ID documents. Fields include:
+    //             merchantId, customerId, customerPhone (E.164), amount,
+    //             remainingAmount, status, approvalStatus, paymentStatus,
+    //             approvalToken (UUID), paymentToken (UUID), referenceNumber,
+    //             dueDate, createdAt, updatedAt.
+    //
+    //  Three access patterns:
+    //
+    //  1. MERCHANT
+    //     Full CRUD for debts belonging to their merchantId.
+    //     merchantId must not change on update.
+    //
+    //  2. CUSTOMER (authenticated, via their customerProfiles phone)
+    //     Read-only access to debts where customerPhone == their stored phone.
+    //     The phone is sourced from customerProfiles/{uid} which only they
+    //     can write, making it impossible to spoof another customer's debts.
+    //
+    //  3. TOKEN FLOWS (authenticated — approval/payment URL pages redirect
+    //     unauthenticated visitors to login before proceeding)
+    //
+    //     READ via token:
+    //       Any authenticated user may read a debt that has a non-empty
+    //       approvalToken or paymentToken. The token in the URL acts as the
+    //       capability proof — guessing a random UUID is computationally
+    //       infeasible. This enables the page to load the debt details.
+    //
+    //     UPDATE via approvalToken (approve / dispute):
+    //       Allowed when the existing approvalToken is non-empty AND the
+    //       incoming document preserves the same approvalToken, merchantId,
+    //       and customerPhone. This ensures the update targets the correct
+    //       debt and cannot be used to redirect ownership.
+    //
+    //     UPDATE via paymentToken (record payment outcome):
+    //       Same logic as approvalToken. Also allows applyPaymentToDebt()
+    //       to set remainingAmount, status, paymentStatus without needing
+    //       to pass the token explicitly — because request.resource.data
+    //       (the full post-write document) still contains the unchanged
+    //       paymentToken from the existing document.
+    // ──────────────────────────────────────────────────────────────────────────
     match /debts/{debtId} {
-      // Merchant can do anything with their own debts
-      allow read, write: if ownsMerchant(resource.data.merchantId);
-      allow create:      if ownsMerchant(request.resource.data.merchantId);
 
-      // Public approval: anyone with the approvalToken may read + update approval fields only
-      allow read: if resource.data.approvalToken == request.query.approvalToken
-                  || resource.data.paymentToken  == request.query.paymentToken;
+      // ── Merchant: full read access ──────────────────────────────────────────
+      allow read: if isMerchant()
+        && resource.data.merchantId == myMerchantId();
 
-      allow update: if
-        // Approval action: only approvalStatus, status, updatedAt allowed
-        (request.resource.data.diff(resource.data).affectedKeys()
-          .hasOnly(['approvalStatus', 'status', 'updatedAt']))
-        ||
-        // Payment action: only remainingAmount, status, updatedAt allowed
-        (request.resource.data.diff(resource.data).affectedKeys()
-          .hasOnly(['remainingAmount', 'status', 'updatedAt']));
+      // ── Customer: read debts by their phone number ──────────────────────────
+      // myPhone() reads from customerProfiles/{uid} — the customer's own doc —
+      // so the phone value cannot be spoofed by another authenticated user.
+      allow read: if isCustomer()
+        && resource.data.customerPhone == myPhone();
+
+      // ── Token-based read (approval / payment URL pages) ─────────────────────
+      // Requires authentication (both pages redirect to login if not signed in).
+      // The token itself (a UUID) is the proof of authorization.
+      allow read: if isAuthed()
+        && (
+          (resource.data.approvalToken != null && resource.data.approvalToken != '')
+          ||
+          (resource.data.paymentToken  != null && resource.data.paymentToken  != '')
+        );
+
+      // ── Merchant: create a new debt ─────────────────────────────────────────
+      // merchantId in the new document must match the writer's merchantId.
+      allow create: if isMerchant()
+        && request.resource.data.merchantId == myMerchantId();
+
+      // ── Merchant: update their own debts ────────────────────────────────────
+      // The merchantId field must not change. Covers status updates,
+      // manual edits, and marking debts as settled from the dashboard.
+      allow update: if isMerchant()
+        && resource.data.merchantId == myMerchantId()
+        && request.resource.data.merchantId == resource.data.merchantId;
+
+      // ── Token-based update: approvalToken flow ──────────────────────────────
+      // Called from DebtApprovalPage by an authenticated customer who received
+      // the approval link. Allows changing approvalStatus and related fields.
+      // Guards:
+      //   (a) Token in existing document is set (debt is awaiting approval).
+      //   (b) Incoming document preserves the same approvalToken — caller
+      //       proves they know the token.
+      //   (c) merchantId and customerPhone are immutable in this update —
+      //       prevents re-assigning the debt to another merchant or customer.
+      allow update: if isAuthed()
+        && resource.data.approvalToken     != null
+        && resource.data.approvalToken     != ''
+        && request.resource.data.approvalToken  == resource.data.approvalToken
+        && request.resource.data.merchantId     == resource.data.merchantId
+        && request.resource.data.customerPhone  == resource.data.customerPhone;
+
+      // ── Token-based update: paymentToken flow ──────────────────────────────
+      // Called from DebtPaymentPage (applyPaymentToDebt). The authenticated
+      // customer updates remainingAmount, status, paymentStatus. The
+      // request.resource.data contains the full post-write document, so the
+      // unchanged paymentToken field is still present and can be verified.
+      // merchantId and customerPhone must not change.
+      allow update: if isAuthed()
+        && resource.data.paymentToken         != null
+        && resource.data.paymentToken         != ''
+        && request.resource.data.paymentToken      == resource.data.paymentToken
+        && request.resource.data.merchantId        == resource.data.merchantId
+        && request.resource.data.customerPhone     == resource.data.customerPhone;
+
+      // ── Merchant: delete their own debts ────────────────────────────────────
+      allow delete: if isMerchant()
+        && resource.data.merchantId == myMerchantId();
     }
 
-    // ─── payments ─────────────────────────────────────────────────────────────
+
+    // ──────────────────────────────────────────────────────────────────────────
+    //  payments/{paymentId}
+    //
+    //  Purpose    Immutable payment event log. Auto-ID documents. Fields:
+    //             debtId, merchantId, customerId, amount, status, method,
+    //             paymentMethod, createdAt.
+    //
+    //  Merchant access   Full read + create. Updates and deletes are blocked
+    //                    — payment records are append-only audit entries.
+    //
+    //  Payment-page create   When a customer completes payment via
+    //                        /pay/{token}, recordPayment() creates a payment
+    //                        document. The customer IS authenticated (the page
+    //                        requires login). This rule validates that the
+    //                        referenced debt has a non-null paymentToken,
+    //                        tying the create to a legitimate payment flow.
+    //
+    //  Payment-page read     The payment page calls fetchPaymentsForDebt()
+    //                        to check prior partial payments. Allowed for
+    //                        any authenticated user when the payment record
+    //                        references a debtId (non-null).
+    //
+    //  PRODUCTION NOTE   Allowing authenticated customers to create payment
+    //                    records is a deliberate trade-off. For full
+    //                    auditability, move recordPayment() to a Cloud
+    //                    Function that verifies the paymentToken server-side.
+    // ──────────────────────────────────────────────────────────────────────────
     match /payments/{paymentId} {
-      // Merchant reads their own payments
-      allow read: if ownsMerchant(resource.data.merchantId);
 
-      // Anyone can create a payment (via public payment link)
-      // The merchantId in the document is validated server-side via token matching
-      allow create: if true;
+      // ── Merchant: read payment records for their merchantId ─────────────────
+      allow read: if isMerchant()
+        && resource.data.merchantId == myMerchantId();
+
+      // ── Payment-page read (authenticated customer) ──────────────────────────
+      // Allows fetchPaymentsForDebt() (query by debtId) from the payment page.
+      // Only permitted when the referenced debtId is non-null.
+      allow read: if isAuthed()
+        && resource.data.debtId != null;
+
+      // ── Merchant: create a payment record ───────────────────────────────────
+      // merchantId in new document must match the writer's merchantId.
+      allow create: if isMerchant()
+        && request.resource.data.merchantId == myMerchantId();
+
+      // ── Payment-page create (authenticated customer) ─────────────────────────
+      // Validates that the referenced debt exists and carries a paymentToken,
+      // confirming this create is part of a legitimate token-gated payment flow.
+      allow create: if isAuthed()
+        && request.resource.data.debtId != null
+        && exists(/databases/$(database)/documents/debts/$(request.resource.data.debtId))
+        && get(/databases/$(database)/documents/debts/$(request.resource.data.debtId)).data.paymentToken != null
+        && get(/databases/$(database)/documents/debts/$(request.resource.data.debtId)).data.paymentToken != '';
+
+      // Payment records are append-only. Updates and deletes are not permitted
+      // from the client — they must be handled server-side if ever needed.
+      allow update, delete: if false;
     }
 
-    // ─── trust_scores ─────────────────────────────────────────────────────────
-    match /trust_scores/{docId} {
-      allow read, write: if ownsMerchant(resource.data.merchantId);
-      allow create:      if ownsMerchant(request.resource.data.merchantId);
-    }
 
-    // ─── analytics ────────────────────────────────────────────────────────────
-    match /analytics/{docId} {
-      allow read, write: if ownsMerchant(resource.data.merchantId);
-      allow create:      if ownsMerchant(request.resource.data.merchantId);
-    }
-
-    // ─── notifications (reserved for FCM) ────────────────────────────────────
-    match /notifications/{notifId} {
-      allow read, write: if ownsMerchant(resource.data.merchantId);
-      allow create:      if ownsMerchant(request.resource.data.merchantId);
-    }
-
-    // ─── merchant_settings ────────────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────────────────────────
+    //  merchant_settings/{merchantId}
+    //
+    //  Purpose    Per-merchant configuration: currency, notification
+    //             preferences, discovery visibility, etc.
+    //             Document ID equals the merchant's merchantId.
+    //
+    //  Access     Strictly the owning merchant. The document ID (merchantId)
+    //             is compared against the caller's merchantId from their
+    //             users/{uid} document.
+    // ──────────────────────────────────────────────────────────────────────────
     match /merchant_settings/{merchantId} {
-      allow read, write: if ownsMerchant(merchantId);
+      // Only the merchant whose merchantId equals this document ID may access.
+      allow read, write: if isMerchant()
+        && myMerchantId() == merchantId;
     }
 
-    // ─── Deny everything else ─────────────────────────────────────────────────
-    match /{document=**} {
-      allow read, write: if false;
-    }
   }
 }

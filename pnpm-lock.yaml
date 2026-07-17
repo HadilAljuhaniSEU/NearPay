@@ -737,7 +737,7 @@ importers:
         specifier: 'catalog:'
         version: 3.25.76
 
-  artifacts/video-js:
+  artifacts/video-ar:
     devDependencies:
       '@react-spring/web':
         specifier: ^10.0.3
@@ -806,7 +806,7 @@ importers:
         specifier: 'catalog:'
         version: 7.3.6(@types/node@25.9.5)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.49.0)(tsx@4.23.0)(yaml@2.9.0)
 
-  artifacts/video-js-old:
+  artifacts/video-js:
     devDependencies:
       '@react-spring/web':
         specifier: ^10.0.3

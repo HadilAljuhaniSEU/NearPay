@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "GyBhdJE5i5Ojh98iAEx8m"
+uri = "file://artifacts/video-ar/public/audio/bg_music.mp3"
+type = "audio"
+title = "Arabic NearPay background music"

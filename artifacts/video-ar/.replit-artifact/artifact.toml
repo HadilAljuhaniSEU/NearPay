@@ -1,0 +1,27 @@
+kind = "video"
+previewPath = "/video-ar/"
+title = "NearPay فيديو عربي"
+version = "1.0.0"
+id = "artifacts/video-ar"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/video-ar/" ]
+localPort = 25700
+
+[services.development]
+run = "pnpm --filter @workspace/video-ar run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/video-ar", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/video-ar/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25700"
+BASE_PATH = "/video-ar/"

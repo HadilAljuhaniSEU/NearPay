@@ -153,6 +153,30 @@ export async function updateMerchantLanguage(
   }
 }
 
+// ─── Customer Email + Password Authentication ─────────────────────────────────
+
+export async function registerCustomer(
+  email: string,
+  password: string,
+  displayName: string
+): Promise<User> {
+  const credential = await createUserWithEmailAndPassword(auth, email, password);
+  // Best-effort display name update; non-blocking
+  try {
+    const { updateProfile } = await import('firebase/auth');
+    await updateProfile(credential.user, { displayName: displayName.trim() });
+  } catch { /* non-critical */ }
+  return credential.user;
+}
+
+export async function signInCustomer(
+  email: string,
+  password: string
+): Promise<User> {
+  const credential = await signInWithEmailAndPassword(auth, email, password);
+  return credential.user;
+}
+
 // ─── Phone OTP — Customer Authentication ─────────────────────────────────────
 // TODO: Enable "Phone" as a sign-in method in Firebase Console →
 //       Authentication → Sign-in method → Phone
@@ -186,7 +210,9 @@ export async function verifyPhoneOTP(
 export async function createCustomerDoc(
   uid: string,
   phone: string,
-  preferredLanguage: 'en' | 'ar' = 'en'
+  preferredLanguage: 'en' | 'ar' = 'en',
+  email = '',
+  displayName = '',
 ): Promise<void> {
   const ref = doc(db, 'customers', uid);
   const existing = await getDoc(ref);
@@ -195,7 +221,8 @@ export async function createCustomerDoc(
   await setDoc(ref, {
     uid,
     phone,
-    displayName: '',
+    email,
+    displayName,
     createdAt: serverTimestamp(),
     preferredLanguage,
   } satisfies Omit<CustomerAuthDoc, 'createdAt'> & Record<string, unknown>);

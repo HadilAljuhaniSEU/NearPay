@@ -15,12 +15,14 @@ export default function CustomerProfilePage() {
   const t = useT();
   const { user } = useAuthContext();
 
-  // Derive display values from Firebase phone auth user
+  // Derive display values from Firebase auth user (email or phone)
+  const email       = user?.email ?? '';
   const phone       = user?.phoneNumber ?? '';
   const displayName = user?.displayName?.trim() || '';
+  const identifier  = email || phone;
   const initials    = displayName
     ? displayName.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase()
-    : phone.replace(/\D/g, '').slice(-2); // last 2 digits of phone as fallback
+    : (email ? email[0].toUpperCase() : phone.replace(/\D/g, '').slice(-2));
 
   const handleLogout = async () => {
     try {
@@ -54,7 +56,7 @@ export default function CustomerProfilePage() {
               {displayName || t('customer')}
             </h2>
             <p className="text-xs font-medium text-muted-foreground bg-secondary/50 px-3 py-1 rounded-full">
-              {phone}
+              {identifier}
             </p>
           </motion.div>
 

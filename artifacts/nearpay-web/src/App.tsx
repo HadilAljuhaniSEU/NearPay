@@ -29,6 +29,7 @@ import CustomerDebtsPage from './pages/customer/DebtsPage';
 import CustomerPaymentsPage from './pages/customer/PaymentsPage';
 import CustomerProfilePage from './pages/customer/ProfilePage';
 import CustomerOTPPage from './pages/customer/OTPPage';
+import CustomerAuthPage from './pages/customer/CustomerAuthPage';
 
 import NotFound from '@/pages/not-found';
 
@@ -44,7 +45,9 @@ function Router() {
       <Route path="/debt/approve/:token" component={DebtApprovalPage} />
       <Route path="/debt/pay/:token" component={DebtPaymentPage} />
 
-      {/* ── Customer OTP auth — public (unauthenticated users land here) ── */}
+      {/* ── Customer auth — email+password (active) ── */}
+      <Route path="/customer/login" component={CustomerAuthPage} />
+      {/* ── Customer OTP auth — preserved, re-enable via CUSTOMER_PHONE_OTP_ENABLED flag ── */}
       <Route path="/customer/otp" component={CustomerOTPPage} />
 
       {/* ── Protected merchant routes — Firebase email/password auth ── */}

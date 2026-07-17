@@ -14,6 +14,7 @@ import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useT } from '../contexts/LanguageContext';
 import { isValidSaudiPhone, normalizeSaudiPhone } from '../utils/phone';
 import { BUSINESS_TYPES, SAUDI_CITIES } from '../services/nearbyService';
+import { CUSTOMER_PHONE_OTP_ENABLED } from '../config/features';
 
 type Step = 'form' | 'forgot' | 'signup';
 
@@ -64,7 +65,7 @@ export default function LoginPage() {
   };
 
   const handleCustomerContinue = () => {
-    setLocation('/customer/otp');
+    setLocation(CUSTOMER_PHONE_OTP_ENABLED ? '/customer/otp' : '/customer/login');
   };
 
   const handleForgotSubmit = async (e: React.FormEvent) => {

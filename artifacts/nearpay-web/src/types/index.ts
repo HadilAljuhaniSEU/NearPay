@@ -61,6 +61,7 @@ export interface DiscoverableMerchant extends MerchantDoc {
 export interface CustomerAuthDoc {
   uid: string;
   phone: string;
+  email: string;
   displayName: string;
   createdAt: Timestamp;
   preferredLanguage: 'en' | 'ar';
